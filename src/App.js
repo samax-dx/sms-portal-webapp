@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.less';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import { useActor } from '@xstate/react';
 
-export default App;
+import { AppLayout } from "./components/AppLayout";
+import { Home } from './components/Home';
+import { Party } from './components/Party';
+import { SendSMS } from './components/SendSMS';
+import { capitalize } from './util';
+
+
+export const App = ({ actor }) => {
+    const [current, send] = useActor(actor);
+    const component = capitalize(current.value);
+
+    return (
+        <AppLayout render={{ Home, Party, SendSMS }[component]} actor={actor} />
+    );
+};
