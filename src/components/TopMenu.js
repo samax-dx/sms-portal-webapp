@@ -6,7 +6,7 @@ export function TopMenu({ actor }) {
 
     return (
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[]} style={{ direction: "rtl" }}>
-            <Menu.Item key="logout" onClick={() => send({ type: 'DO_LOGOUT' })}>Logout</Menu.Item>
+            <Menu.Item key="logout" onClick={() => send({ type: 'LOGOUT' })}>Logout</Menu.Item>
             <Menu.Item key="profile" onClick={() => send({ type: 'NAV_PROFILE' })}>Profile</Menu.Item>
         </Menu>
     );

@@ -6,7 +6,8 @@ import { AppLayout } from "./components/AppLayout";
 import { Home } from './components/Home';
 import { Party } from './components/Party';
 import { SendSMS } from './components/SendSMS';
-import { capitalize } from './util';
+import { Login } from './components/Login';
+import { capitalize } from './Util';
 
 
 export const App = ({ actor }) => {
@@ -14,6 +15,6 @@ export const App = ({ actor }) => {
     const component = capitalize(current.value);
 
     return (
-        <AppLayout render={{ Home, Party, SendSMS }[component]} actor={actor} />
+        <AppLayout render={{ Home, Party, SendSMS, Login }[component]} actor={actor} />
     );
 };

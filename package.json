@@ -10,7 +10,7 @@
     "@xstate/react": "^2.0.1",
     "antd": "^4.19.1",
     "antd-dayjs-webpack-plugin": "^1.0.6",
-    "axios": "^0.26.0",
+    "axios": "^0.26.1",
     "countries-list": "^2.6.1",
     "craco-less": "^2.0.0",
     "react": "^17.0.2",
