@@ -21,7 +21,6 @@ export const Login = ({ actor }) => {
                 <Form
                     form={loginForm}
                     labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
                 >
                     <Form.Item label="User ID" name="username">
                         <Input />
@@ -30,12 +29,13 @@ export const Login = ({ actor }) => {
                         <Input type={"password"} />
                     </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 18, span: 6 }}>
+                    <Form.Item wrapperCol={{ offset: 8 }}>
                         <Button
                             type="primary"
                             htmlType="submit"
                             onClick={() => sendActor({ type: "SUBMIT", data: loginForm.getFieldsValue() })}
-                            children={"Save"}
+                            style={{ float: "right" }}
+                            children={"Submit"}
                         />
                     </Form.Item>
                 </Form>

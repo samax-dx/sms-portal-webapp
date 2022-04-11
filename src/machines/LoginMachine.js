@@ -9,7 +9,7 @@ export const LoginMachine = createMachine({
         },
         submit: {
             invoke: {
-                src: (ctx, ev) => XAuth.login(ev.data),
+                src: XAuth.login,
                 onDone: { target: "success", actions: (ctx, ev) => ctx.token = ev.data.token },
                 onError: { target: "error", actions: (ctx, ev) => ctx.error = ev.data.message },
             }

@@ -1,16 +1,22 @@
 import axios from "axios";
+import { XAuth } from "./XAuth";
 
-export const XAuth = (storage => ({
-    login: (ctx, ev) => axios
+export const Profile = {
+    fetchProfile: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Party/login",
+            "https://localhost:8443/ofbiz-spring/api/Party/profile",
             { ...ev.data },
-            { headers: { 'Content-Type': 'application/json' } }
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
         ).then(response => {
             const { data } = response;
 
-            if (data.token) {
-                return Promise.resolve(Object.assign(storage, data));
+            if (data.profile) {
+                return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });
             }
@@ -18,7 +24,5 @@ export const XAuth = (storage => ({
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
-        }),
-    logout: () => storage.token = null,
-    token: () => storage.token
-}))({ token: null });
+        })
+};

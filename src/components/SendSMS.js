@@ -1,25 +1,23 @@
-import { Button, Card, Form, Input, Space, Select, Tag, Tooltip, Checkbox, Modal } from "antd";
+import { Button, Card, Form, Input, Space, Select, Tooltip, Checkbox } from "antd";
 import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
 import { countries } from "countries-list";
+import { useActor } from "@xstate/react";
+import { useEffect } from "react";
 
 
 export const SendSMS = ({ actor }) => {
     const [form] = Form.useForm();
 
-    const sendSMS = async () => {
-        const url = "https://localhost:8443/ofbiz-spring/api/SmsTask/sendSMS";
-        const payload = form.getFieldsValue();
+    const [gatewayState, sendGateway] = useActor(actor);
+    const [parentState, sendParent] = useActor(actor.parent);
 
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
+    useEffect(() => {
+        actor.subscribe(state => {
+            if (state.matches("idle") && (state.context.result || state.context.error)) {
+                sendParent("NAV_SMS_REPORT");
+            }
         });
-
-        alert(JSON.stringify(await response.json()));
-    };
+    }, [])
 
     return (<>
         <Space><br /></Space>
@@ -109,7 +107,15 @@ export const SendSMS = ({ actor }) => {
                 <Space style={{ width: "100%", justifyContent: "flex-end" }}>
                     <Button type="default">Draft</Button>
                     <Button type="default">Schedule</Button>
-                    <Button type="primary" onClick={sendSMS}>Send</Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            sendGateway({
+                                type: "LOAD", data: form.getFieldsValue()
+                            });
+                        }}
+                        children="Send"
+                    />
                 </Space>
             </Form>
         </Card>
