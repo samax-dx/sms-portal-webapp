@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, Space, Select, Tooltip, Checkbox } from "antd";
+import { Button, Card, Form, Input, Space, Select, Tooltip, Checkbox, notification } from "antd";
 import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
 import { countries } from "countries-list";
 import { useActor } from "@xstate/react";
@@ -13,14 +13,20 @@ export const SendSMS = ({ actor }) => {
 
     useEffect(() => {
         actor.subscribe(state => {
-            if (state.matches("idle") && (state.context.result || state.context.error)) {
-                sendParent("NAV_SMS_REPORT");
+            if (state.matches("idle")) {
+                state.context.result && sendParent("NAV_SMS_REPORT");
+                state.context.error && notification.error({
+                    message: "Task Failed",
+                    description: <>
+                        Error sending SMS.<br />{state.context.error.message}
+                    </>,
+                    duration: 5
+                });
             }
         });
-    }, [])
+    }, []);
 
     return (<>
-        <Space><br /></Space>
         <Card style={{ maxWidth: "40vw" }}>
             <Form
                 form={form}

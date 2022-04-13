@@ -1,7 +1,10 @@
+import axios from "axios";
+import { XAuth } from "./XAuth";
+
 export const Order = {
     fetchOrders: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Accounting/listPartyBalanceRequests",
+            "https://localhost:8443/ofbiz-spring/api/Order/listPartyOrders",
             { ...ev.data },
             {
                 headers: {
@@ -12,11 +15,7 @@ export const Order = {
         ).then(response => {
             const { data } = response;
 
-            if (data.payments === null) {
-                data.payments = [];
-            }
-
-            if (data.payments) {
+            if (data.orders) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });
@@ -26,9 +25,9 @@ export const Order = {
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
         }),
-    placeOrder: (ctx, ev) => axios
+    createOrder: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Order/purchaseSmsPackage",
+            "https://localhost:8443/ofbiz-spring/api/Order/createPartyOrder",
             { ...ev.data },
             {
                 headers: {
@@ -39,7 +38,7 @@ export const Order = {
         ).then(response => {
             const { data } = response;
 
-            if (data.paymentId) {
+            if (data.orderId) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });

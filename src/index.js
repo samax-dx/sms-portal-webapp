@@ -11,10 +11,10 @@ import reportWebVitals from './reportWebVitals';
 
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App actor={interpret(AppMachine).start()} />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <App actor={interpret(AppMachine).start(/*JSON.parse(localStorage.getItem("lastState")) || AppMachine.initialState*/)} />
+    </React.StrictMode>,
+    document.getElementById('root')
 );
 
 

@@ -8,6 +8,8 @@ import { LogoutMachine } from "./LogoutMachine";
 import { SmsTask } from "../services/SmsTask";
 import { Accounting } from "../services/Accounting";
 import { Profile } from "../services/Profile";
+import { Order } from "../services/Order";
+import { Product } from "../services/Product";
 
 
 export const AppMachine = createMachine({
@@ -20,6 +22,7 @@ export const AppMachine = createMachine({
         sendSMS: {},
         smsReport: {},
         cashDeposit: {},
+        orders: {},
         login: {},
         logout: {},
     },
@@ -28,6 +31,7 @@ export const AppMachine = createMachine({
         "NAV_SEND_SMS": { target: "sendSMS", actions: ["assignSendSmsActor"] },
         "NAV_SMS_REPORT": { target: "smsReport", actions: ["assignSmsReportActor"] },
         "NAV_CASH_DEPOSIT": { target: "cashDeposit", actions: ["assignCashDepositActor"] },
+        "NAV_ORDERS": { target: "orders", actions: ["assignOrdersActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
     },
@@ -73,8 +77,37 @@ export const AppMachine = createMachine({
                     {
                         services: { doFetch: Accounting.requestDeposit }
                     }
+                ))
+            ];
+            return { actor };
+        }),
+        assignOrdersActor: assign((ctx, ev) => {
+            const actor = [
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Order.fetchOrders }
+                    },
+                    {
+                        payload: { data: { page: 1, limit: 10 } },
+                        result: { orders: [], count: 0 },
+                        error: { message: "Waiting for Order Search" }
+                    }
                 )),
-                ctx.profileActor
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Order.createOrder }
+                    }
+                )),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Product.fetchProducts }
+                    },
+                    {
+                        payload: { data: { page: 1, limit: 10 } },
+                        result: { products: [], count: 0 },
+                        error: { message: "Waiting for Product Search" }
+                    }
+                ))
             ];
             return { actor };
         }),

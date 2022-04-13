@@ -46,7 +46,7 @@ export const CashDeposit = ({ actor: [listActor, depositActor] }) => {
     return (<>
         <PaymentList actor={listActor}>
             <Space direction="vertical" size={"large"}>
-                <Text strong>Request Cash Deposit</Text>
+                <Text strong>Request TopUp / Payment</Text>
                 <Form
                     form={depositForm}
                     layout="inline"
@@ -65,6 +65,7 @@ export const CashDeposit = ({ actor: [listActor, depositActor] }) => {
                                 .catch(_ => { })
                             }
                             children={"Submit"}
+                            disabled
                         />
                     </Form.Item>
                 </Form>

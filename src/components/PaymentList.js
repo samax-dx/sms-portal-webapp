@@ -55,7 +55,7 @@ export const PaymentList = ({ actor: listActor, children }) => {
         <Row>
             <Col span={16}>
                 <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-                    <Text strong>Find Deposit Requests</Text>
+                    <Text strong>Find Payment Requests</Text>
                     <Form
                         form={searchForm}
                         labelCol={{ span: 4 }}
@@ -117,7 +117,10 @@ export const PaymentList = ({ actor: listActor, children }) => {
                 defaultPageSize={10}
                 pageSizeOptions={["10", "20", "50", "100", "200"]}
                 showSizeChanger={true}
-                onChange={(page, limit) => performSearch(searchForm.getFieldsValue(), page, limit)}
+                onChange={(page, limit) => {
+                    Object.assign(listPayload.data, { page, limit });
+                    sendList({ ...listPayload, type: "LOAD" });
+                }}
                 current={listPayload.data.page}
             />
         </Space>

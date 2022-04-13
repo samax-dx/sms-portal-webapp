@@ -9,13 +9,24 @@ import { Login } from './components/Login';
 import { SmsReport } from './components/SmsReport';
 import { CashDeposit } from './components/CashDeposit';
 import { capitalize } from './Util';
+import { useEffect } from 'react';
+import { Orders } from './components/Orders';
 
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
     const component = capitalize(current.value);
 
+    useEffect(() => {
+        const saveApp = () => {
+            localStorage.setItem("lastState", JSON.stringify(current));
+        };
+
+        window.addEventListener('beforeunload', saveApp);
+        return () => window.removeEventListener("beforeunload", saveApp);
+    }, [current]);
+
     return (
-        <AppLayout render={{ Home, SendSMS, SmsReport, CashDeposit, Login }[component]} actor={actor} />
+        <AppLayout render={{ Home, SendSMS, SmsReport, CashDeposit, Orders, Login }[component]} actor={actor} />
     );
 };

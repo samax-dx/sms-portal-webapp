@@ -1,9 +1,8 @@
-import { Card, Col, Row, Space } from "antd";
+import { Card, Col, Row } from "antd";
 import { SmsTask } from "../services/SmsTask";
 
 export const SmsReport = ({ actor }) => {
     return (<>
-        <Space><br /></Space>
         <div key="taskReports">{SmsTask.lastTaskReports().map((report, i) => (
             <Card size="small" key={i}>
                 <Row gutter={[8, 8]}>

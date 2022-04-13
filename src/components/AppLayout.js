@@ -22,7 +22,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
             {appState.matches("login") || <Sider width={240} className="site-layout-background">
                 <MainMenu actor={actor} />
             </Sider>}
-            <Layout style={{ padding: "0 24px 24px" }}>
+            <Layout style={{ padding: "24px" }}>
                 <PageContent actor={appState.context.actor} />
             </Layout>
         </Layout>

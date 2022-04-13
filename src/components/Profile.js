@@ -14,10 +14,11 @@ export const Profile = ({ actor }) => {
     const queryError = queryState.context.error;
 
     return (({ profile, balance }) => <div style={{ minWidth: "180px" }}>
-        <Row gutter={12}>
+        <Row>
             <Col><Typography.Text strong>{profile.username}</Typography.Text></Col>
+            <Col>&nbsp;</Col>
         </Row>
-        <Row gutter={[8, 8]}>
+        <Row>
             <Col span={8}>Balance: </Col>
             <Col>{balance} BDT</Col>
         </Row>
