@@ -7,7 +7,7 @@ const lastErrors = [];
 const sendSms = (ctx, { data }) =>
     axios.post(
         "https://localhost:8443/ofbiz-spring/api/SmsTask/sendSMS",
-        { CampaignPackage: "domestic", ...data },
+        { ...data },
         {
             headers: {
                 'Content-Type': 'application/json',

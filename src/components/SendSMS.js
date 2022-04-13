@@ -111,6 +111,9 @@ export const SendSMS = ({ actor }) => {
                     </Space>
                 </Form.Item>
                 <Space style={{ width: "100%", justifyContent: "flex-end" }}>
+                    <Form.Item name="CampaignPackage">
+                        <Input />
+                    </Form.Item>
                     <Button type="default">Draft</Button>
                     <Button type="default">Schedule</Button>
                     <Button
