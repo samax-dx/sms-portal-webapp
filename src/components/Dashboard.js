@@ -60,5 +60,5 @@ const data = [
 ];
 
 export function Dashboard() {
-    return <Table columns={columns} dataSource={data}/>;
+    return <Table columns={columns} dataSource={data} />;
 }
