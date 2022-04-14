@@ -22,7 +22,7 @@ export const Login = ({ actor }) => {
                     form={loginForm}
                     labelCol={{ span: 8 }}
                 >
-                    <Form.Item label="User ID" name="username">
+                    <Form.Item label="User ID" name="loginId">
                         <Input />
                     </Form.Item>
                     <Form.Item label="Password" name="password">

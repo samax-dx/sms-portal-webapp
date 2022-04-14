@@ -15,7 +15,7 @@ export const Profile = ({ actor }) => {
 
     return (({ profile, balance }) => <div style={{ minWidth: "180px" }}>
         <Row>
-            <Col><Typography.Text strong>{profile.username}</Typography.Text></Col>
+            <Col><Typography.Text strong>{profile.loginId}</Typography.Text></Col>
             <Col>&nbsp;</Col>
         </Row>
         <Row>
