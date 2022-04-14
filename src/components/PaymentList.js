@@ -20,7 +20,7 @@ export const PaymentList = ({ actor: listActor, children }) => {
             queryData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const data = ["party.username", "party.name", "date_fld0_value", "date_fld1_value", "statusId"].reduce((acc, v) => {
+        const data = ["statusId", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();

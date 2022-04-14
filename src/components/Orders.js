@@ -130,7 +130,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             />
 
             <Table.Column title="Title" dataIndex={"orderName"} />
-            <Table.Column title="Date" dataIndex={"orderDate"} />
+            <Table.Column title="Date" dataIndex={"orderDate"} render={date => dayjs(date).format("DD-MM-YYYY")} />
             <Table.Column title="Product" dataIndex={"productName"} />
             <Table.Column title="Unit Price" dataIndex={"unitPrice"} />
             <Table.Column title="Quantity" dataIndex={"quantity"} />
