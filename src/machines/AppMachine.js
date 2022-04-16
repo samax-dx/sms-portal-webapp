@@ -11,6 +11,7 @@ import { Profile } from "../services/Profile";
 import { Order } from "../services/Order";
 import { Product } from "../services/Product";
 import { EditorMachineLite } from "./EditorMachineLite";
+import { Campaign } from "../services/Campaign";
 
 
 export const AppMachine = createMachine({
@@ -26,6 +27,7 @@ export const AppMachine = createMachine({
         orders: {},
         login: {},
         logout: {},
+        campaign: {},
     },
     on: {
         "NAV_HOME": { target: "home", actions: ["assignHomeActor"] },
@@ -35,6 +37,7 @@ export const AppMachine = createMachine({
         "NAV_ORDERS": { target: "orders", actions: ["assignOrdersActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
+        "NAV_CAMPAIGN": { target: "campaign", actions: ["assignCampaignActor"] },
     },
     context: {
         actor: null,
@@ -115,5 +118,35 @@ export const AppMachine = createMachine({
         assignLogoutActor: assign((ctx, ev) => ({
             actor: spawn(LogoutMachine)
         })),
+        assignCampaignActor: assign((ctx, ev) => {
+            const actor = [
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Campaign.fetchCampigns }
+                    },
+                    {
+                        payload: { data: { page: 1, limit: 10 } },
+                        result: { campaigns: [], count: 0 },
+                        error: { message: "Waiting for Campaign Search" }
+                    }
+                )),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Campaign.saveCampaign }
+                    }
+                )),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Campaign.fetchCampaignTasks }
+                    },
+                    {
+                        payload: { data: { page: 1, limit: 10 } },
+                        result: { campaign: {}, tasks: [], count: 0 },
+                        error: { message: "" }
+                    }
+                ))
+            ];
+            return { actor };
+        }),
     }
 });

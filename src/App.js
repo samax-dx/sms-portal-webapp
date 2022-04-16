@@ -11,6 +11,7 @@ import { CashDeposit } from './components/CashDeposit';
 import { capitalize } from './Util';
 import { useEffect } from 'react';
 import { Orders } from './components/Orders';
+import { Campaign } from './components/Campaign';
 
 
 export const App = ({ actor }) => {
@@ -27,6 +28,6 @@ export const App = ({ actor }) => {
     }, [current]);
 
     return (
-        <AppLayout render={{ Home, SendSMS, SmsReport, CashDeposit, Orders, Login }[component]} actor={actor} />
+        <AppLayout render={{ Home, SendSMS, SmsReport, CashDeposit, Campaign, Orders, Login }[component]} actor={actor} />
     );
 };

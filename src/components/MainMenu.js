@@ -16,6 +16,7 @@ export const MainMenu = ({ actor }) => {
         >
             <Menu.SubMenu key="messaging" icon={<MailOutlined />} title="SMS Task">
                 <Menu.Item key="sendSMS" onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>
+                <Menu.Item key="campaign" onClick={() => sendApp({ type: 'NAV_CAMPAIGN' })}>Campaigns</Menu.Item>
                 <Menu.Item key="smsReport" onClick={() => sendApp({ type: 'NAV_SMS_REPORT' })}>Task Report</Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="order" icon={<ContainerOutlined />} title="Order Service">

@@ -48,6 +48,29 @@ export const Campaign = {
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
         }),
+    fetchCampaignTasks: (ctx, ev) => axios
+        .post(
+            "https://localhost:8443/ofbiz-spring/api/Campaign/getCampaignTasks",
+            { ...ev.data },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        ).then(response => {
+            const { data } = response;
+
+            if (data.tasks) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ message: data.errorMessage });
+            }
+        }).catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            return Promise.reject({ code, message: data.error || text });
+        }),
     saveCampaign: (ctx, ev) => axios
         .post(
             "https://localhost:8443/ofbiz-spring/api/Campaign/saveCampaign",
