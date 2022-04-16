@@ -1,12 +1,18 @@
 import {Button, Card, Col, Collapse, Row, Space, Statistic} from 'antd';
 import {Dashboard} from "./Dashboard";
 import {PaymentInstrument} from "./paymentInstrument";
-
+import {CampaignTasks} from "./campaignTasks";
 
 export const Home = props => {
     return (
 
         <Space direction="vertical" size="middle" style={{display: 'flex'}}>
+            <Card title="Pending Campaign Tasks" size="small">
+                <Row gutter={16}>
+                    <CampaignTasks/>
+                </Row>
+            </Card>
+
             <Card title="Card" size="small">
                 <Row gutter={16}>
                     <Col span={12}>

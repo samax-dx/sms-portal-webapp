@@ -172,9 +172,12 @@ const DataViewSingle = ({ context, onExit }) => {
     const viewResult = context.result;
     const viewError = context.error;
 
-    return (<Row style={{ margin: "15px 0" }}>
-        <Col md={6}>
-            <Card size="small" title={"Campaign Info"}>
+    return (
+        <>
+
+            <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+
+            <Card title="Campaign Info" style={{ width: 1200 }}>
                 {[
                     ["campaignName", "Campaign Name"],
                     ["createdStamp", "Date", d => dayjs(d).format("DD-MM-YYYY")],
@@ -187,17 +190,18 @@ const DataViewSingle = ({ context, onExit }) => {
                     <Col span={2}>&nbsp;:&nbsp;</Col>
                     <Col>{toValue(viewResult.campaign[k])}</Col>
                 </Row>))}
+
             </Card>
-        </Col>
-        <Col md={6}>
-            <Card size="small" title={"Task Info"}>
-                {viewResult.tasks.map((task, i) => JSON.stringify(task))}
-            </Card>
-        </Col>
-        <Row>
-            {JSON.stringify(context)}
-        </Row>
-    </Row>);
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => null}
+                    children={"Execute Pending Tasks"}
+                />
+            </Space>
+
+        </>
+    );
 };
 
 const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
