@@ -1,131 +1,230 @@
-import { Button, Card, Form, Input, Space, Select, Tooltip, Checkbox, notification } from "antd";
-import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
-import { countries } from "countries-list";
+import { Button, Card, Form, Input, Space, Tooltip, Checkbox, notification } from "antd";
 import { useActor } from "@xstate/react";
 import { useEffect } from "react";
+import { DebounceSelect } from "./DebounceSelect";
+import { Campaign } from "../services/Campaign";
+import { Inventory } from "../services/Inventory";
+import { SmsTask } from "../services/SmsTask";
 
 
-export const SendSMS = ({ actor }) => {
-    const [form] = Form.useForm();
+const fetchCampaignsByName = async (campaignName) => Campaign
+    .fetchCampigns({}, {
+        data: {
+            campaignName,
+            campaignName_op: "contains",
+            pending: 0,
+            pending_op: "greaterThan"
+        }
+    })
+    .then(({ campaigns = [] }) => [{ campaignName }, ...campaigns]
+        .map(c => ({ label: `${c.campaignName}`, value: JSON.stringify(c) }))
+    ).catch(() => { });
 
-    const [gatewayState, sendGateway] = useActor(actor);
-    const [parentState, sendParent] = useActor(actor.parent);
+
+const fetchInventoryByName = async (productName) => Inventory
+    .fetchProducts({}, {
+        data: {
+            productName,
+            productName_op: "contains"
+        }
+    })
+    .then(({ products = [] }) => products
+        .map(p => ({ label: `${p.productName}`, value: p.productId }))
+    ).catch(() => { });
+
+export const SendSMS = ({ actor: editorActor }) => {
+    const [campaignForm] = Form.useForm();
+
+    const [editorState, emitEditor] = useActor(editorActor);
 
     useEffect(() => {
-        actor.subscribe(state => {
-            if (state.matches("idle")) {
-                state.context.result && sendParent("NAV_SMS_REPORT");
-                state.context.error && notification.error({
-                    message: "Task Failed",
-                    description: <>
-                        Error sending SMS.<br />{state.context.error.message}
-                    </>,
-                    duration: 5
-                });
+        editorActor.subscribe(state => {
+            if (state.event.type === "xstate.init") {
+                return;
+            }
+
+            if (state.matches("isSaving") && state.event.data) {
+                const campaign = state.event.data;
+                const { campaignId, campaignName } = JSON.parse(state.event.data.campaignName)
+
+                Campaign
+                    .saveCampaign({}, {
+                        data: {
+                            campaignId,
+                            campaignName,
+                            isFlash: campaign.isFlash,
+                            isUnicode: campaign.isUnicode,
+                            message: campaign.message,
+                            runCount: campaign.runCount,
+                            phoneNumbers: campaign.phoneNumbers,
+                            senderId: campaign.senderId
+                        }
+                    })
+                    .then(data => notification.success({
+                        message: "Task Finished",
+                        description: <>
+                            {JSON.stringify(data)}
+                        </>,
+                        duration: 5
+                    }) || campaignForm.setFieldsValue({ campaignId: data.campaignId }) || emitEditor("SAVE_SUCCESS"))
+                    .catch(error => notification.error({
+                        message: "Task Failed",
+                        description: <>
+                            Error saving campaign.<br />{JSON.stringify(error.message)}
+                        </>,
+                        duration: 5
+                    }) || emitEditor("SAVE_FAILURE"));
             }
         });
     }, []);
 
+    const onEdited = () => editorState.matches("isEditing") || emitEditor("EDIT_RECORD");
+
     return (<>
-        <Card style={{ maxWidth: "40vw" }}>
+        <Card>
             <Form
-                form={form}
-                initialValues={{
-                    CampaignName: null,
-                    SenderId: "8809638010035",
-                    MobileNumbers: "",
-                    autoCountryCode: null,
-                    Message: "",
-                    Is_Unicode: true,
-                    Is_Flash: false,
-                }}
+                form={campaignForm}
+                initialValues={{ senderId: "8809638010035", isUnicode: true }}
                 layout="vertical"
+                wrapperCol={{ span: 8 }}
             >
                 <Form.Item
+                    name="campaignName"
                     label="Campaign Name"
-                    name="CampaignName"
+                    rules={[{ required: true }]}
                 >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="Sender ID"
-                    name="SenderId"
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item label="Contacts">
-                    <Space direction="vertical" style={{ width: "100%" }}>
-                        <Form.Item name="MobileNumbers" style={{ margin: 0 }}>
-                            <Input.TextArea />
-                        </Form.Item>
-                        <Space style={{ width: "100%", justifyContent: "space-between" }}>
-                            <Form.Item name="autoCountryCode" style={{ margin: 0 }}>
-                                <Select
-                                    showSearch
-                                    style={{ width: 200 }}
-                                    placeholder="Auto Country Code"
-                                    onChange={_ => console.log("changed")}
-                                    optionFilterProp="children"
-                                    filterOption={true}
-                                    allowClear={true}
-                                >
-                                    {
-                                        Object.values(countries).map(({ name, emoji, phone }) => {
-                                            return (
-                                                <Select.Option value={phone} key={emoji}>
-                                                    <Button type="link">{emoji}</Button> {name}
-                                                </Select.Option>
-                                            );
-                                        })
-                                    }
-                                </Select>
-                            </Form.Item>
-                            <div>
-                                Import Contacts:
-                                <Button size="small" type="link">Groups</Button> |
-                                <Button size="small" type="link">File (Excel, CSV, Text)</Button>
-                            </div>
-                        </Space>
-                    </Space>
-                </Form.Item>
-                <Form.Item label="Message">
-                    <Space direction="vertical" style={{ width: "100%" }}>
-                        <Space style={{ width: "100%", justifyContent: "space-between" }}>
-                            <Space>
-                                <Tooltip title="Import Draft"><Button shape="circle" icon={<FileTextOutlined />} /></Tooltip>
-                                <Tooltip title="Import Template"><Button shape="circle" icon={<FileDoneOutlined />} /></Tooltip>
-                            </Space>
-                            <Space>
-                                <Form.Item name="Is_Unicode" valuePropName="checked" style={{ margin: 0 }}>
-                                    <Checkbox><Tooltip title="using unicode charecters">Unicode</Tooltip></Checkbox>
-                                </Form.Item>
-                                <Form.Item name="Is_Flash" valuePropName="checked" style={{ margin: 0 }}>
-                                    <Checkbox><Tooltip title="is a flash sms">Flash</Tooltip></Checkbox>
-                                </Form.Item>
-                            </Space>
-                        </Space>
-                        <Form.Item name="Message" style={{ margin: 0 }}>
-                            <Input.TextArea />
-                        </Form.Item>
-                        <span>Used: 0 | Left: 1224 | SMS Count: 0</span>
-                    </Space>
-                </Form.Item>
-                <Space style={{ width: "100%", justifyContent: "flex-end" }}>
-                    <Form.Item name="CampaignPackage">
-                        <Input />
-                    </Form.Item>
-                    <Button type="default">Draft</Button>
-                    <Button type="default">Schedule</Button>
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            sendGateway({
-                                type: "LOAD", data: form.getFieldsValue()
-                            });
+                    <DebounceSelect
+                        showSearch
+                        placeholder="Select Campaign"
+                        fetchOptions={fetchCampaignsByName}
+                        onChange={v => {
+                            Campaign
+                                .fetchCampaignPendingTasks({}, {
+                                    data: JSON.parse(v)
+                                })
+                                .then(data => {
+                                    onEdited();
+                                    return data;
+                                })
+                                .then(({ campaign, tasks }) => {
+                                    campaignForm.setFieldsValue({
+                                        phoneNumbers: tasks.map(t => t.phoneNumber).join(","),
+                                        message: campaign.message,
+                                        isUnicode: campaign.isUnicode,
+                                        isFlash: campaign.isFlash
+                                    }) + "1" && emitEditor("FETCHED");
+                                })
+                                .catch(_ => {
+                                    //
+                                });
                         }}
-                        children="Send"
+                        style={{ width: '100%' }}
                     />
-                </Space>
+                </Form.Item>
+
+                <Form.Item
+                    name="campaignPackage"
+                    label="Campaign Package"
+                    rules={[{ required: true }]}
+                >
+                    <DebounceSelect
+                        showSearch
+                        placeholder="Select Package"
+                        fetchOptions={fetchInventoryByName}
+                        style={{ width: '100%' }}
+                    />
+                </Form.Item>
+
+                <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input onChange={onEdited} />} />
+
+                <Form.Item
+                    name="phoneNumbers"
+                    label={<>
+                        <span>Contacts</span>
+                        &nbsp;
+                        <Button type="link" onClick={() => console.log("Import Draft")}>
+                            [ Import (Excel, CSV, Text) ]
+                        </Button>
+                    </>}
+                    rules={[{ required: true }]}
+                    onChange={onEdited}
+                >
+                    <Input.TextArea />
+                </Form.Item>
+
+                <Form.Item
+                    name="message"
+                    label={<>
+                        <span>Message Text</span>
+                        &nbsp;
+                        <Button type="link" onClick={() => console.log("Import Draft")}>
+                            [ Import Draft ]
+                        </Button>
+                        &nbsp;
+                        <Button type="link" onClick={() => console.log("Import Template")}>
+                            [ Import Template ]
+                        </Button>
+                    </>}
+                    rules={[{ required: true }]}
+                    onChange={onEdited}
+                >
+                    <Input.TextArea />
+                </Form.Item>
+
+                <Form.Item>
+                    <Space style={{ width: "100%", justifyContent: "space-between" }}>
+                        <span>SMS Count: ...</span>
+                        <Space>
+                            <Form.Item name="isUnicode" valuePropName="checked" style={{ margin: 0 }}>
+                                <Checkbox onChange={onEdited}><Tooltip title="using unicode charecters">Unicode</Tooltip></Checkbox>
+                            </Form.Item>
+                            <Form.Item name="isFlash" valuePropName="checked" style={{ margin: 0 }}>
+                                <Checkbox onChange={onEdited}><Tooltip title="is a flash sms">Flash</Tooltip></Checkbox>
+                            </Form.Item>
+                            <Button
+                                type="primary"
+                                onClick={() => emitEditor({ type: "SAVE_RECORD", data: campaignForm.getFieldsValue() })}
+                                disabled={!editorState.matches("isEditing")}
+                                children="Save"
+                            />
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                onClick={() => {
+                                    campaignForm
+                                        .validateFields()
+                                        .then(_ => SmsTask.sendSms({}, {
+                                            data: {
+                                                campaignId: JSON.parse(campaignForm.getFieldsValue().campaignName).campaignId || campaignForm.getFieldValue("campaignId"),
+                                                campaignPackage: campaignForm.getFieldsValue().campaignPackage
+                                            }
+                                        }))
+                                        .then(result => {
+                                            notification.success({
+                                                message: "Task Finished",
+                                                description: <>
+                                                    {JSON.stringify(result)}
+                                                </>,
+                                                duration: 5
+                                            });
+                                            campaignForm.resetFields();
+                                        })
+                                        .catch(error => {
+                                            notification.error({
+                                                message: "Task Failed",
+                                                description: <>
+                                                    Error sending SMS.<br />{JSON.stringify(error)}
+                                                </>,
+                                                duration: 5
+                                            });
+                                        })
+                                }}
+                                disabled={editorState.matches("start") || !editorState.matches("didSave")}
+                                children="Send"
+                            />
+                        </Space>
+                    </Space>
+                </Form.Item>
             </Form>
         </Card>
     </>)

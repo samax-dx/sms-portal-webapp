@@ -36,7 +36,7 @@ const sendSms = (ctx, { data }) =>
     });
 
 export const SmsTask = {
-    sendSms,
+    sendSms: (...args) => console.log(...args) || sendSms(...args),
     lastTaskReports() {
         return [...lastReports];
     },

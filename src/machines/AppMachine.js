@@ -10,6 +10,7 @@ import { Accounting } from "../services/Accounting";
 import { Profile } from "../services/Profile";
 import { Order } from "../services/Order";
 import { Product } from "../services/Product";
+import { EditorMachineLite } from "./EditorMachineLite";
 
 
 export const AppMachine = createMachine({
@@ -51,11 +52,8 @@ export const AppMachine = createMachine({
             actor: spawn(NullMachine)
         })),
         assignSendSmsActor: assign((ctx, ev) => {
-            const actor = spawn(FetchMachine.withConfig(
-                {
-                    services: { doFetch: SmsTask.sendSms }
-                }
-            ));
+            const actor = spawn(EditorMachineLite);
+
             return { actor };
         }),
         assignSmsReportActor: assign((ctx, ev) => {
