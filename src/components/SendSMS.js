@@ -84,7 +84,7 @@ export const SendSMS = ({ actor: editorActor }) => {
         <Card>
             <Form
                 form={campaignForm}
-                initialValues={{ senderId: "8809638010035", isUnicode: true }}
+                initialValues={{ senderId: "8801552146283", isUnicode: true }}
                 layout="vertical"
                 wrapperCol={{ span: 8 }}
             >
