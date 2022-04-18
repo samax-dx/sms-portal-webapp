@@ -1,39 +1,14 @@
-import { Button, Card, Form, Input, Space, Tooltip, Checkbox, notification } from "antd";
+import { Button, Card, Form, Input, Space, Tooltip, Checkbox, notification, Select } from "antd";
 import { useActor } from "@xstate/react";
-import { useEffect } from "react";
-import { DebounceSelect } from "./DebounceSelect";
+import { useEffect, useState } from "react";
 import { Campaign } from "../services/Campaign";
 import { Inventory } from "../services/Inventory";
 import { SmsTask } from "../services/SmsTask";
 
 
-const fetchCampaignsByName = async (campaignName) => Campaign
-    .fetchCampigns({}, {
-        data: {
-            campaignName,
-            campaignName_op: "contains",
-            pending: 0,
-            pending_op: "greaterThan"
-        }
-    })
-    .then(({ campaigns = [] }) => [{ campaignName }, ...campaigns]
-        .map(c => ({ label: `${c.campaignName}`, value: JSON.stringify(c) }))
-    ).catch(() => { });
-
-
-const fetchInventoryByName = async (productName) => Inventory
-    .fetchProducts({}, {
-        data: {
-            productName,
-            productName_op: "contains"
-        }
-    })
-    .then(({ products = [] }) => products
-        .map(p => ({ label: `${p.productName}`, value: p.productId }))
-    ).catch(() => { });
-
 export const SendSMS = ({ actor: editorActor }) => {
     const [campaignForm] = Form.useForm();
+    const [campaignPackages, setCampaignPackages] = useState([]);
 
     const [editorState, emitEditor] = useActor(editorActor);
 
@@ -78,61 +53,32 @@ export const SendSMS = ({ actor: editorActor }) => {
         });
     }, []);
 
+    useEffect(() => {
+        Inventory
+            .fetchProducts({}, { data: {} })
+            .then(data => console.log("fetched inventory", data) || data)
+            .then(data => setCampaignPackages(data.products || []))
+            .catch(error => console.log("error fetching inventory", error));
+    }, [])
+
     const onEdited = () => editorState.matches("isEditing") || emitEditor("EDIT_RECORD");
 
     return (<>
         <Card>
             <Form
                 form={campaignForm}
-                initialValues={{ senderId: "8801552146283", isUnicode: true }}
+                initialValues={{ senderId: "8801552146283", isUnicode: true, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null }}
                 layout="vertical"
                 wrapperCol={{ span: 8 }}
             >
-                <Form.Item
-                    name="campaignName"
-                    label="Campaign Name"
-                    rules={[{ required: true }]}
-                >
-                    <DebounceSelect
-                        showSearch
-                        placeholder="Select Campaign"
-                        fetchOptions={fetchCampaignsByName}
-                        onChange={v => {
-                            Campaign
-                                .fetchCampaignPendingTasks({}, {
-                                    data: JSON.parse(v)
-                                })
-                                .then(data => {
-                                    onEdited();
-                                    return data;
-                                })
-                                .then(({ campaign, tasks }) => {
-                                    campaignForm.setFieldsValue({
-                                        phoneNumbers: tasks.map(t => t.phoneNumber).join(","),
-                                        message: campaign.message,
-                                        isUnicode: campaign.isUnicode,
-                                        isFlash: campaign.isFlash
-                                    }) + "1" && emitEditor("FETCHED");
-                                })
-                                .catch(_ => {
-                                    //
-                                });
-                        }}
-                        style={{ width: '100%' }}
-                    />
-                </Form.Item>
-
                 <Form.Item
                     name="campaignPackage"
                     label="Campaign Package"
                     rules={[{ required: true }]}
                 >
-                    <DebounceSelect
-                        showSearch
-                        placeholder="Select Package"
-                        fetchOptions={fetchInventoryByName}
-                        style={{ width: '100%' }}
-                    />
+                    <Select style={{ minWidth: 150 }}>
+                        {campaignPackages.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName}</Select.Option>)}
+                    </Select>
                 </Form.Item>
 
                 <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input onChange={onEdited} />} />
@@ -183,21 +129,12 @@ export const SendSMS = ({ actor: editorActor }) => {
                             </Form.Item>
                             <Button
                                 type="primary"
-                                onClick={() => emitEditor({ type: "SAVE_RECORD", data: campaignForm.getFieldsValue() })}
-                                disabled={!editorState.matches("isEditing")}
-                                children="Save"
-                            />
-                            <Button
-                                type="primary"
                                 htmlType="submit"
                                 onClick={() => {
                                     campaignForm
                                         .validateFields()
                                         .then(_ => SmsTask.sendSms({}, {
-                                            data: {
-                                                campaignId: JSON.parse(campaignForm.getFieldsValue().campaignName).campaignId || campaignForm.getFieldValue("campaignId"),
-                                                campaignPackage: campaignForm.getFieldsValue().campaignPackage
-                                            }
+                                            data: { ...campaignForm.getFieldsValue() }
                                         }))
                                         .then(result => {
                                             notification.success({
@@ -219,7 +156,6 @@ export const SendSMS = ({ actor: editorActor }) => {
                                             });
                                         })
                                 }}
-                                disabled={editorState.matches("start") || !editorState.matches("didSave")}
                                 children="Send"
                             />
                         </Space>
