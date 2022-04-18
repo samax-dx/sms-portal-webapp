@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useActor } from "@xstate/react";
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, InputNumber, Modal, Checkbox, Tooltip, Collapse, Card, Breadcrumb } from "antd";
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select } from "antd";
 import dayjs from "dayjs";
 import { Br } from "./Br";
 import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
+import { Inventory } from "../services/Inventory";
+import { SmsTask } from "../services/SmsTask";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -168,40 +170,99 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
     </>);
 };
 
-const DataViewSingle = ({ context, onExit }) => {
+const DataViewSingle = ({ context, campaignPackages, onRunCampaign }) => {
     const viewResult = context.result;
     const viewError = context.error;
 
-    return (
-        <>
+    const [campaignPackage, setCampaignPackage] = useState(campaignPackages ? campaignPackages[0].productId : null);
 
-            <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+    return (<>
+        <Card bordered={false} bodyStyle={{ padding: 0 }}>
+            <List
+                header={<Typography.Text strong>
+                    <span>Campaign Overview</span>
+                    &nbsp;
+                    <Tag >{viewResult.campaign.campaignId}</Tag>
+                </Typography.Text>}
+                footer={<Space>
+                    {campaignPackage && <Select onChange={setCampaignPackage} defaultValue={campaignPackage} style={{ minWidth: 150 }}>
+                        {campaignPackages.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName}</Select.Option>)}
+                    </Select>}
+                    <Button
+                        type="primary"
+                        onClick={() => onRunCampaign({ campaignId: viewResult.campaign.campaignId, campaignPackage })}
+                        children={"Run Pending Tasks"}
+                        disabled={!campaignPackage || viewResult.campaign.pending == 0}
+                    />
+                    {campaignPackage ? null : <Typography.Text type="warning" italic>Please buy a package !</Typography.Text>}
+                </Space>}
+                size="large"
+                bordered
+            >
+                <Card bordered={false}>
+                    <Space direction="vertical" size={"large"}>
+                        <div
+                            children={
+                                [
+                                    ["campaignName", "Campaign Name"],
+                                    ["createdStamp", "Date", d => dayjs(d).format("DD-MM-YYYY")],
+                                    ["message", "Message"]
+                                ].map(([k, l, toValue = v => v]) => (<Row gutter={[10]} key={k}>
+                                    <Col><Typography.Paragraph strong>{l}</Typography.Paragraph></Col>
+                                    <Col>&nbsp;:&nbsp;</Col>
+                                    <Col><Typography.Text>{toValue(viewResult.campaign[k])}</Typography.Text></Col>
+                                </Row>))
+                            }
+                        />
+                        <List
+                            grid={{ gutter: 24 }}
+                            dataSource={[
+                                [
+                                    ["complete", "Complete", "success", v => v || 0],
+                                    ["pending", "Pending", "warning", v => v || 0],
+                                    ["taskTotal", "Total Task", "danger", v => v],
+                                ]
+                            ]}
+                            renderItem={item => item.map(([key, label, type, toValue]) => (<Col>
+                                <Statistic
+                                    title={<Typography.Text type={type} strong>{label}</Typography.Text>}
+                                    value={toValue(viewResult.campaign[key])}
+                                    key={key}
+                                />
+                            </Col>))}
+                        />
+                    </Space>
+                </Card>
+                <Divider style={{ margin: 0 }} />
+            </List>
+        </Card>
 
-            <Card title="Campaign Info" style={{ width: 1200 }}>
-                {[
-                    ["campaignName", "Campaign Name"],
-                    ["createdStamp", "Date", d => dayjs(d).format("DD-MM-YYYY")],
-                    ["message", "Message"],
-                    ["taskTotal", "Total Task"],
-                    ["pending", "Pending", v => v || 0],
-                    ["complete", "Complete", v => v || 0]
-                ].map(([k, l, toValue = v => v], i) => (<Row key={i}>
-                    <Col span={8}><Typography.Text type={i < 3 ? "success" : "warning"}>{l}</Typography.Text></Col>
-                    <Col span={2}>&nbsp;:&nbsp;</Col>
-                    <Col>{toValue(viewResult.campaign[k])}</Col>
-                </Row>))}
+        <Typography.Text>&nbsp;</Typography.Text>
 
-            </Card>
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    onClick={() => null}
-                    children={"Execute Pending Tasks"}
+        <Card title="Campaign Tasks">
+            <Table
+                size="small"
+                dataSource={viewResult.tasks}
+                rowKey={"phoneNumber"}
+                locale={{ emptyText: viewError && `[ ${viewError.message} ]` }}
+                pagination={true}
+            >
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"#"}
+                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
                 />
-            </Space>
 
-        </>
-    );
+                <Table.Column title="Phone Number" dataIndex={"phoneNumber"} />
+                <Table.Column title="Task Status" dataIndex={"status"} render={status => status > 0 ? <Tag color={"success"}>complete</Tag> : <Tag color={"processing"}>pending</Tag>} />
+
+                <Table.Column
+                    dataIndex={undefined}
+                    render={(_, campaignTask, i) => <Button onClick={_ => console.log(campaignTask)} type="primary">Delete</Button>}
+                />
+            </Table>
+        </Card>
+    </>);
 };
 
 const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
@@ -226,6 +287,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
 
     const [editForm] = Form.useForm();
     const [previewing, setPreviewing] = useState(false);
+    const [campaignPackages, setCampaignPackages] = useState(null);
 
     const sendPagedQuery = queryData => (page, limit) => {
         console.log(queryData, page, limit);
@@ -238,7 +300,37 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         return sendSave({ data, type: "LOAD" });
     };
 
+    const sendSms = campaign => SmsTask
+        .sendSms({}, { data: campaign })
+        .then(result => {
+            notification.success({
+                message: "Task Finished",
+                description: <>
+                    {JSON.stringify(result)}
+                </>,
+                duration: 5
+            });
+            loadPreview(campaign);
+        })
+        .catch(error => {
+            notification.error({
+                message: "Task Failed",
+                description: <>
+                    Error sending SMS.<br />{JSON.stringify(error)}
+                </>,
+                duration: 5
+            });
+        });
+
     useEffect(() => sendPagedQuery({})(1, 10), []);
+
+    useEffect(() => {
+        Inventory
+            .fetchProducts({}, { data: {} })
+            .then(data => console.log("fetched inventory", data) || data)
+            .then(data => setCampaignPackages(data.products))
+            .catch(error => console.log("error fetching inventory", error));
+    }, [])
 
     useEffect(() => {
         saveActor.subscribe(state => {
@@ -290,7 +382,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
     const viewPage = viewContext.payload.data.page;
     const viewLimit = viewContext.payload.data.limit;
 
-    return (<>
+    return (<Space direction="vertical">
         <Breadcrumb>
             <Breadcrumb.Item>
                 {previewing || "Campaign"}
@@ -319,8 +411,6 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
             <Br />
             <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         </div>}
-        {previewing && <div>
-            <DataViewSingle context={previewState.context} onExit={() => setPreviewing(false)} />
-        </div>}
-    </>);
+        {previewing && <DataViewSingle context={previewState.context} campaignPackages={campaignPackages} onRunCampaign={campaign => sendSms(campaign)} />}
+    </Space>);
 };
