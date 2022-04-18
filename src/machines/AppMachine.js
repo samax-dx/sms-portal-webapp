@@ -52,7 +52,7 @@ export const AppMachine = createMachine({
             }))
         })),
         assignHomeActor: assign((ctx, ev) => ({
-            actor: spawn(NullMachine)
+            actor: spawn(EditorMachineLite)
         })),
         assignSendSmsActor: assign((ctx, ev) => {
             const actor = spawn(EditorMachineLite);
