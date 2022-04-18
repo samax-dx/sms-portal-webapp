@@ -192,7 +192,7 @@ const DataViewSingle = ({ context, campaignPackages, onRunCampaign }) => {
                         type="primary"
                         onClick={() => onRunCampaign({ campaignId: viewResult.campaign.campaignId, campaignPackage })}
                         children={"Run Pending Tasks"}
-                        disabled={!campaignPackage || viewResult.campaign.pending == 0}
+                        disabled={!campaignPackage || viewResult.campaign.pending <= 0}
                     />
                     {campaignPackage ? null : <Typography.Text type="warning" italic>Please buy a package !</Typography.Text>}
                 </Space>}
