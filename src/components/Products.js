@@ -137,12 +137,15 @@ export const ProductPicker = ({ actor: lookupActor, onPicked }) => {
     const [lookupState, sendLookup] = useActor(lookupActor);
 
     const sendPagedQuery = queryData => (page, limit) => {
+        page === undefined && (page = queryData.page)
+        limit === undefined && (limit = queryData.limit)
         console.log(queryData, page, limit);
+
         const query = { data: { ...queryData, page, limit }, type: "LOAD" };
         return sendLookup(query);
     };
 
-    useEffect(() => sendPagedQuery({})(1, 10), []);
+    useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
     useEffect(() => {
         if (lookupState.matches("idle")) {

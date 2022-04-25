@@ -1,7 +1,7 @@
 import { assign, createMachine, send, spawn } from "xstate";
 
 import { NullMachine } from "./NullMachine";
-import { FetchMachine } from "./FetchMachine";
+import { FetchMachine, spawnFetcher } from "./FetchMachine";
 import { LoginMachine } from "./LoginMachine";
 import { LogoutMachine } from "./LogoutMachine";
 
@@ -54,99 +54,77 @@ export const AppMachine = createMachine({
         assignHomeActor: assign((ctx, ev) => ({
             actor: spawn(EditorMachineLite)
         })),
-        assignSendSmsActor: assign((ctx, ev) => {
-            const actor = spawn(EditorMachineLite);
-
-            return { actor };
-        }),
-        assignSmsReportActor: assign((ctx, ev) => {
-            const actor = spawn(NullMachine);
-            return { actor };
-        }),
-        assignCashDepositActor: assign((ctx, ev) => {
-            const actor = [
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Accounting.fetchBalanceRequests }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        error: { message: "Waiting for Deposit Search" }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Accounting.requestDeposit }
-                    }
-                ))
-            ];
-            return { actor };
-        }),
-        assignOrdersActor: assign((ctx, ev) => {
-            const actor = [
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Order.fetchOrders }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        result: { orders: [], count: 0 },
-                        error: { message: "Waiting for Order Search" }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Order.createOrder }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Product.fetchProducts }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        result: { products: [], count: 0 },
-                        error: { message: "Waiting for Product Search" }
-                    }
-                ))
-            ];
-            return { actor };
-        }),
+        assignSendSmsActor: assign((ctx, ev) => ({
+            actor: spawn(EditorMachineLite)
+        })),
+        assignSmsReportActor: assign((ctx, ev) => ({
+            actor: spawn(NullMachine)
+        })),
+        assignCashDepositActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Accounting.fetchBalanceRequests,
+                    { data: { page: 1, limit: 10 } },
+                    { payments: [], count: 0 },
+                    { message: "Waiting for Deposit Search" }
+                ),
+                spawnFetcher(
+                    Accounting.requestDeposit,
+                    { data: {} },
+                    { paymentId: null },
+                    { message: "Waiting for Payment Save" }
+                )
+            ]
+        })),
+        assignOrdersActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Order.fetchOrders,
+                    { data: { page: 1, limit: 10 } },
+                    { orders: [], count: 0 },
+                    { message: "Waiting for Order Search" }
+                ),
+                spawnFetcher(
+                    Order.createOrder,
+                    { data: {} },
+                    { orderId: null },
+                    { message: "Waiting for Order Save" }
+                ),
+                spawnFetcher(
+                    Product.fetchProducts,
+                    { data: { page: 1, limit: 10 } },
+                    { products: [], count: 0 },
+                    { message: "Waiting for Product Search" }
+                )
+            ]
+        })),
         assignLoginActor: assign((ctx, ev) => ({
             actor: spawn(LoginMachine)
         })),
         assignLogoutActor: assign((ctx, ev) => ({
             actor: spawn(LogoutMachine)
         })),
-        assignCampaignActor: assign((ctx, ev) => {
-            const actor = [
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Campaign.fetchCampigns }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        result: { campaigns: [], count: 0 },
-                        error: { message: "Waiting for Campaign Search" }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Campaign.saveCampaign }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Campaign.fetchCampaignTasks }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        result: { campaign: {}, tasks: [], count: 0 },
-                        error: { message: "" }
-                    }
-                ))
-            ];
-            return { actor };
-        }),
+        assignCampaignActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Campaign.fetchCampigns,
+                    { data: { page: 1, limit: 10 } },
+                    { campaigns: [], count: 0 },
+                    { message: "Waiting for Campaign Search" }
+                ),
+                spawnFetcher(
+                    Campaign.saveCampaign,
+                    { data: {} },
+                    { campaignId: null },
+                    { message: "Waiting for Campaign Save" }
+                ),
+                spawnFetcher(
+                    Campaign.fetchCampaignTasks,
+                    { data: { page: 1, limit: 10 } },
+                    { campaign: {}, tasks: [], count: 0 },
+                    { message: "Waiting for Campaign-Task Search" }
+                )
+            ]
+        })),
     }
 });

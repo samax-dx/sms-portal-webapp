@@ -161,7 +161,10 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
     const [choosingParty, setChoosingParty] = useState(false);
 
     const sendPagedQuery = queryData => (page, limit) => {
+        page === undefined && (page = queryData.page)
+        limit === undefined && (limit = queryData.limit)
         console.log(queryData, page, limit);
+
         const query = { data: { ...queryData, page, limit }, type: "LOAD" };
         return sendLookup(query);
     };
@@ -171,7 +174,7 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
         return sendSave({ data, type: "LOAD" });
     };
 
-    useEffect(() => sendPagedQuery({})(1, 10), []);
+    useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
     useEffect(() => {
         saveActor.subscribe(state => {
@@ -179,7 +182,7 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
             const saveContext = saveActor.getSnapshot().context;
 
             if (state.matches("hasResult")) {
-                sendPagedQuery({ orderBy: "orderId DESC" })(1, lookupContext.payload.data.limit);
+                sendPagedQuery({ ...lookupContext.payload.data, orderBy: "orderId DESC" })();
 
                 notification.success({
                     message: "Task Complete",

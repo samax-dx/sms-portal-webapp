@@ -290,7 +290,10 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
     const [campaignPackages, setCampaignPackages] = useState(null);
 
     const sendPagedQuery = queryData => (page, limit) => {
+        page === undefined && (page = queryData.page)
+        limit === undefined && (limit = queryData.limit)
         console.log(queryData, page, limit);
+
         const query = { data: { ...queryData, page, limit }, type: "LOAD" };
         return sendLookup(query);
     };
@@ -299,6 +302,11 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         console.log(data);
         return sendSave({ data, type: "LOAD" });
     };
+
+    const loadPreview = data => sendPreview({
+        type: "LOAD",
+        data: { campaignId: data.campaignId }
+    });
 
     const sendSms = campaign => SmsTask
         .sendSms({}, { data: campaign })
@@ -310,7 +318,9 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
                 </>,
                 duration: 5
             });
-            loadPreview(campaign);
+        })
+        .then(() => {
+            loadPreview({ ...campaign, type: "LOAD" });
         })
         .catch(error => {
             notification.error({
@@ -322,7 +332,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
             });
         });
 
-    useEffect(() => sendPagedQuery({})(1, 10), []);
+    useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
     useEffect(() => {
         Inventory
@@ -338,7 +348,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
             const saveContext = saveActor.getSnapshot().context;
 
             if (state.matches("hasResult")) {
-                sendPagedQuery({ orderBy: "campaignId DESC" })(1, lookupContext.payload.data.limit);
+                sendPagedQuery({ ...lookupContext.payload.data, orderBy: "campaignId DESC" })();
 
                 notification.success({
                     message: "Task Complete",
@@ -368,11 +378,6 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         }
     }, [lookupState]);
 
-    const loadPreview = data => sendPreview({
-        type: "LOAD",
-        data: { campaignId: data.campaignId }
-    });
-
     const onClickView = data => console.log("view", data) || loadPreview(data) || setPreviewing(true);
     const onClickEdit = data => console.log("edit", data);
     const onClickDelete = data => console.log("delete", data);
@@ -386,7 +391,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         <Breadcrumb>
             <Breadcrumb.Item>
                 {previewing || "Campaign"}
-                {previewing && <Button type="link" style={{ padding: 0 }} onClick={() => setPreviewing(false)}>Campaign</Button>}
+                {previewing && <Button type="link" style={{ padding: 0 }} onClick={() => sendPagedQuery(viewContext.payload.data)() || setPreviewing(false)}>Campaign</Button>}
             </Breadcrumb.Item>
             {previewing && <Breadcrumb.Item>
                 {previewState.context.result.campaign.campaignName}

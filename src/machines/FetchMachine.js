@@ -1,4 +1,4 @@
-import { assign, createMachine } from "xstate";
+import { assign, createMachine, spawn } from "xstate";
 
 
 export const FetchMachine = createMachine({
@@ -13,7 +13,7 @@ export const FetchMachine = createMachine({
             invoke: {
                 src: "doFetch",
                 onDone: { target: "hasResult", actions: ["setResult"] },
-                onError: { target: "hasError", actions: ["setError"] },
+                onError: { target: "hasError", actions: ["setError", "setErrorResult"] },
             }
         },
         hasResult: {
@@ -24,9 +24,9 @@ export const FetchMachine = createMachine({
         },
     },
     context: {
+        payload: null,
         result: null,
         error: null,
-        payload: null,
     },
     id: undefined,
 }, {
@@ -34,5 +34,14 @@ export const FetchMachine = createMachine({
         setResult: assign((ctx, ev) => ({ result: ev.data, error: null })),
         setError: assign((ctx, ev) => ({ error: ev.data, result: null })),
         assignPayload: assign((ctx, ev) => ({ payload: { ...ev } })),
+        setErrorResult: assign({})
     }
 });
+
+export const spawnFetcher = (doFetch, payload, result, error) => spawn(FetchMachine.withConfig(
+    {
+        services: { doFetch },
+        actions: { setErrorResult: assign({ result }) }
+    },
+    { payload, result, error }
+));
