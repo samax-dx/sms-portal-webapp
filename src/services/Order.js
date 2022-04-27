@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Order = {
     fetchOrders: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Order/listPartyOrders",
+            `${SERVER_URL}/Order/listPartyOrders`,
             { ...ev.data },
             {
                 headers: {
@@ -27,7 +28,7 @@ export const Order = {
         }),
     createOrder: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Order/createPartyOrder",
+            `${SERVER_URL}/Order/createPartyOrder`,
             { ...ev.data },
             {
                 headers: {

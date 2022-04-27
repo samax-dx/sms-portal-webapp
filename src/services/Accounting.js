@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Accounting = ({
     fetchBalanceRequests: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Accounting/listPartyBalanceRequests",
+            `${SERVER_URL}/Accounting/listPartyBalanceRequests`,
             { ...ev.data },
             {
                 headers: {
@@ -31,7 +32,7 @@ export const Accounting = ({
         }),
     requestDeposit: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Accounting/addPartyBalanceRequest",
+            `${SERVER_URL}/Accounting/addPartyBalanceRequest`,
             { ...ev.data },
             {
                 headers: {

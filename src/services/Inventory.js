@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Inventory = {
     fetchProducts: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Inventory/listPartyProducts",
+            `${SERVER_URL}/Inventory/listPartyProducts`,
             { ...ev.data },
             {
                 headers: {

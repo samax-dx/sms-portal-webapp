@@ -1,4 +1,5 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 const lastReports = [];
@@ -6,7 +7,7 @@ const lastErrors = [];
 
 const sendSms = (ctx, { data }) =>
     axios.post(
-        "https://localhost:8443/ofbiz-spring/api/SmsTask/sendSMS",
+        `${SERVER_URL}/SmsTask/sendSMS`,
         { ...data },
         {
             headers: {

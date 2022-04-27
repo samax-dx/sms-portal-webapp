@@ -1,9 +1,10 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 
 export const XAuth = (storage => ({
     login: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Party/login",
+            `${SERVER_URL}/Party/login`,
             { ...ev.data },
             { headers: { 'Content-Type': 'application/json' } }
         ).then(response => {

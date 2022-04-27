@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Profile = {
     fetchProfile: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Party/profile",
+            `${SERVER_URL}/Party/profile`,
             { ...ev.data },
             {
                 headers: {

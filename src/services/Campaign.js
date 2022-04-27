@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Campaign = {
     fetchCampigns: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Campaign/listPartyCampaigns",
+            `${SERVER_URL}/Campaign/listPartyCampaigns`,
             { ...ev.data },
             {
                 headers: {
@@ -27,7 +28,7 @@ export const Campaign = {
         }),
     fetchCampaignPendingTasks: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Campaign/getCampaignPendingTasks",
+            `${SERVER_URL}/Campaign/getCampaignPendingTasks`,
             { ...ev.data },
             {
                 headers: {
@@ -50,7 +51,7 @@ export const Campaign = {
         }),
     fetchCampaignTasks: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Campaign/getCampaignTasks",
+            `${SERVER_URL}/Campaign/getCampaignTasks`,
             { ...ev.data },
             {
                 headers: {
@@ -73,7 +74,7 @@ export const Campaign = {
         }),
     saveCampaign: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Campaign/saveCampaign",
+            `${SERVER_URL}/Campaign/saveCampaign`,
             { ...ev.data },
             {
                 headers: {
