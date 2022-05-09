@@ -1,2 +1,2 @@
 export const APP_NAME = "SMS Portal";
-export const SERVER_URL = "https://localhost:8443/ofbiz-spring/api";
+export const SERVER_URL = "http://localhost:8080/ofbiz-spring/api";
