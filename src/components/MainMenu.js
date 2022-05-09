@@ -2,7 +2,7 @@ import React from 'react';
 import { useActor } from '@xstate/react';
 import { Menu } from 'antd';
 
-import { BarcodeOutlined, MailOutlined, ContainerOutlined, CreditCardOutlined } from '@ant-design/icons';
+import { MailOutlined, CreditCardOutlined, AuditOutlined, DatabaseOutlined, ReconciliationTwoTone, DatabaseTwoTone, ReconciliationOutlined, ReconciliationFilled, DatabaseFilled, ShoppingTwoTone, MailFilled, FileTextFilled, MailTwoTone, FileTextOutlined, SendOutlined, FileTextTwoTone, RocketTwoTone, InfoCircleTwoTone, HddTwoTone } from '@ant-design/icons';
 
 export const MainMenu = ({ actor }) => {
     const [appState, sendApp] = useActor(actor);
@@ -15,20 +15,20 @@ export const MainMenu = ({ actor }) => {
             selectedKeys={[appState.value]}
         >
             <Menu.SubMenu key="messaging" icon={<MailOutlined />} title="SMS Task">
-                <Menu.Item key="sendSMS" onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>
-                <Menu.Item key="campaign" onClick={() => sendApp({ type: 'NAV_CAMPAIGN' })}>Campaigns</Menu.Item>
-                <Menu.Item key="smsReport" onClick={() => sendApp({ type: 'NAV_SMS_REPORT' })}>Task Report</Menu.Item>
+                <Menu.Item key="sendSMS" icon={<RocketTwoTone />} onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>
+                <Menu.Item key="campaign" icon={<FileTextTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN' })}>Campaigns</Menu.Item>
+                <Menu.Item key="campaignTaskReport" icon={<InfoCircleTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN_TASK_REPORT' })}>SMS History</Menu.Item>
             </Menu.SubMenu>
-            <Menu.SubMenu key="order" icon={<ContainerOutlined />} title="Order Service">
-                <Menu.Item key="orders" onClick={() => sendApp({ type: 'NAV_ORDERS' })}>Orders</Menu.Item>
-            </Menu.SubMenu>
-            <Menu.SubMenu key="inventory" icon={<BarcodeOutlined />} title="Inventory">
-                <Menu.Item key="prducts" onClick={() => sendApp({ type: 'NAV_INVENTORY_PRODUCTS' })}>Products</Menu.Item>
+            <Menu.SubMenu key="order" icon={<DatabaseFilled />} title="Orders">
+                <Menu.Item key="buyPackage" icon={<ShoppingTwoTone />} onClick={() => sendApp({ type: 'NAV_BUY_PACKAGE' })}>Buy Package</Menu.Item>
+                <Menu.Item key="orders" icon={<ReconciliationTwoTone />} onClick={() => sendApp({ type: 'NAV_ORDERS' })}>Order History</Menu.Item>
+                <Menu.Item key="myPackage" icon={<HddTwoTone />} onClick={() => sendApp({ type: 'NAV_MY_PACKAGE' })}>My Packages</Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="balance" icon={<CreditCardOutlined />} title="Balance & Topup">
-                <Menu.Item key="makeDeposit" onClick={() => sendApp({ type: 'NAV_MAKE_DEPOSIT' })}>TopUp / Payments</Menu.Item>
+                <Menu.Item key="myPayment" onClick={() => sendApp({ type: 'NAV_MY_PAYMENT' })}>Payment History</Menu.Item>
+                {/* <Menu.Item key="makeDeposit" onClick={() => sendApp({ type: 'NAV_MAKE_DEPOSIT' })} disabled>TopUp / Payments</Menu.Item>
                 <Menu.Item key="transaction_view" onClick={() => sendApp({ type: 'NAV_TRANSACTION_VIEW' })} disabled>Transaction View</Menu.Item>
-                <Menu.Item key="current_balance" onClick={() => sendApp({ type: 'NAV_CURRENT_BALANCE' })} disabled>Current Balance</Menu.Item>
+                <Menu.Item key="current_balance" onClick={() => sendApp({ type: 'NAV_CURRENT_BALANCE' })} disabled>Current Balance</Menu.Item> */}
             </Menu.SubMenu>
         </Menu>
     );

@@ -6,7 +6,7 @@ export const Campaign = {
     fetchCampigns: (ctx, ev) => axios
         .post(
             `${SERVER_URL}/Campaign/listPartyCampaigns`,
-            { ...ev.data },
+            { orderBy: "createdOn DESC", ...ev.data },
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,6 +63,52 @@ export const Campaign = {
             const { data } = response;
 
             if (data.tasks) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ message: data.errorMessage });
+            }
+        }).catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            return Promise.reject({ code, message: data.error || text });
+        }),
+    removeCampaignTask: (ctx, { data }) => axios
+        .post(
+            `${SERVER_URL}/Campaign/deleteCampaignTask`,
+            { ...data },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        ).then(response => {
+            const { data } = response;
+
+            if (+data.deleted) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ message: data.errorMessage });
+            }
+        }).catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            return Promise.reject({ code, message: data.error || text });
+        }),
+    fetchCampaignTaskReports: (ctx, { data }) => axios
+        .post(
+            `${SERVER_URL}/Campaign/getPartyCampaignTaskReports`,
+            { ...data, status: "1", orderBy: "updatedOn DESC" },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        ).then(response => {
+            const { data } = response;
+
+            if (data.taskReports) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });

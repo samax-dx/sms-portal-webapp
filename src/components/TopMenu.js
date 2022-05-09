@@ -1,19 +1,44 @@
+import { ExportOutlined } from "@ant-design/icons";
 import { useActor } from "@xstate/react";
-import { Menu, Popover } from "antd";
+import { Button, Card, Menu, Popover, Space, Tag, Typography } from "antd";
+import { useEffect } from "react";
 import { Profile } from "./Profile";
+
+const { Text } = Typography;
 
 export function TopMenu({ actor }) {
     const [appState, sendApp] = useActor(actor);
+    const [profileState, sendProfile] = useActor(appState.context.profileActor);
 
-    const profileView = <Profile actor={appState.context.profileActor} appState />;
-    const sendProfileActor = payload => appState.context.profileActor.send(payload);
+    const profileView = <Space direction="vertical">
+        <div>
+            <div>
+                <Text type="secondary" strong>A-Code : </Text>
+                <Text>&nbsp;{profileState.context.result.profile.partyId}</Text>
+            </div>
+            <div>
+                <Text type="secondary" strong>User ID : </Text>
+                <Text>&nbsp;{profileState.context.result.profile.loginId}</Text>
+            </div>
+        </div>
+        <Button size="small" onClick={() => sendApp({ type: 'LOGOUT' })}><Text type="warning">logout</Text></Button>
+    </Space>;
+
+    useEffect(() => sendProfile("LOAD"), []);
 
     return (
-        <Menu theme="dark" mode="horizontal" style={{ direction: "rtl" }} selectedKeys={[appState.value]}>
-            <Menu.Item key="logout" onClick={() => sendApp({ type: 'LOGOUT' })}>Logout</Menu.Item>
+        <Menu
+            mode="horizontal"
+            className="menu"
+            selectedKeys={[appState.value]}
+        >
+            
             <Popover content={profileView}>
-                <Menu.Item key="profile" onClick={() => sendApp({ type: 'NAV_PROFILE' })} onMouseEnter={() => sendProfileActor({ type: "LOAD" })}>Profile</Menu.Item>
+                <Menu.Item key="profile" onClick={() => sendApp({ type: 'NAV_PROFILE' })}>
+                    {profileState.context.result.profile.name}
+                </Menu.Item>
             </Popover>
+            <Menu.Item key="balance" className="balanceView"><strong>Balance: {profileState.context.result.balance} BDT</strong></Menu.Item>
         </Menu>
     );
 }

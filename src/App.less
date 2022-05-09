@@ -1,82 +1,70 @@
 @import '~antd/dist/antd.less';
 
-.App {
-  text-align: center;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-.App-home-link {
-  text-decoration: underline;
-  border: navajowhite;
-  padding: 0;
-  cursor: pointer;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.code-box-demo {
-  text-align: center;
-}
 .ant-layout-header,
 .ant-layout-footer {
   color: #fff;
-  background: #7dbcea;
+  background: #689dc4;
 }
-[data-theme="dark"] .ant-layout-header {
-  background: #6aa0c7;
-}
+[data-theme="dark"] .ant-layout-header,
 [data-theme="dark"] .ant-layout-footer {
-  background: #6aa0c7;
+  background: #386c91;
 }
 .ant-layout-footer {
   line-height: 1.5;
 }
+
 .ant-layout-sider {
   color: #fff;
   line-height: 120px;
-  background: #3ba0e9;
+  background: #6f9ec0;
 }
 [data-theme="dark"] .ant-layout-sider {
-  background: #3499ec;
+  background: #3f7196;
 }
+
 .ant-layout-content {
   min-height: 120px;
   color: #fff;
   line-height: 120px;
-  background: rgba(16, 142, 233, 1);
+  background: #60a8e2;
 }
 [data-theme="dark"] .ant-layout-content {
-  background: #107bcb;
+  background: #306891;
 }
-* > .code-box-demo > .ant-layout + .ant-layout {
-  margin-top: 48px;
+
+.header .logo,
+.header .menu {
+  background-color: transparent;
 }
 
 .logo {
   font-size: large;
   font-weight: 600;
   padding-left: 20px;
-  background-color: #001529;
   cursor: pointer;
+}
+
+.header .menu {
+  border-bottom: 0;
+  direction: rtl;
+  color: #ffffffa6;
+  background: transparent;
+  background-color: transparent;
+}
+
+.header .menu .ant-menu-item {
+  direction: initial;
+}
+
+.header .menu .ant-menu-item:hover,
+.header .menu .ant-menu-item-active,
+.header .menu .ant-menu-submenu-open,
+.header .menu .ant-menu-submenu-selected,
+.header .menu .ant-menu-submenu-title:hover {
+  color: #fff;
+  background-color: #1DA57A;
+}
+.header .menu .balanceView {
+  pointer-events: none;
+  margin-right: 24px;
 }

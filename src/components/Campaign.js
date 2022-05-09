@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useActor } from "@xstate/react";
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select } from "antd";
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select, Modal, Spin } from "antd";
 import dayjs from "dayjs";
 import { Br } from "./Br";
 import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
 import { Inventory } from "../services/Inventory";
-import { SmsTask } from "../services/SmsTask";
+import { SmsTask as SmsTaskSvc } from "../services/SmsTask";
+import { Campaign as CampaignSvc } from "../services/Campaign";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -165,16 +166,16 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             <Table.Column title="Pending" dataIndex={"pending"} render={v => v || 0} />
             <Table.Column title="Complete" dataIndex={"complete"} render={v => v || 0} />
             <Table.Column title="Total Tasks" dataIndex={"taskTotal"} />
-            <Table.Column title="Date" dataIndex={"createdOn"} render={date => dayjs(date).format("DD-MM-YYYY")} />
+            <Table.Column title="Date" dataIndex={"createdOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
         </Table>
     </>);
 };
 
-const DataViewSingle = ({ context, campaignPackages, onRunCampaign }) => {
+const DataViewSingle = ({ context, /*campaignPackages, */onRunCampaign, onDeleteTask }) => {
     const viewResult = context.result;
     const viewError = context.error;
 
-    const [campaignPackage, setCampaignPackage] = useState(campaignPackages ? campaignPackages[0].productId : null);
+    // const [campaignPackage, setCampaignPackage] = useState(campaignPackages ? campaignPackages[0].productId : null);
 
     return (<>
         <Card bordered={false} bodyStyle={{ padding: 0 }}>
@@ -185,16 +186,16 @@ const DataViewSingle = ({ context, campaignPackages, onRunCampaign }) => {
                     <Tag >{viewResult.campaign.campaignId}</Tag>
                 </Typography.Text>}
                 footer={<Space>
-                    {campaignPackage && <Select onChange={setCampaignPackage} defaultValue={campaignPackage} style={{ minWidth: 150 }}>
+                    {/* {campaignPackage && <Select onChange={setCampaignPackage} defaultValue={campaignPackage} style={{ minWidth: 150 }}>
                         {campaignPackages.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName}</Select.Option>)}
-                    </Select>}
+                    </Select>} */}
                     <Button
                         type="primary"
-                        onClick={() => onRunCampaign({ campaignId: viewResult.campaign.campaignId, campaignPackage })}
+                        onClick={() => onRunCampaign({ campaignId: viewResult.campaign.campaignId/*, campaignPackage*/ })}
                         children={"Run Pending Tasks"}
-                        disabled={!campaignPackage || viewResult.campaign.pending <= 0}
+                        disabled={/*!campaignPackage || */viewResult.campaign.pending <= 0}
                     />
-                    {campaignPackage ? null : <Typography.Text type="warning" italic>Please buy a package !</Typography.Text>}
+                    {/* {campaignPackage ? null : <Typography.Text type="warning" italic>Please buy a package !</Typography.Text>} */}
                 </Space>}
                 size="large"
                 bordered
@@ -205,7 +206,7 @@ const DataViewSingle = ({ context, campaignPackages, onRunCampaign }) => {
                             children={
                                 [
                                     ["campaignName", "Campaign Name"],
-                                    ["createdStamp", "Date", d => dayjs(d).format("DD-MM-YYYY")],
+                                    ["createdOn", "Date", d => dayjs(d).format("MMM D, YYYY - hh:mm A")],
                                     ["message", "Message"]
                                 ].map(([k, l, toValue = v => v]) => (<Row gutter={[10]} key={k}>
                                     <Col><Typography.Paragraph strong>{l}</Typography.Paragraph></Col>
@@ -255,10 +256,11 @@ const DataViewSingle = ({ context, campaignPackages, onRunCampaign }) => {
 
                 <Table.Column title="Phone Number" dataIndex={"phoneNumber"} />
                 <Table.Column title="Task Status" dataIndex={"status"} render={status => status > 0 ? <Tag color={"success"}>complete</Tag> : <Tag color={"processing"}>pending</Tag>} />
+                <Table.Column title="Status Message" dataIndex={"statusText"} />
 
                 <Table.Column
                     dataIndex={undefined}
-                    render={(_, campaignTask, i) => <Button onClick={_ => console.log(campaignTask)} type="primary">Delete</Button>}
+                    render={(_, campaignTask, i) => <Button onClick={_ => onDeleteTask(viewResult.campaign, campaignTask)} type="primary" disabled={campaignTask.status === "1"}>Delete</Button>}
                 />
             </Table>
         </Card>
@@ -287,7 +289,8 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
 
     const [editForm] = Form.useForm();
     const [previewing, setPreviewing] = useState(false);
-    const [campaignPackages, setCampaignPackages] = useState(null);
+    const [saving, setSaving] = useState(false);
+    // const [campaignPackages, setCampaignPackages] = useState(null);
 
     const sendPagedQuery = queryData => (page, limit) => {
         page === undefined && (page = queryData.page)
@@ -308,10 +311,11 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         data: { campaignId: data.campaignId }
     });
 
-    const sendSms = campaign => SmsTask
+    const sendSms = campaign => setSaving(true) || SmsTaskSvc
         .sendSms({}, { data: campaign })
         .then(result => {
             notification.success({
+                key: `send_${Date.now()}`,
                 message: "Task Finished",
                 description: <>
                     {JSON.stringify(result)}
@@ -324,9 +328,37 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         })
         .catch(error => {
             notification.error({
+                key: `send_${Date.now()}`,
                 message: "Task Failed",
                 description: <>
                     Error sending SMS.<br />{JSON.stringify(error)}
+                </>,
+                duration: 5
+            });
+        })
+        .finally(_ => setSaving(false));
+
+    const deleteTask = (campaign, task) => CampaignSvc
+        .removeCampaignTask({}, { data: task })
+        .then(result => {
+            notification.success({
+                key: `dtask_${Date.now()}`,
+                message: "Task Finished",
+                description: <>
+                    {JSON.stringify(result)}
+                </>,
+                duration: 5
+            });
+        })
+        .then(() => {
+            loadPreview({ ...campaign, type: "LOAD" });
+        })
+        .catch(error => {
+            notification.error({
+                key: `dtask_${Date.now()}`,
+                message: "Task Failed",
+                description: <>
+                    Error Deleting Task.<br />{JSON.stringify(error)}
                 </>,
                 duration: 5
             });
@@ -334,13 +366,13 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
 
     useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
-    useEffect(() => {
-        Inventory
-            .fetchProducts({}, { data: {} })
-            .then(data => console.log("fetched inventory", data) || data)
-            .then(data => setCampaignPackages(data.products))
-            .catch(error => console.log("error fetching inventory", error));
-    }, [])
+    // useEffect(() => {
+    //     Inventory
+    //         .fetchProducts({}, { data: {} })
+    //         .then(data => console.log("fetched inventory", data) || data)
+    //         .then(data => setCampaignPackages(data.products))
+    //         .catch(error => console.log("error fetching inventory", error));
+    // }, [])
 
     useEffect(() => {
         saveActor.subscribe(state => {
@@ -351,6 +383,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
                 sendPagedQuery({ ...lookupContext.payload.data, orderBy: "campaignId DESC" })();
 
                 notification.success({
+                    key: `save_${Date.now()}`,
                     message: "Task Complete",
                     description: <>Campaign created: {saveContext.result.campaignId}</>,
                     duration: 5
@@ -361,6 +394,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `save_${Date.now()}`,
                     message: "Task Failed",
                     description: <>Error creating campaign.<br />{state.context.error.message}</>,
                     duration: 5
@@ -416,6 +450,9 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
             <Br />
             <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         </div>}
-        {previewing && <DataViewSingle context={previewState.context} campaignPackages={campaignPackages} onRunCampaign={campaign => sendSms(campaign)} />}
+        {previewing && <DataViewSingle context={previewState.context} /*campaignPackages={campaignPackages}*/ onRunCampaign={sendSms} onDeleteTask={deleteTask} />}
+        <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
+            <Spin tip="Sending Request" />
+        </Modal>
     </Space>);
 };

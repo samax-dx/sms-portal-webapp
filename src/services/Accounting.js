@@ -6,7 +6,7 @@ export const Accounting = ({
     fetchBalanceRequests: (ctx, ev) => axios
         .post(
             `${SERVER_URL}/Accounting/listPartyBalanceRequests`,
-            { ...ev.data },
+            { orderBy: "date DESC", ...ev.data },
             {
                 headers: {
                     'Content-Type': 'application/json',

@@ -15,7 +15,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
         {appState.matches("login") || <Header className="header">
             <Row>
                 <Col xs={10} sm={4} className="logo">SMS Gateway</Col>
-                <Col xs={14} sm={20}><TopMenu actor={actor} /></Col>
+                <Col xs={14} sm={20} className="menu"><TopMenu actor={actor} /></Col>
             </Row>
         </Header>}
         <Layout>

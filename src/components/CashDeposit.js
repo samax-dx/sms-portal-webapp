@@ -23,6 +23,7 @@ export const CashDeposit = ({ actor: [listActor, depositActor] }) => {
                 sendList({ ...listPayload, type: "LOAD" });
 
                 notification.success({
+                    key: `cdepo_${Date.now()}`,
                     message: "Success",
                     description: <>
                         Deposit request sent.
@@ -33,6 +34,7 @@ export const CashDeposit = ({ actor: [listActor, depositActor] }) => {
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `cdepo_${Date.now()}`,
                     message: "Error",
                     description: <>
                         Deposit request failed. [Error: {depositState.context.error.message}]

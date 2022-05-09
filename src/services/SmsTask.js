@@ -19,6 +19,18 @@ const sendSms = (ctx, { data }) =>
         const { data } = response;
 
         if (data.reports) {
+            return Promise.resolve(data);
+        } else {
+            return Promise.reject({ message: data.errorMessage });
+        }
+    }).catch(error => {
+        const response = error.response || { data: { error: error.message } };
+        const { status: code, statusText: text, data } = response;
+        return Promise.reject({ code, message: data.error || text });
+    })/*.then(response => {
+        const { data } = response;
+
+        if (data.reports) {
             Object.assign(lastReports, data.reports);
             lastErrors.splice(0);
 
@@ -34,7 +46,7 @@ const sendSms = (ctx, { data }) =>
         lastReports.splice(0);
 
         return Promise.reject({ code, message: data.error || text });
-    });
+    })*/;
 
 export const SmsTask = {
     sendSms: (...args) => console.log(...args) || sendSms(...args),

@@ -12,6 +12,10 @@ import { capitalize } from './Util';
 import { useEffect } from 'react';
 import { Orders } from './components/Orders';
 import { Campaign } from './components/Campaign';
+import { CampaignTaskReport } from './components/CampaignTaskReport';
+import { BuyPackage } from './components/BuyPackage';
+import { MyPackage } from './components/MyPackage';
+import { MyPayment } from './components/MyPayment';
 
 
 export const App = ({ actor }) => {
@@ -28,6 +32,6 @@ export const App = ({ actor }) => {
     }, [current]);
 
     return (
-        <AppLayout render={{ Home, SendSMS, SmsReport, CashDeposit, Campaign, Orders, Login }[component]} actor={actor} />
+        <AppLayout render={{ Home, SendSMS, SmsReport, CashDeposit, Campaign, CampaignTaskReport, Orders, BuyPackage, MyPackage, MyPayment, Login }[component]} actor={actor} />
     );
 };

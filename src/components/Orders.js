@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useActor } from "@xstate/react";
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, InputNumber, Modal } from "antd";
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, InputNumber, Modal, Card, Collapse } from "antd";
 import dayjs from "dayjs";
 import { Br } from "./Br";
 import { SearchOutlined } from "@ant-design/icons";
@@ -42,11 +42,11 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 7 }}
             labelAlign="left"
         >
-            <Form.Item name="orderId" label="Order ID" children={<Input />} />
+            <Form.Item name="orderId" label="Order ID" hidden children={<Input />} />
             <Form.Item name="orderId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="orderName" label="Order Name" children={<Input />} />
+            <Form.Item name="orderName" label="Order Name" hidden children={<Input />} />
             <Form.Item name="orderName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="productName" label="Product Name" children={<Input />} />
+            <Form.Item name="productName" label="Package Name" children={<Input />} />
             <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="orderDate_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="orderDate_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
@@ -129,11 +129,11 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                 }}
             />
 
-            <Table.Column title="Title" dataIndex={"orderName"} />
-            <Table.Column title="Date" dataIndex={"orderDate"} render={date => dayjs(date).format("DD-MM-YYYY")} />
-            <Table.Column title="Product" dataIndex={"productName"} />
-            <Table.Column title="Unit Price" dataIndex={"unitPrice"} />
-            <Table.Column title="Quantity" dataIndex={"quantity"} />
+            {/* <Table.Column title="Order Name " dataIndex={"orderName"} /> */}
+            <Table.Column title="Package" dataIndex={"productName"} />
+            <Table.Column title="Order Date" dataIndex={"orderDate"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
+            {/* <Table.Column title="Unit Price" dataIndex={"unitPrice"} />
+            <Table.Column title="Quantity" dataIndex={"quantity"} /> */}
             <Table.Column title="Price" dataIndex={"grandTotal"} />
         </Table>
     </>);
@@ -185,6 +185,7 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
                 sendPagedQuery({ ...lookupContext.payload.data, orderBy: "orderId DESC" })();
 
                 notification.success({
+                    key: `corder_${Date.now()}`,
                     message: "Task Complete",
                     description: <>Order created: {saveContext.result.orderId}</>,
                     duration: 5
@@ -195,6 +196,7 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `corder_${Date.now()}`,
                     message: "Task Failed",
                     description: <>Error placing order.<br />{state.context.error.message}</>,
                     duration: 5
@@ -223,17 +225,18 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
 
     return (<>
         <Row>
-            <Col md={14}>
-                <Typography.Text strong>Find Orders</Typography.Text>
-                <Br />
-                <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+            <Col md={10} style={{ margin: "15px 0" }}>
+                <Card title="Find Orders" size="default">
+                    <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+                </Card>
             </Col>
-            <Col md={10} pull={2}>
-                <Typography.Text strong>Purchase Product</Typography.Text>
-                <Br />
-                <EditForm form={editForm} record={{}} onSave={saveRecord} onFindProduct={() => setChoosingParty(true)} />
-                <Br />
-            </Col>
+            {/* <Col md={11} push={1} style={{ margin: "15px 0" }}>
+                <Collapse>
+                    <Collapse.Panel header="Purchase Product" key="purchaseProduct">
+                        <EditForm form={editForm} record={{}} onSave={saveRecord} onFindProduct={() => setChoosingParty(true)} />
+                    </Collapse.Panel>
+                </Collapse>
+            </Col> */}
         </Row>
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />

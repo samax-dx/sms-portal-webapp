@@ -8,7 +8,7 @@ import { SmsTask } from "../services/SmsTask";
 
 export const SendSMS = ({ actor: editorActor }) => {
     const [campaignForm] = Form.useForm();
-    const [campaignPackages, setCampaignPackages] = useState([]);
+    // const [campaignPackages, setCampaignPackages] = useState([]);
 
     const [editorState, emitEditor] = useActor(editorActor);
 
@@ -36,6 +36,7 @@ export const SendSMS = ({ actor: editorActor }) => {
                         }
                     })
                     .then(data => notification.success({
+                        key: `ccamp_${Date.now()}`,
                         message: "Task Finished",
                         description: <>
                             {JSON.stringify(data)}
@@ -43,6 +44,7 @@ export const SendSMS = ({ actor: editorActor }) => {
                         duration: 5
                     }) || campaignForm.setFieldsValue({ campaignId: data.campaignId }) || emitEditor("SAVE_SUCCESS"))
                     .catch(error => notification.error({
+                        key: `ccamp_${Date.now()}`,
                         message: "Task Failed",
                         description: <>
                             Error saving campaign.<br />{JSON.stringify(error.message)}
@@ -53,13 +55,13 @@ export const SendSMS = ({ actor: editorActor }) => {
         });
     }, []);
 
-    useEffect(() => {
-        Inventory
-            .fetchProducts({}, { data: {} })
-            .then(data => console.log("fetched inventory", data) || data)
-            .then(data => setCampaignPackages(data.products || []))
-            .catch(error => console.log("error fetching inventory", error));
-    }, [])
+    // useEffect(() => {
+    //     Inventory
+    //         .fetchProducts({}, { data: {} })
+    //         .then(data => console.log("fetched inventory", data) || data)
+    //         .then(data => setCampaignPackages(data.products || []))
+    //         .catch(error => console.log("error fetching inventory", error));
+    // }, [])
 
     const onEdited = () => editorState.matches("isEditing") || emitEditor("EDIT_RECORD");
 
@@ -67,11 +69,11 @@ export const SendSMS = ({ actor: editorActor }) => {
         <Card>
             <Form
                 form={campaignForm}
-                initialValues={{ senderId: "8801552146283", isUnicode: true, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null }}
+                initialValues={{ senderId: "8801552146283", isUnicode: true/*, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null*/ }}
                 layout="vertical"
                 wrapperCol={{ span: 8 }}
             >
-                <Form.Item
+                {/* <Form.Item
                     name="campaignPackage"
                     label="Campaign Package"
                     rules={[{ required: true }]}
@@ -79,7 +81,7 @@ export const SendSMS = ({ actor: editorActor }) => {
                     <Select style={{ minWidth: 150 }}>
                         {campaignPackages.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName}</Select.Option>)}
                     </Select>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input onChange={onEdited} />} />
 
@@ -138,6 +140,7 @@ export const SendSMS = ({ actor: editorActor }) => {
                                         }))
                                         .then(result => {
                                             notification.success({
+                                                key: `csend_${Date.now()}`,
                                                 message: "Task Finished",
                                                 description: <>
                                                     {JSON.stringify(result)}
@@ -148,6 +151,7 @@ export const SendSMS = ({ actor: editorActor }) => {
                                         })
                                         .catch(error => {
                                             notification.error({
+                                                key: `csend_${Date.now()}`,
                                                 message: "Task Failed",
                                                 description: <>
                                                     Error sending SMS.<br />{JSON.stringify(error)}

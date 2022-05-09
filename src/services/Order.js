@@ -6,7 +6,7 @@ export const Order = {
     fetchOrders: (ctx, ev) => axios
         .post(
             `${SERVER_URL}/Order/listPartyOrders`,
-            { ...ev.data },
+            { orderBy: "orderDate DESC", ...ev.data },
             {
                 headers: {
                     'Content-Type': 'application/json',
