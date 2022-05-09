@@ -176,7 +176,7 @@ export const BuyPackage = ({ actor: [lookupActor, saveActor, profileActor] }) =>
         <Br />
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
-            <Spin tip="Sending Order" />
+            <Spin tip="Processing Order" />
         </Modal>
     </>);
 };
