@@ -13,7 +13,8 @@ export const Accounting = ({
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        ).then(response => {
+        )
+        .then(response => {
             const { data } = response;
 
             if (data.payments === null) {
@@ -25,7 +26,8 @@ export const Accounting = ({
             } else {
                 return Promise.reject({ message: data.errorMessage });
             }
-        }).catch(error => {
+        })
+        .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
@@ -40,7 +42,8 @@ export const Accounting = ({
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        ).then(response => {
+        )
+        .then(response => {
             const { data } = response;
 
             if (data.paymentId) {
@@ -48,9 +51,10 @@ export const Accounting = ({
             } else {
                 return Promise.reject({ message: data.errorMessage });
             }
-        }).catch(error => {
+        })
+        .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
-        }),
+        })
 });

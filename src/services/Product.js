@@ -13,7 +13,8 @@ export const Product = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        ).then(response => {
+        )
+        .then(response => {
             const { data } = response;
 
             if (data.products) {
@@ -21,7 +22,8 @@ export const Product = {
             } else {
                 return Promise.reject({ message: data.errorMessage });
             }
-        }).catch(error => {
+        })
+        .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
