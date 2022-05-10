@@ -16,7 +16,7 @@ const SearchForm = ({ onSearch }) => {
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const queryData = ["phoneNumber", "updatedOn_fld0_value", "updatedOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["phoneNumber", "campaignName", "packageId", "updatedOn_fld0_value", "updatedOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -42,6 +42,10 @@ const SearchForm = ({ onSearch }) => {
         >
             <Form.Item name="phoneNumber" label="Phone Number" children={<Input />} />
             <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="campaignName" label="Campaign" children={<Input />} />
+            <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="packageId" label="Package" children={<Input />} />
+            <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="updatedOn_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="updatedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
             <Form.Item name="updatedOn_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
@@ -79,6 +83,8 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             <Table.Column title="PhoneNumber" dataIndex={"phoneNumber"} />
             <Table.Column title="Message" dataIndex={"message"} />
             <Table.Column title="Date" dataIndex={"updatedOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
+            <Table.Column title="Campaign" dataIndex={"campaignName"} />
+            <Table.Column title="Package" dataIndex={"packageId"} />
         </Table>
     </>);
 };

@@ -257,6 +257,7 @@ const DataViewSingle = ({ context, /*campaignPackages, */onRunCampaign, onDelete
                 <Table.Column title="Phone Number" dataIndex={"phoneNumber"} />
                 <Table.Column title="Task Status" dataIndex={"status"} render={status => status > 0 ? <Tag color={"success"}>complete</Tag> : <Tag color={"processing"}>pending</Tag>} />
                 <Table.Column title="Status Message" dataIndex={"statusText"} />
+                <Table.Column title="Pakcage" dataIndex={"packageId"} />
 
                 <Table.Column
                     dataIndex={undefined}
