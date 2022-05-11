@@ -80,7 +80,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
             <Table.Column title="Package Name" dataIndex={"productName"} />
             <Table.Column title="Details" dataIndex={"description"} />
-            <Table.Column title="Group Details" dataIndex={"lineupDetails"} />
+            <Table.Column title="Prefixes" dataIndex={"lineupDescription"} />
             <Table.Column title="Volume" dataIndex={"volume"} />
             <Table.Column title="Price" dataIndex={"price"} />
 
