@@ -16,7 +16,7 @@ const SearchForm = ({ onSearch }) => {
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const queryData = ["productName", "lineupDescription", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
+        const queryData = ["productName", "packagePrefixes", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -42,8 +42,8 @@ const SearchForm = ({ onSearch }) => {
         >
             <Form.Item name="productName" label="Name" children={<Input />} />
             <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="lineupDescription" label="Prefix" children={<Input />} />
-            <Form.Item name="lineupDescription_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="packagePrefixes" label="Prefix" children={<Input />} />
+            <Form.Item name="packagePrefixes_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
             <Form.Item name="date_fld1_value" label="To Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
@@ -80,7 +80,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
             <Table.Column title="Package Name" dataIndex={"productName"} />
             <Table.Column title="Details" dataIndex={"description"} />
-            <Table.Column title="Prefixes" dataIndex={"lineupDescription"} />
+            <Table.Column title="Prefixes" dataIndex={"packagePrefixes"} />
             <Table.Column title="Volume" dataIndex={"volume"} />
             <Table.Column title="Price" dataIndex={"price"} />
 

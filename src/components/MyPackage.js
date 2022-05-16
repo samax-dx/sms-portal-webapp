@@ -77,8 +77,9 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             />
 
             <Table.Column title="Package" dataIndex={"productName"} />
-            <Table.Column title="Details" dataIndex={"description"} />
             <Table.Column title="Volume" dataIndex={"stock"} />
+            <Table.Column title="Prefixes" dataIndex={"packagePrefixes"} />
+            <Table.Column title="Details" dataIndex={"description"} />
         </Table>
     </>);
 };
