@@ -4,7 +4,17 @@ import { Button, Card, Menu, Popover, Space, Tag, Typography } from "antd";
 import { useEffect } from "react";
 import { Profile } from "./Profile";
 
+
 const { Text } = Typography;
+
+const QueryPager = (sender, data) => (page, limit) => {
+    page === undefined && (page = data.page);
+    limit === undefined && (limit = data.limit);
+    console.log(data, page, limit);
+
+    const query = { data: { ...data, page, limit }, type: "LOAD" };
+    return sender(query);
+};
 
 export function TopMenu({ actor }) {
     const [appState, sendApp] = useActor(actor);
@@ -24,7 +34,7 @@ export function TopMenu({ actor }) {
         <Button size="small" onClick={() => sendApp({ type: 'LOGOUT' })}><Text type="warning">logout</Text></Button>
     </Space>;
 
-    useEffect(() => sendProfile("LOAD"), []);
+    useEffect(() => QueryPager(sendProfile, profileState.context.payload.data)(), []);
 
     return (
         <Menu

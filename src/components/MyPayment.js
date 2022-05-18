@@ -75,7 +75,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             />
 
             <Table.Column title="Payment ID" dataIndex={"paymentId"} />
-            <Table.Column title="Amount" dataIndex={"amount"} />
+            <Table.Column title="Amount" dataIndex={"amount"} render={v => v.toFixed(2)} />
             <Table.Column title="Date" dataIndex={"date"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
         </Table>
     </>);

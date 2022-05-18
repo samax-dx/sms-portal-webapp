@@ -64,7 +64,27 @@ export const AppMachine = createMachine({
             )
         })),
         assignHomeActor: assign((ctx, ev) => ({
-            actor: spawn(EditorMachineLite)
+            actor: [
+                ctx.profileActor,
+                spawnFetcher(
+                    Inventory.fetchProducts,
+                    { data: { page: 1, limit: 10 } },
+                    { products: [], count: 0 },
+                    { message: "Waiting for Product Search" }
+                ),
+                spawnFetcher(
+                    Campaign.fetchCampaignTaskReports,
+                    { data: { page: 1, limit: 10 } },
+                    { campaigns: [], count: 0 },
+                    { message: "Waiting for Campaign-Task Search" }
+                ),
+                spawnFetcher(
+                    Accounting.fetchBalanceRequests,
+                    { data: { statusId: "PMNT_CONFIRMED", page: 1, limit: 10 } },
+                    { payments: [], count: 0 },
+                    { message: "Waiting for Product Search" }
+                )
+            ]
         })),
         assignSendSmsActor: assign((ctx, ev) => ({
             actor: spawn(EditorMachineLite)
@@ -170,7 +190,7 @@ export const AppMachine = createMachine({
                 spawnFetcher(
                     Inventory.fetchProducts,
                     { data: { page: 1, limit: 10 } },
-                    { payments: [], count: 0 },
+                    { products: [], count: 0 },
                     { message: "Waiting for Product Search" }
                 )
             ]

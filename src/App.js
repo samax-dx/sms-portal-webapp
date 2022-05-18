@@ -22,14 +22,14 @@ export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
     const component = capitalize(current.value);
 
-    useEffect(() => {
-        const saveApp = () => {
-            localStorage.setItem("lastState", JSON.stringify(current));
-        };
+    // useEffect(() => {
+    //     const saveApp = () => {
+    //         localStorage.setItem("lastState", JSON.stringify(current));
+    //     };
 
-        window.addEventListener('beforeunload', saveApp);
-        return () => window.removeEventListener("beforeunload", saveApp);
-    }, [current]);
+    //     window.addEventListener('beforeunload', saveApp);
+    //     return () => window.removeEventListener("beforeunload", saveApp);
+    // }, [current]);
 
     return (
         <AppLayout render={{ Home, SendSMS, SmsReport, CashDeposit, Campaign, CampaignTaskReport, Orders, BuyPackage, MyPackage, MyPayment, Login }[component]} actor={actor} />

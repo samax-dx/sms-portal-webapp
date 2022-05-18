@@ -79,10 +79,10 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             />
 
             <Table.Column title="Package Name" dataIndex={"productName"} />
-            <Table.Column title="Details" dataIndex={"description"} />
             <Table.Column title="Prefixes" dataIndex={"packagePrefixes"} />
             <Table.Column title="Volume" dataIndex={"volume"} />
             <Table.Column title="Price" dataIndex={"price"} />
+            <Table.Column title="Details" dataIndex={"description"} />
 
             <Table.Column
                 dataIndex={undefined}
@@ -129,12 +129,13 @@ export const BuyPackage = ({ actor: [lookupActor, saveActor, profileActor] }) =>
     useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
     useEffect(() => {
-        saveActor.subscribe(state => {
+        const observer = saveActor.subscribe(state => {
             const lookupContext = lookupActor.getSnapshot().context;
             const saveContext = saveActor.getSnapshot().context;
+            const profileContext = profileActor.getSnapshot().context;
 
             if (state.matches("hasResult")) {
-                profileActor.send("LOAD");
+                profileActor.send({ ...profileContext.payload, type: "LOAD" });
                 notification.success({
                     key: `corder_${Date.now()}`,
                     message: "Task Complete",
@@ -153,6 +154,7 @@ export const BuyPackage = ({ actor: [lookupActor, saveActor, profileActor] }) =>
                 });
             }
         });
+        return observer.unsubscribe;
     }, [setSaving]);
 
     const onClickView = data => console.log("view", data) || !(data.quantity = 1) || saveRecord(data) || setSaving(true);
