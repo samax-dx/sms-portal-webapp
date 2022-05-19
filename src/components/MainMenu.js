@@ -5,7 +5,7 @@ import { Menu } from 'antd';
 import { MailOutlined, CreditCardOutlined, AuditOutlined, DatabaseOutlined, ReconciliationTwoTone, DatabaseTwoTone, ReconciliationOutlined, ReconciliationFilled, DatabaseFilled, ShoppingTwoTone, MailFilled, FileTextFilled, MailTwoTone, FileTextOutlined, SendOutlined, FileTextTwoTone, RocketTwoTone, InfoCircleTwoTone, HddTwoTone } from '@ant-design/icons';
 
 export const MainMenu = ({ actor }) => {
-    const [appState, sendApp] = useActor(actor);
+    const [appState, sendApp] = [actor.getSnapshot(), actor.send];
 
     return (
         <Menu

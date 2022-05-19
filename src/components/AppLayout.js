@@ -9,7 +9,7 @@ import { MainMenu } from './MainMenu';
 const { Header, Sider } = Layout;
 
 export const AppLayout = ({ render: PageContent, actor }) => {
-    const appState = actor.getSnapshot();
+    const [appState, sendApp] = [actor.getSnapshot(), actor.send];
 
     return [
         <Layout style={{ padding: "24px" }}>

@@ -17,7 +17,7 @@ const QueryPager = (sender, data) => (page, limit) => {
 };
 
 export function TopMenu({ actor }) {
-    const [appState, sendApp] = useActor(actor);
+    const [appState, sendApp] = [actor.getSnapshot(), actor.send];
     const [profileState, sendProfile] = useActor(appState.context.profileActor);
 
     const profileView = <Space direction="vertical">
