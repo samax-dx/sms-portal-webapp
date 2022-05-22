@@ -6,6 +6,7 @@ import { LoginMachine } from "./LoginMachine";
 import { LogoutMachine } from "./LogoutMachine";
 
 import { SmsTask } from "../services/SmsTask";
+import { XAuth } from "../services/XAuth";
 import { Accounting } from "../services/Accounting";
 import { Profile } from "../services/Profile";
 import { Order } from "../services/Order";
@@ -19,7 +20,11 @@ export const AppMachine = createMachine({
     id: "app",
     states: {
         start: {
-            entry: ["assingProfileActor", send({ type: "LOGIN" })]
+            entry: [
+                "assignStartAction",
+                "assingProfileActor",
+                send((ctx, ev) => ({ type: ctx.__start_action }))
+            ],
         },
         home: {},
         sendSMS: {},
@@ -49,12 +54,16 @@ export const AppMachine = createMachine({
         "NAV_MY_PAYMENT": { target: "myPayment", actions: ["assignMyPaymentActor"] },
     },
     context: {
+        __start_action: null,
         actor: null,
-        profileActor: null
+        profileActor: null,
     },
     initial: "start"
 }, {
     actions: {
+        assignStartAction: assign((ctx, ev) => ({
+            __start_action: XAuth.token() ? "NAV_HOME" : "LOGIN"
+        })),
         assingProfileActor: assign((ctx, ev) => ({
             profileActor: spawnFetcher(
                 Profile.fetchProfile,
