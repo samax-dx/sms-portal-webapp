@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useActor } from "@xstate/react";
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select, Modal, Spin } from "antd";
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select, Modal, Spin, Upload, message } from "antd";
 import dayjs from "dayjs";
 import { Br } from "./Br";
-import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
+import { FileDoneOutlined, FileTextOutlined, FileTextTwoTone } from "@ant-design/icons";
 import { Inventory } from "../services/Inventory";
 import { SmsTask as SmsTaskSvc } from "../services/SmsTask";
 import { Campaign as CampaignSvc } from "../services/Campaign";
+import * as sheetjs from "xlsx";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -81,9 +82,49 @@ const EditForm = ({ form, record, onSave }) => {
                 name="phoneNumbers"
                 label={<>
                     <span>Contacts</span>
-                    &nbsp;
-                    &nbsp;
-                    <Tooltip title="Import (Excel, CSV, Text)"><Button shape="circle" icon={<FileTextOutlined />} /></Tooltip>
+                    &nbsp;&nbsp;
+                    <Tooltip title="Import (Excel, CSV, Text)">
+                        <Upload
+                            maxCount={1}
+                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
+                            customRequest={r => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    const contactBook = sheetjs.read(reader.result, { sheets: 0 });
+                                    const contactSheet = Object.values(contactBook.Sheets)[0];
+
+                                    const contacts = sheetjs.utils
+                                        .sheet_to_json(contactSheet, { skipHidden: true })
+                                        .reduce((acc, v) => {
+                                            if (v.msisdn !== undefined) {
+                                                acc.push(v.msisdn);
+                                            }
+                                            return acc;
+                                        }, []);
+
+                                    contacts.length ? r.onSuccess(JSON.stringify(contacts)) : r.onError("zero_msisdn_found");
+                                };
+
+                                reader.onerror = () => {
+                                    r.onError(reader.error.message);
+                                }
+
+                                reader.readAsArrayBuffer(r.file);
+                            }}
+                            onChange={info => {
+                                if (info.file.status === 'done') {
+                                    editForm.setFieldsValue({ ...editForm.getFieldsValue, phoneNumbers: info.file.response.join(", ") })
+                                    return message.success(`Found ${info.file.response.length} MSISDN(s)`);
+                                }
+                                if (info.file.status === 'error') {
+                                    return message.error(`Error: ${info.file.error.toUpperCase()}`);
+                                }
+                            }}
+                            showUploadList={false}
+                            children={<Button shape="round" icon={<FileTextTwoTone />} />}
+                        />
+                    </Tooltip>
                 </>}
                 rules={[{ required: true }]}
                 children={<Input.TextArea />}
