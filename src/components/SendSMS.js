@@ -146,14 +146,16 @@ export const SendSMS = ({ actor: editorActor }) => {
                     name="message"
                     label={<>
                         <span>Message Text</span>
-                        &nbsp;
-                        <Button type="link" onClick={() => console.log("Import Draft")}>
-                            [ Import Draft ]
-                        </Button>
-                        &nbsp;
-                        <Button type="link" onClick={() => console.log("Import Template")}>
-                            [ Import Template ]
-                        </Button>
+                        <span style={{ display: "none" }}>
+                            &nbsp;
+                            <Button type="link" onClick={() => console.log("Import Draft")}>
+                                [ Import Draft ]
+                            </Button>
+                            &nbsp;
+                            <Button type="link" onClick={() => console.log("Import Template")}>
+                                [ Import Template ]
+                            </Button>
+                        </span>
                     </>}
                     rules={[{ required: true }]}
                     onChange={onEdited}

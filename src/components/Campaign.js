@@ -82,8 +82,8 @@ const EditForm = ({ form, record, onSave }) => {
                 name="phoneNumbers"
                 label={<>
                     <span>Contacts</span>
-                    &nbsp;&nbsp;
                     <Tooltip title="Import (Excel, CSV, Text)">
+                        &nbsp;&nbsp;
                         <Upload
                             maxCount={1}
                             accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
@@ -134,9 +134,8 @@ const EditForm = ({ form, record, onSave }) => {
                 name="message"
                 label={<>
                     <span>Message Text</span>
-                    &nbsp;
-                    &nbsp;
-                    <Space>
+                    <Space style={{ display: "none" }}>
+                        &nbsp;&nbsp;
                         <Tooltip title="Import Draft"><Button shape="circle" icon={<FileTextOutlined />} /></Tooltip>
                         <Tooltip title="Import Template"><Button shape="circle" icon={<FileDoneOutlined />} /></Tooltip>
                     </Space>
@@ -453,6 +452,24 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
             }
         }
     }, [lookupState]);
+
+    useEffect(() => {
+        if (previewing) {
+            const interval = setInterval(() => {
+                const context = previewActor.getSnapshot().context;
+                loadPreview({ campaignId: context.result.campaign.campaignId })
+            }, 2000);
+
+            return interval;
+        } else {
+            const interval = setInterval(() => {
+                const context = lookupActor.getSnapshot().context;
+                sendPagedQuery(context.payload.data)();
+            }, 5000);
+
+            return interval;
+        }
+    }, [previewing]);
 
     const onClickView = data => console.log("view", data) || loadPreview(data) || setPreviewing(true);
     const onClickEdit = data => console.log("edit", data);
