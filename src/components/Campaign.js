@@ -41,17 +41,17 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 8 }}
+            labelCol={{ span: 22 }}
+            wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item name="campaignName" label="Campaign Name" children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="campaignName" label="Campaign Name" children={<Input />} />
             <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="cratedOn_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="cratedOn_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="cratedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item name="cratedOn_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="cratedOn_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="cratedOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 5 }}>
+            <Form.Item wrapperCol={{ offset: 5 }} style={{display:'inline-block', margin:'0px'}} colon={false} label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -73,6 +73,9 @@ const EditForm = ({ form, record, onSave }) => {
             wrapperCol={{ span: 16 }}
             labelAlign={"left"}
             initialValues={{ senderId: "8801552146283", isUnicode: true }}
+            style={{
+                padding:'15px'
+            }}
         >
             <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input />} />
 
@@ -480,10 +483,22 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
     const viewPage = viewContext.payload.data.page;
     const viewLimit = viewContext.payload.data.limit;
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
     return (<Space direction="vertical">
         <Breadcrumb>
             <Breadcrumb.Item>
-                {previewing || "Campaign"}
+                {previewing}
                 {previewing && <Button type="link" style={{ padding: 0 }} onClick={() => sendPagedQuery(viewContext.payload.data)() || setPreviewing(false)}>Campaign</Button>}
             </Breadcrumb.Item>
             {previewing && <Breadcrumb.Item>
@@ -491,18 +506,19 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
             </Breadcrumb.Item>}
         </Breadcrumb>
         {previewing || <div>
-            <Row>
-                <Col md={10} style={{ margin: "15px 0" }}>
-                    <Card title="Find Campaigns" size="default">
+            <Row >
+                <Col md={16} style={{ marginTop:'0px',marginBottom:'5px'}}>
+                    <Card title="Find Campaigns" size="small">
                         <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                     </Card>
                 </Col>
-                <Col md={11} push={1} style={{ margin: "15px 0" }}>
-                    <Collapse>
-                        <Collapse.Panel header="Create Campaign" key="createCampaign">
-                            <EditForm form={editForm} record={{}} onSave={saveRecord} />
-                        </Collapse.Panel>
-                    </Collapse>
+                <Col md={5} push={1} style={{ marginTop:'0px',marginBottom:'5px'}}>
+                    <Button type="default" onClick={showModal}>
+                        Create Campaign
+                    </Button>
+                    <Modal header="Create Campaign" key="createCampaign" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                        <EditForm form={editForm} record={{}} onSave={saveRecord} />
+                    </Modal>
                 </Col>
             </Row>
             <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />

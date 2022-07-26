@@ -38,21 +38,21 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 7 }}
+            labelCol={{ span: 15}}
+            wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item name="orderId" label="Order ID" hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="orderId" label="Order ID" hidden children={<Input />} />
             <Form.Item name="orderId_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="orderName" label="Order Name" hidden children={<Input />} />
             <Form.Item name="orderName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="productName" label="Package Name" children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="productName" label="Package Name" children={<Input />} />
             <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="orderDate_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="orderDate_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="orderDate_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item name="orderDate_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="orderDate_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="orderDate_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 4 }}>
+            <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 4 }} colon={false} label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -224,9 +224,9 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
     const viewLimit = viewContext.payload.data.limit;
 
     return (<>
-        <Row>
-            <Col md={10} style={{ margin: "15px 0" }}>
-                <Card title="Find Orders" size="default">
+        <Row style={{padding:'0px'}}>
+            <Col md={24} style={{ marginBottom:'5px'}}>
+                <Card title="Find Orders" size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>

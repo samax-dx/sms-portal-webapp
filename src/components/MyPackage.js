@@ -36,17 +36,17 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 8 }}
+            labelCol={{ span: 15}}
+            wrapperCol={{ span: 20 }}
             labelAlign="left"
         >
-            <Form.Item name="productName" label="Package Name" children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="productName" label="Package Name" children={<Input />} />
             <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item name="date_fld1_value" label="To Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld1_value" label="To Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 5 }}>
+            <Form.Item wrapperCol={{ offset: 5 }} style={{display:'inline-block', margin:'0px'}} colon={false} label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -129,8 +129,8 @@ export const MyPackage = ({ actor: [listLoader] }) => {
 
     return (<>
         <Row>
-            <Col md={10}>
-                <Card title="Find Report">
+            <Col md={20}>
+                <Card title="Find Report" size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>

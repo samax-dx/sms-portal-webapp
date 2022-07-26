@@ -36,19 +36,19 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 7 }}
+            labelCol={{ span: 15 }}
+            wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item name="productName" label="Name" children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="productName" label="Name" children={<Input />} />
             <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="packagePrefixes" label="Prefix" children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="packagePrefixes" label="Prefix" children={<Input />} />
             <Form.Item name="packagePrefixes_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item name="date_fld1_value" label="To Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld1_value" label="To Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 4 }}>
+            <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 4 }} colon={false} label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -168,8 +168,8 @@ export const BuyPackage = ({ actor: [lookupActor, saveActor, profileActor] }) =>
 
     return (<>
         <Row>
-            <Col md={10} style={{ margin: "15px 0" }}>
-                <Card title="Find Products" size="default">
+            <Col md={24} style={{ margin: "15px 0" }}>
+                <Card title="Find Products" size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
