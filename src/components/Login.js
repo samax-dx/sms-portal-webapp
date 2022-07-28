@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useActor } from "@xstate/react";
 import { Button, Form, Input, Alert, Row, Card, Divider } from "antd";
-
+import getAllConfig from '../config/main'
 
 export const Login = ({ actor }) => {
     const [actorState, sendActor] = useActor(actor);
@@ -18,7 +18,7 @@ export const Login = ({ actor }) => {
     return (
         <Row type="flex" justify="center" align="middle" style={{ minHeight: '100vh' }}>
             <Card style={{width: "300px"}}>
-                <img height={120} src="/logo.png" style={{display: "block",margin: "0 auto"}}/>
+                <img height={120} src={getAllConfig.logo} style={{display: "block",margin: "0 auto"}}/>
                 <Divider style={{marginTop: 0}}>Client Login</Divider>
                 <Form form={loginForm} size="large">
                     <Form.Item name="loginId">

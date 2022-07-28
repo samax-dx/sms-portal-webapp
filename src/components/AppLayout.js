@@ -4,7 +4,7 @@ import { Col, Row, Layout, Breadcrumb } from 'antd';
 
 import { TopMenu } from "./TopMenu";
 import { MainMenu } from './MainMenu';
-import images from '../img/imgIndex';
+import getAllConfig from '../config/main'
 
 
 const { Header, Sider } = Layout;
@@ -20,7 +20,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
             <Header className="header">
                 <Row>
                     <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
-                        <img src={images["2.png"]} style={{ marginBottom: "4px" }} />
+                        <img src={getAllConfig.logo} style={{ marginBottom: "4px" }} />
                         &nbsp;
                         <span>SMS-Portal Client</span>
                     </Col>
