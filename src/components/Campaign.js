@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useActor } from "@xstate/react";
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select, Modal, Spin, Upload, message } from "antd";
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select, Modal, Spin, Upload, message,TimePicker,Descriptions } from "antd";
+import moment from 'moment';
 import dayjs from "dayjs";
 import { Br } from "./Br";
 import { FileDoneOutlined, FileTextOutlined, FileTextTwoTone } from "@ant-design/icons";
@@ -8,7 +9,6 @@ import { Inventory } from "../services/Inventory";
 import { SmsTask as SmsTaskSvc } from "../services/SmsTask";
 import { Campaign as CampaignSvc } from "../services/Campaign";
 import * as sheetjs from "xlsx";
-
 
 const SearchForm = ({ onSearch }) => {
     const [searchForm] = Form.useForm();
@@ -63,18 +63,64 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
+const {Option} = Select;
+const SchedulePickerWithType = ({type, onChange}) => {
+    if (type === 'default') return (<>
+        <Row>
+            <Col md={12}>
+                <TimePicker onChange={onChange}/>
+            </Col>
+            <Col md={12}>
+                <DatePicker onChange={onChange}/>
+            </Col>
+        </Row>
+    </>);
+    if (type === 'start&end_date') return (<>
+        <Row>
+            <Col md={12}>
+                <DatePicker placeholder="start-date" onChange={onChange}/>
+            </Col>
+            <Col md={12}>
+                <DatePicker placeholder="end-date" onChange={onChange}/>
+            </Col>
+        </Row>
+    </>);
+    if (type === 'start_end_date&hours') return (<>
+        <Row>
+            <Descriptions title="Date">
+             <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'center'}}><DatePicker placeholder="start-date" onChange={onChange}/></Descriptions.Item>
+             <Descriptions.Item label="End-Date" span={1} labelStyle={{ alignItems:'center'}}><DatePicker placeholder="end-date" onChange={onChange}/></Descriptions.Item>
+            </Descriptions>
+        </Row>
+        <Row>
+            <Descriptions title="Active Hours" Layout="vertical" >
+                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'center'}}><TimePicker style={{width:160}} placeholder="select-time" onChange={onChange}/></Descriptions.Item>
+                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'center'}}><TimePicker style={{width:160}} placeholder="select-time"  onChange={onChange}/></Descriptions.Item>
+            </Descriptions>
+        </Row>
+        <Row>
+            <Descriptions title="Exclude Hours" Layout="vertical" >
+                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'center'}}><TimePicker style={{width:160}} placeholder="select-time" onChange={onChange}/></Descriptions.Item>
+                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'center'}}><TimePicker style={{width:160}} placeholder="select-time"  onChange={onChange}/></Descriptions.Item>
+            </Descriptions>
+        </Row>
+    </>);
+    // return <DatePicker picker={type} onChange={onChange} />;
+};
+
 const EditForm = ({ form, record, onSave }) => {
     const [editForm] = Form.useForm(form);
+    const [type, setType] = useState('default');
 
     return (<>
         <Form
             form={editForm}
             labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            wrapperCol={{ span: 20 }}
             labelAlign={"left"}
             initialValues={{ senderId: "8801552146283", isUnicode: true }}
             style={{
-                padding:'15px'
+                padding:'35px'
             }}
         >
             <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input />} />
@@ -146,7 +192,24 @@ const EditForm = ({ form, record, onSave }) => {
                 rules={[{ required: true }]}
                 children={<Input.TextArea />}
             />
+            <Form.Item label="Schedule Policy">
+                    <Select value={type} onChange={setType}>
+                        <Option value="default">Default</Option>
+                        <Option value="start&end_date">Start Date-End Date</Option>
+                        <Option value="start_end_date&hours">Start Date-End Date,Active-hours</Option>
+                    </Select>
+            </Form.Item>
+            <Form.Item
+                colon={false}
+                label=" "
+                style={{
+                    marginTop:'0px'
+                }}
+            >
 
+                <SchedulePickerWithType type={type} onChange={value => console.log(value)} />
+
+            </Form.Item>
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Space>
                     <Form.Item name="isUnicode" valuePropName="checked" style={{ margin: 0 }}>
@@ -516,7 +579,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
                     <Button type="default" onClick={showModal}>
                         Create Campaign
                     </Button>
-                    <Modal header="Create Campaign" key="createCampaign" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                    <Modal width={1000} header="Create Campaign" key="createCampaign" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                         <EditForm form={editForm} record={{}} onSave={saveRecord} />
                     </Modal>
                 </Col>
