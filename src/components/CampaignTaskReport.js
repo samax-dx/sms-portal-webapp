@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col } from "antd";
+import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col,Typography} from "antd";
 import dayjs from "dayjs";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
@@ -68,6 +68,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:5}}
             size="small"
             dataSource={viewResult.taskReports}
             rowKey={taskReport => taskReport.phoneNumber + taskReport.campaignId}
@@ -131,16 +132,18 @@ export const CampaignTaskReport = ({ actor: [listLoader] }) => {
 
     const viewPage = listLoaderContext.payload.data.page;
     const viewLimit = listLoaderContext.payload.data.limit;
-
+    const { Title } = Typography;
     return (<>
-        <Row>
+        <Row style={{marginBottom:5,marginLeft:5}}>
             <Col md={24}>
-                <Card title="Find Report" size='small'>
+                <Card title={<Title level={4}>Report</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
+                      size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
         </Row>
-        <Br />
+        {/*<Br />*/}
         <DataView context={listLoaderContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />

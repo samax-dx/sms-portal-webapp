@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useActor } from "@xstate/react";
 import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select, Modal, Spin, Upload, message,TimePicker,Descriptions } from "antd";
+import { PlusCircleFilled } from '@ant-design/icons';
 import moment from 'moment';
 import dayjs from "dayjs";
 import { Br } from "./Br";
@@ -244,6 +245,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:3}}
             size="small"
             dataSource={viewResult.campaigns}
             rowKey={"campaignId"}
@@ -557,6 +559,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
+    const { Title } = Typography;
 
     return (<Space direction="vertical">
         <Breadcrumb>
@@ -570,19 +573,26 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         </Breadcrumb>
         {previewing || <div>
             <Row >
-                <Col md={16} style={{ marginTop:'0px',marginBottom:'5px'}}>
-                    <Card title="Find Campaigns" size="small">
+                <Col md={24} style={{marginBottom:'5px',marginLeft:3}}>
+                    <Card title={<Title level={4}>Campaign</Title>}
+                          headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
+                          size="small"
+                          extra={
+                              <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
+                                  Create Campaign
+                              </Button>}
+                    >
                         <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                     </Card>
                 </Col>
-                <Col md={5} push={1} style={{ marginTop:'0px',marginBottom:'5px'}}>
+                {/*<Col md={5} push={1} style={{ marginTop:'0px',marginBottom:'5px'}}>
                     <Button type="default" onClick={showModal}>
                         Create Campaign
-                    </Button>
+                    </Button>*/}
                     <Modal width={1000} header="Create Campaign" key="createCampaign" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                         <EditForm form={editForm} record={{}} onSave={saveRecord} />
                     </Modal>
-                </Col>
+                {/*</Col>*/}
             </Row>
             <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
             <Br />
