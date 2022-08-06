@@ -23,7 +23,7 @@ export function TopMenu({ actor }) {
     const profileView = <Space direction="vertical">
         <div>
             <div>
-                <Text type="secondary" strong>A-Code : </Text>
+                <Text type="secondary" strong>Customer-Id : </Text>
                 <Text>&nbsp;{profileState.context.result.profile.partyId}</Text>
             </div>
             <div>

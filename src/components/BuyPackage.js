@@ -169,7 +169,7 @@ export const BuyPackage = ({ actor: [lookupActor, saveActor, profileActor] }) =>
     return (<>
         <Row>
             <Col md={24} style={{ margin: "15px 0" }}>
-                <Card title="Find Products" size="small">
+                <Card title="Find Package" size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>

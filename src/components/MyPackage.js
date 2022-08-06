@@ -1,5 +1,21 @@
-import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col } from "antd";
+import {useEffect, useRef, useState} from "react";
+import {
+    Form,
+    Input,
+    Button,
+    Table,
+    Space,
+    Pagination,
+    DatePicker,
+    notification,
+    Collapse,
+    Card,
+    Select,
+    Row,
+    Col,
+    Modal,
+    Tooltip
+} from "antd";
 import dayjs from "dayjs";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
@@ -61,6 +77,18 @@ const SearchForm = ({ onSearch }) => {
 const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
     const viewResult = context.result;
     const viewError = context.error;
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+    const prefixRef = useRef("");
 
     return (<>
         <Table
@@ -77,10 +105,26 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             />
 
             <Table.Column title="Package" dataIndex={"productName"} />
-            <Table.Column title="Prefixes" dataIndex={"packagePrefixes"} />
-            <Table.Column title="Volume" dataIndex={"stock"} />
+            <Table.Column width="19%" title="Prefixes" dataIndex={"packagePrefixes"}
+                          render={() =><>
+                              <span
+                                  style={{textOverflow:"ellipsis",
+                                      whiteSpace:"nowrap",
+                                      maxWidth: "95px",
+                                      display: "inline-block",
+                                      overflow:"hidden",
+                                      verticalAlign:"middle"
+                                  }}
+                              ref={prefixRef}>017,015,018,019</span>
+                              <Button type="link" onClick={showModal}>show all</Button>
+                          </>} />
+            <Table.Column title="Total" dataIndex={undefined} render={() => "Unknown"}/>
+            <Table.Column title="Remaining" dataIndex={"stock"} />
             <Table.Column title="Details" dataIndex={"description"} />
         </Table>
+        <Modal title="Package Prefixes" key="createCampaign" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+            {prefixRef.current.innerText}
+        </Modal>
     </>);
 };
 
@@ -141,3 +185,5 @@ export const MyPackage = ({ actor: [listLoader] }) => {
         <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />
     </>);
 };
+
+
