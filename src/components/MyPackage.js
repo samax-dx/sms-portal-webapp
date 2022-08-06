@@ -77,18 +77,11 @@ const SearchForm = ({ onSearch }) => {
 const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
     const viewResult = context.result;
     const viewError = context.error;
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const showModal = () => {
-        setIsModalVisible(true);
-    };
-    const handleOk = () => {
-        setIsModalVisible(false);
-    };
 
-    const handleCancel = () => {
-        setIsModalVisible(false);
-    };
-    const prefixRef = useRef("");
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
 
     return (<>
         <Table
@@ -106,7 +99,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
             <Table.Column title="Package" dataIndex={"productName"} />
             <Table.Column width="19%" title="Prefixes" dataIndex={"packagePrefixes"}
-                          render={() =><>
+                          render={(v, r, i) =><>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
@@ -115,15 +108,15 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                                       overflow:"hidden",
                                       verticalAlign:"middle"
                                   }}
-                              ref={prefixRef}>017,015,018,019</span>
-                              <Button type="link" onClick={showModal}>show all</Button>
+                              >017,015,018,019</span>
+                              <Button type="link" onClick={() => showModal(v)}>show all</Button>
                           </>} />
             <Table.Column title="Total" dataIndex={undefined} render={() => "Unknown"}/>
             <Table.Column title="Remaining" dataIndex={"stock"} />
             <Table.Column title="Details" dataIndex={"description"} />
         </Table>
-        <Modal title="Package Prefixes" key="createCampaign" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-            {prefixRef.current.innerText}
+        <Modal title="Package Prefixes" key="createCampaign" visible={!!modalData} onOk={handleOk} onCancel={handleCancel}>
+            {modalData}
         </Modal>
     </>);
 };
