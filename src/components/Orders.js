@@ -158,7 +158,6 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
     const [lookupState, sendLookup] = useActor(lookupActor);
     const [saveState, sendSave] = useActor(saveActor);
     const [editForm] = Form.useForm();
-    const [choosingParty, setChoosingParty] = useState(false);
 
     const sendPagedQuery = queryData => (page, limit) => {
         page === undefined && (page = queryData.page)
@@ -173,6 +172,11 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
         console.log(data);
         return sendSave({ data, type: "LOAD" });
     };
+
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
 
     useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
@@ -214,7 +218,7 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
         }
     }, [lookupState]);
 
-    const onClickView = data => console.log("view", data);
+    const onClickView = data => console.log("view", data) || showModal(data);
     const onClickEdit = data => console.log("edit", data);
     const onClickDelete = data => console.log("delete", data);
 
@@ -230,19 +234,12 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            {/* <Col md={11} push={1} style={{ margin: "15px 0" }}>
-                <Collapse>
-                    <Collapse.Panel header="Purchase Product" key="purchaseProduct">
-                        <EditForm form={editForm} record={{}} onSave={saveRecord} onFindProduct={() => setChoosingParty(true)} />
-                    </Collapse.Panel>
-                </Collapse>
-            </Col> */}
         </Row>
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
-        <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
-        <Modal visible={choosingParty} footer={null} onCancel={() => setChoosingParty(false)} width={"90vw"}>
-            <ProductPicker actor={productActor} onPicked={({ productId }) => setChoosingParty(false) || editForm.setFieldsValue({ productId })} />
+        <Modal title="Basic Modal" visible={!!modalData} onOk={handleOk} onCancel={handleCancel}>
+            {JSON.stringify(modalData)}
         </Modal>
+        <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
     </>);
 };
