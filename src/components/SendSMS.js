@@ -6,6 +6,7 @@ import { Inventory } from "../services/Inventory";
 import { SmsTask } from "../services/SmsTask";
 import * as sheetjs from "xlsx";
 import { FileTextTwoTone } from "@ant-design/icons";
+import Title from "antd/es/typography/Title";
 
 
 export const SendSMS = ({ actor: editorActor }) => {
@@ -68,7 +69,8 @@ export const SendSMS = ({ actor: editorActor }) => {
     const onEdited = () => editorState.matches("isEditing") || emitEditor("EDIT_RECORD");
 
     return (<>
-        <Card>
+        <Card style={{marginLeft:5}} title={<Title level={5}>Send SMS</Title>}
+              headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
             <Form
                 form={campaignForm}
                 initialValues={{ senderId: "8801552146283", isUnicode: true/*, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null*/ }}
