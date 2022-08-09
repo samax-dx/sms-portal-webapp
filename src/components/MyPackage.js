@@ -19,6 +19,7 @@ import {
 import dayjs from "dayjs";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
+import Title from "antd/es/typography/Title";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -85,6 +86,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:'6px',marginTop:'0px'}}
             size="small"
             dataSource={viewResult.products}
             rowKey={"productId"}
@@ -166,13 +168,13 @@ export const MyPackage = ({ actor: [listLoader] }) => {
 
     return (<>
         <Row>
-            <Col md={20}>
-                <Card title="Find Report" size='small'>
+            <Col md={20} style={{ marginBottom:'0px', marginLeft:'5px'}}>
+                <Card title={<Title level={5}>Packages</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
         </Row>
-        <Br />
         <DataView context={listLoaderContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />

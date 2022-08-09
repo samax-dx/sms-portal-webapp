@@ -17,7 +17,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
             <PageContent actor={appState.context.actor} />
         </Layout>,
         <Layout>
-            <Header className="header">
+            <Header className="header" style={{paddingLeft:'5px',paddingRight:'5px'}}>
                 <Row>
                     <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
                         <img src={getAllConfig.logo} style={{ marginBottom: "4px" }} />

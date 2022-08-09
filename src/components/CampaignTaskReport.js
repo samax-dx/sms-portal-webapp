@@ -134,9 +134,9 @@ export const CampaignTaskReport = ({ actor: [listLoader] }) => {
     const viewLimit = listLoaderContext.payload.data.limit;
     const { Title } = Typography;
     return (<>
-        <Row style={{marginBottom:5,marginLeft:5}}>
+        <Row style={{marginLeft:5}}>
             <Col md={24}>
-                <Card title={<Title level={4}>Report</Title>}
+                <Card title={<Title level={5}>SMS History</Title>}
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
                       size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />

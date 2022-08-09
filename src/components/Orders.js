@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { Br } from "./Br";
 import { SearchOutlined } from "@ant-design/icons";
 import { ProductPicker } from "./Products";
+import Title from "antd/es/typography/Title";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -107,6 +108,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{ marginLeft:'6px'}}
             size="small"
             dataSource={viewResult.orders}
             rowKey={"orderId"}
@@ -229,8 +231,9 @@ export const Orders = ({ actor: [lookupActor, saveActor, productActor] }) => {
 
     return (<>
         <Row style={{padding:'0px'}}>
-            <Col md={24} style={{ marginBottom:'5px'}}>
-                <Card title="Find Orders" size="small">
+            <Col md={24} style={{marginLeft:'5px'}}>
+                <Card title={<Title level={5}>Orders</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>

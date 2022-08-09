@@ -245,7 +245,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
-            style={{marginLeft:3}}
+            style={{marginLeft:'6px'}}
             size="small"
             dataSource={viewResult.campaigns}
             rowKey={"campaignId"}
@@ -561,7 +561,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
     };
     const { Title } = Typography;
 
-    return (<Space direction="vertical">
+    return (<>
         <Breadcrumb>
             <Breadcrumb.Item>
                 {previewing}
@@ -573,8 +573,8 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         </Breadcrumb>
         {previewing || <div>
             <Row >
-                <Col md={24} style={{marginBottom:'5px',marginLeft:3}}>
-                    <Card title={<Title level={4}>Campaign</Title>}
+                <Col md={24} style={{marginLeft:'5px'}}>
+                    <Card title={<Title level={5}>Campaign</Title>}
                           headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
                           size="small"
                           extra={
@@ -597,5 +597,5 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
             <Spin tip="Sending Request" />
         </Modal>
-    </Space>);
+    </>);
 };

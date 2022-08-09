@@ -3,6 +3,7 @@ import { useActor } from "@xstate/react";
 import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, InputNumber, Modal, Card, Spin } from "antd";
 import dayjs from "dayjs";
 import { Br } from "./Br";
+import Title from "antd/es/typography/Title";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -66,6 +67,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:'6px'}}
             size="small"
             dataSource={viewResult.products}
             rowKey={"productId"}
@@ -168,8 +170,9 @@ export const BuyPackage = ({ actor: [lookupActor, saveActor, profileActor] }) =>
 
     return (<>
         <Row>
-            <Col md={24} style={{ margin: "15px 0" }}>
-                <Card title="Find Package" size="small">
+            <Col md={24} style={{ marginLeft:'5px'}}>
+                <Card title={<Title level={5}>Package</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
