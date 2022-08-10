@@ -203,19 +203,18 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} />
             <Table.Column title="Sender" dataIndex={"senderId"} />
             <Table.Column title="Message" dataIndex={"message"} />
-            <Table.Column title="Pending" dataIndex={"pending"} render={v => v || 0} />
-            <Table.Column title="Complete" dataIndex={"complete"} render={v => v || 0} />
-            <Table.Column title="Total Tasks" dataIndex={"taskTotal"} />
+            <Table.Column title="Sent" dataIndex={"sentTaskCount"} render={v => v || 0} />
+            <Table.Column title="Failed" dataIndex={"failedTaskCount"} render={v => v || 0} />
+            <Table.Column title="Pending" dataIndex={"pendingTaskCount"} render={v => v || 0} />
+            <Table.Column title="Total Tasks" dataIndex={"totalTaskCount"} />
             <Table.Column title="Date" dataIndex={"createdOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
         </Table>
     </>);
 };
 
-const DataViewSingle = ({ context, /*campaignPackages, */onRunCampaign, onDeleteTask }) => {
+const DataViewSingle = ({ context, onCampaignStart, onDeleteTask }) => {
     const viewResult = context.result;
     const viewError = context.error;
-
-    // const [campaignPackage, setCampaignPackage] = useState(campaignPackages ? campaignPackages[0].productId : null);
 
     return (<>
         <Card bordered={false} bodyStyle={{ padding: 0 }}>
@@ -226,16 +225,12 @@ const DataViewSingle = ({ context, /*campaignPackages, */onRunCampaign, onDelete
                     <Tag >{viewResult.campaign.campaignId}</Tag>
                 </Typography.Text>}
                 footer={<Space>
-                    {/* {campaignPackage && <Select onChange={setCampaignPackage} defaultValue={campaignPackage} style={{ minWidth: 150 }}>
-                        {campaignPackages.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName}</Select.Option>)}
-                    </Select>} */}
                     <Button
                         type="primary"
-                        onClick={() => onRunCampaign({ campaignId: viewResult.campaign.campaignId/*, campaignPackage*/ })}
-                        children={"Run Pending Tasks"}
-                        disabled={/*!campaignPackage || */viewResult.campaign.pending <= 0}
+                        onClick={() => onCampaignStart({ campaignId: viewResult.campaign.campaignId })}
+                        children={"Start Campaign"}
+                        disabled={viewResult.campaign.createdOn !== viewResult.campaign.updatedOn}
                     />
-                    {/* {campaignPackage ? null : <Typography.Text type="warning" italic>Please buy a package !</Typography.Text>} */}
                 </Space>}
                 size="large"
                 bordered
@@ -259,9 +254,10 @@ const DataViewSingle = ({ context, /*campaignPackages, */onRunCampaign, onDelete
                             grid={{ gutter: 24 }}
                             dataSource={[
                                 [
-                                    ["complete", "Complete", "success", v => v || 0],
-                                    ["pending", "Pending", "warning", v => v || 0],
-                                    ["taskTotal", "Total Task", "danger", v => v],
+                                    ["sentTaskCount", "Sent", "success", v => v || 0],
+                                    ["failedTaskCount", "Failed", "secondary", v => v || 0],
+                                    ["pendingTaskCount", "Pending", "warning", v => v || 0],
+                                    ["totalTaskCount", "Total Task", "danger", v => v],
                                 ]
                             ]}
                             renderItem={item => item.map(([key, label, type, toValue]) => (<Col>
@@ -295,13 +291,13 @@ const DataViewSingle = ({ context, /*campaignPackages, */onRunCampaign, onDelete
                 />
 
                 <Table.Column title="Phone Number" dataIndex={"phoneNumber"} />
-                <Table.Column title="Task Status" dataIndex={"status"} render={status => status > 0 ? <Tag color={"success"}>complete</Tag> : <Tag color={"processing"}>pending</Tag>} />
-                <Table.Column title="Status Message" dataIndex={"statusText"} />
+                <Table.Column title="Task Status" dataIndex={"status"} render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>sent</Tag>, <Tag color={"error"}>error</Tag>][[v === "pending", v === "sent", v === "failed"].indexOf(!0)]} />
+                <Table.Column title="Status Message" dataIndex={undefined} render={(v, r, i) => (r.statusExternal && "sent") || (r.errorCode || r.errorCodeExternal)} />
                 <Table.Column title="Pakcage" dataIndex={"packageId"} />
 
                 <Table.Column
                     dataIndex={undefined}
-                    render={(_, campaignTask, i) => <Button onClick={_ => onDeleteTask(viewResult.campaign, campaignTask)} type="primary" disabled={campaignTask.status === "1"}>Delete</Button>}
+                    render={(_, campaignTask, i) => <Button onClick={_ => onDeleteTask(viewResult.campaign, campaignTask)} type="primary" disabled={campaignTask.status === "sent"}>Delete</Button>}
                 />
             </Table>
         </Card>
@@ -509,7 +505,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
             <Br />
             <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         </div>}
-        {previewing && <DataViewSingle context={previewState.context} /*campaignPackages={campaignPackages}*/ onRunCampaign={sendSms} onDeleteTask={deleteTask} />}
+        {previewing && <DataViewSingle context={previewState.context} onCampaignStart={sendSms} onDeleteTask={deleteTask} />}
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
             <Spin tip="Sending Request" />
         </Modal>

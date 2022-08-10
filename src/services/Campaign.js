@@ -28,31 +28,6 @@ export const Campaign = {
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
         }),
-    fetchCampaignPendingTasks: (ctx, ev) => axios
-        .post(
-            `${SERVER_URL}/Campaign/getCampaignPendingTasks`,
-            { ...ev.data },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${XAuth.token()}`,
-                }
-            }
-        )
-        .then(response => {
-            const { data } = response;
-
-            if (data.tasks) {
-                return Promise.resolve(data);
-            } else {
-                return Promise.reject({ message: data.errorMessage });
-            }
-        })
-        .catch(error => {
-            const response = error.response || { data: { error: error.message } };
-            const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
-        }),
     fetchCampaignTasks: (ctx, ev) => axios
         .post(
             `${SERVER_URL}/Campaign/getCampaignTasks`,
@@ -106,7 +81,7 @@ export const Campaign = {
     fetchCampaignTaskReports: (ctx, { data }) => axios
         .post(
             `${SERVER_URL}/Campaign/getPartyCampaignTaskReports`,
-            { ...data, status: "1", orderBy: "updatedOn DESC" },
+            { ...data, status: "sent", orderBy: "updatedOn DESC" },
             {
                 headers: {
                     'Content-Type': 'application/json',
