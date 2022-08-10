@@ -174,7 +174,7 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
             </Card>
         </Space>
         <Space children={<><p /><p /></>} />
-        <Card title="Completed Tasks" size="small">
+        <Card title="Sent Messages" size="small">
             <CompleteTaskView context={smsReportLoaderState.context} viewPage={smsReportLoaderPage} viewLimit={smsReportLoaderLimit} />
             <Space children={<><p /><p /></>} />
             <ViewPager totalPagingItems={smsReportLoaderResult.count} currentPage={smsReportLoaderPage} onPagingChange={pageSmsReportLoader} pageSize={5} />
