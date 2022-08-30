@@ -10,6 +10,7 @@ import { Inventory } from "../services/Inventory";
 import { SmsTask as SmsTaskSvc } from "../services/SmsTask";
 import { Campaign as CampaignSvc } from "../services/Campaign";
 import * as sheetjs from "xlsx";
+import axios from "axios";
 
 const SearchForm = ({ onSearch }) => {
     const [searchForm] = Form.useForm();
@@ -407,8 +408,34 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
     };
 
     const saveRecord = data => {
-        console.log(data);
-        return sendSave({ data, type: "LOAD" });
+//        console.log(data);
+//        return sendSave({ data, type: "LOAD" });
+        axios.post(
+	            `http://localhost:3100/saveCampaign`,
+	            { ...data },
+	            {
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'Access-Control-Request-Private-Network': true
+                     }
+                 }
+	        )
+	        .then(response => {
+                notification.success({
+                    key: `save_${Date.now()}`,
+                    message: "Task Complete",
+                    description: <>Campaign saved</>,
+                    duration: 5
+                });
+	        })
+	        .catch(error => {
+	            notification.error({
+                    key: `save_${Date.now()}`,
+                    message: "Task Failed",
+                    description: <>Error saving campaign.<br />{error.message}</>,
+                    duration: 5
+                });
+	        })
     };
 
     const loadPreview = data => sendPreview({
