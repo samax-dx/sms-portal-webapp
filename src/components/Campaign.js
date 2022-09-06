@@ -304,7 +304,7 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask }) => {
                 bordered
             >
                 <Card bordered={false}>
-                    <Space direction="vertical" size={"large"}>
+                    <Space direction="horizontal" size={"large"} style={{alignItems:'start'}}>
                         <div
                             children={
                                 [
