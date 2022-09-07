@@ -10,6 +10,7 @@ import { Inventory } from "../services/Inventory";
 import { SmsTask as SmsTaskSvc } from "../services/SmsTask";
 import { Campaign as CampaignSvc } from "../services/Campaign";
 import * as sheetjs from "xlsx";
+import {TaskSearchForm} from "./TaskSearch";
 
 const SearchForm = ({ onSearch }) => {
     const [searchForm] = Form.useForm();
@@ -280,9 +281,25 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
     </>);
 };
 
-const DataViewSingle = ({ context, onCampaignStart, onDeleteTask }) => {
+const FilterTaskDataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
+    return (<>
+        <Space align="end" direction="vertical" style={{ width: "100%" }}>
+            <Pagination
+                total={totalPagingItems}
+                defaultPageSize={10}
+                pageSizeOptions={["10", "20", "50", "100", "200"]}
+                showSizeChanger={true}
+                onChange={onPagingChange}
+                current={currentPage}
+            />
+        </Space>
+    </>);
+};
+const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks }) => {
     const viewResult = context.result;
     const viewError = context.error;
+    const { Title } = Typography;
+
 
     return (<>
         <Card bordered={false} bodyStyle={{ padding: 0 }}>
@@ -303,7 +320,7 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask }) => {
                 size="large"
                 bordered
             >
-                <Card bordered={false}>
+                <Card bordered={false} style={{margin:"0px"}}>
                     <Space direction="horizontal" size={"large"} style={{alignItems:'start'}}>
                         <div
                             children={
@@ -342,7 +359,12 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask }) => {
             </List>
         </Card>
 
-        <Typography.Text>&nbsp;</Typography.Text>
+        <Card title={<Title style={{marginLeft:12}} level={5}>Search Task</Title>}
+              headStyle={{/*backgroundColor:"#f0f2f5",*/ border: 0,padding:'0px'}}
+              size="small"
+        >
+            <TaskSearchForm  onSearch={data => onFilterTasks({ campaignId: viewResult.campaign.campaignId, ...data })}/>
+        </Card>
 
         <Card title="Campaign Tasks">
             <Table
@@ -350,7 +372,8 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask }) => {
                 dataSource={viewResult.tasks}
                 rowKey={"phoneNumber"}
                 locale={{ emptyText: viewError && `[ ${viewError.message} ]` }}
-                pagination={true}
+                pagination={false}
+                style={{paddingBottom:8}}
             >
                 <Table.Column
                     dataIndex={undefined}
@@ -368,7 +391,9 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask }) => {
                     render={(_, campaignTask, i) => <Button onClick={_ => onDeleteTask(viewResult.campaign, campaignTask)} type="primary" disabled={campaignTask.status === "sent"}>Delete</Button>}
                 />
             </Table>
+            {/*<FilterTaskDataPager totalPagingItems={50} />*/}
         </Card>
+
     </>);
 };
 
@@ -406,14 +431,22 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         return sendLookup(query);
     };
 
+    const sendPagedQueryTask = queryData => (page, limit) => {
+        page === undefined && (page = queryData.page)
+        limit === undefined && (limit = queryData.limit)
+        console.log(queryData, page, limit);
+
+        const query = { data: { ...queryData, page, limit }, type: "LOAD" };
+        return sendPreview(query);
+    };
+
     const saveRecord = data => {
         console.log(data);
         return sendSave({ data, type: "LOAD" });
     };
 
     const loadPreview = data => sendPreview({
-        type: "LOAD",
-        data: { campaignId: data.campaignId }
+        type: "LOAD", data
     });
 
     const sendSms = campaign => setSaving(true) || SmsTaskSvc
@@ -521,8 +554,8 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         if (previewing) {
             const interval = setInterval(() => {
                 const context = previewActor.getSnapshot().context;
-                loadPreview({ campaignId: context.result.campaign.campaignId })
-            }, 2000);
+                loadPreview(context.payload.data);
+            }, 5000);
 
             return interval;
         } else {
@@ -535,7 +568,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
         }
     }, [previewing]);
 
-    const onClickView = data => console.log("view", data) || loadPreview(data) || setPreviewing(true);
+    const onClickView = data => console.log("view", data) || loadPreview({ campaignId: data.campaignId }) || setPreviewing(true);
     const onClickEdit = data => console.log("edit", data);
     const onClickDelete = data => console.log("delete", data);
 
@@ -589,7 +622,8 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
             <Br />
             <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         </div>}
-        {previewing && <DataViewSingle context={previewState.context} onCampaignStart={sendSms} onDeleteTask={deleteTask} />}
+        {previewing &&(<> <DataViewSingle context={previewState.context} onCampaignStart={sendSms} onDeleteTask={deleteTask} onFilterTasks={loadPreview} />
+         <FilterTaskDataPager totalPagingItems={previewState.context.payload.data.count} currentPage={previewState.context.payload.data.page} onPagingChange={sendPagedQueryTask(previewState.context.payload.data)}/> </> )}
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
             <Spin tip="Sending Request" />
         </Modal>

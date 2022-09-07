@@ -31,7 +31,7 @@ export const Campaign = {
     fetchCampaignTasks: (ctx, ev) => axios
         .post(
             `${SERVER_URL}/Campaign/getCampaignTasks`,
-            { ...ev.data },
+            console.log(JSON.stringify({ ...ev.data })) || { ...ev.data },
             {
                 headers: {
                     'Content-Type': 'application/json',
