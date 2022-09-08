@@ -66,48 +66,87 @@ const SearchForm = ({ onSearch }) => {
 };
 
 const {Option} = Select;
-const SchedulePickerWithType = ({type, onChange}) => {
+const SchedulePickerWithType = ({type}) => {
     if (type === 'default') return (<>
         <Row>
             <Col md={12}>
-                <TimePicker onChange={onChange}/>
+                <Form.Item name="pickedSchedule_time">
+                    <TimePicker />
+                </Form.Item>
             </Col>
             <Col md={12}>
-                <DatePicker onChange={onChange}/>
+                <Form.Item name="pickedSchedule_date">
+                    <DatePicker />
+                </Form.Item>
             </Col>
         </Row>
     </>);
     if (type === 'start&end_date') return (<>
         <Row>
             <Col md={12}>
-                <DatePicker placeholder="start-date" onChange={onChange}/>
+                <Form.Item name="pickedSchedule_start_date">
+                    <DatePicker placeholder="Start Date"/>
+                </Form.Item>
+                {/*<DatePicker placeholder="start-date"/>*/}
             </Col>
             <Col md={12}>
-                <DatePicker placeholder="end-date" onChange={onChange}/>
+                <Form.Item name="pickedSchedule_end_date">
+                    <DatePicker placeholder="End Date"/>
+                </Form.Item>
             </Col>
         </Row>
     </>);
     if (type === 'start_end_date&hours') return (<>
         <Row>
             <Descriptions title="Date">
-             <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'center'}}><DatePicker placeholder="start-date" onChange={onChange}/></Descriptions.Item>
-             <Descriptions.Item label="End-Date" span={1} labelStyle={{ alignItems:'center'}}><DatePicker placeholder="end-date" onChange={onChange}/></Descriptions.Item>
+             <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
+                 <Form.Item name="pickedSchedule_start_date">
+                     <DatePicker placeholder="Start Date"/>
+                 </Form.Item>
+                 {/*<DatePicker placeholder="start-date"/>*/}
+             </Descriptions.Item>
+             <Descriptions.Item label="End-Date" span={1} labelStyle={{ alignItems:'start'}}>
+                 <Form.Item name="pickedSchedule_end_date">
+                     <DatePicker placeholder="End Date"/>
+                 </Form.Item>
+                 {/*<DatePicker placeholder="end-date"/>*/}
+             </Descriptions.Item>
             </Descriptions>
         </Row>
         <Row>
             <Descriptions title="Active Hours" Layout="vertical" >
-                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'center'}}><TimePicker style={{width:160}} placeholder="select-time" onChange={onChange}/></Descriptions.Item>
-                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'center'}}><TimePicker style={{width:160}} placeholder="select-time"  onChange={onChange}/></Descriptions.Item>
+                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="pickedSchedule_start_time">
+                        <TimePicker placeholder="Start Time" />
+                    </Form.Item>
+                    {/*<TimePicker style={{width:160}} placeholder="select-time"/>*/}
+                </Descriptions.Item>
+                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="pickedSchedule_end_time">
+                        <TimePicker placeholder="End Time"/>
+                    </Form.Item>
+                    {/*<TimePicker style={{width:160}} placeholder="select-time" />*/}
+                </Descriptions.Item>
             </Descriptions>
         </Row>
         <Row>
             <Descriptions title="Exclude Hours" Layout="vertical" >
-                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'center'}}><TimePicker style={{width:160}} placeholder="select-time" onChange={onChange}/></Descriptions.Item>
-                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'center'}}><TimePicker style={{width:160}} placeholder="select-time"  onChange={onChange}/></Descriptions.Item>
+                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="pickedSchedule_exclude_start_time">
+                        <TimePicker placeholder="Start Time"/>
+                    </Form.Item>
+                    {/*<TimePicker style={{width:160}} placeholder="select-time"/>*/}
+                </Descriptions.Item>
+                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="pickedSchedule_exclude_end_time">
+                        <TimePicker placeholder="End Time"/>
+                    </Form.Item>
+                    {/*<TimePicker style={{width:160}} placeholder="select-time" />*/}
+                </Descriptions.Item>
             </Descriptions>
         </Row>
     </>);
-    // return <DatePicker picker={type} onChange={onChange} />;
+    // return <DatePicker picker={type}={onChange} />;
 };
 
 const EditForm = ({ form, record, onSave }) => {
@@ -120,14 +159,13 @@ const EditForm = ({ form, record, onSave }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={{ senderId: "8801552146283", isUnicode: true }}
             style={{
                 padding:'35px'
             }}
         >
             <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input />} />
 
-            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} initialValue={"8801552146283"} children={<Input />} />
 
             <Form.Item
                 name="phoneNumbers"
@@ -194,27 +232,26 @@ const EditForm = ({ form, record, onSave }) => {
                 rules={[{ required: true }]}
                 children={<Input.TextArea />}
             />
-            <Form.Item label="Schedule Policy">
-                    <Select value={type} onChange={setType}>
+            <Form.Item name="selectedPolicy" id="selected" label="Schedule Policy" initialValue={type}>
+                    <Select onChange={setType} >
                         <Option value="default">Default</Option>
                         <Option value="start&end_date">Start Date-End Date</Option>
                         <Option value="start_end_date&hours">Start Date-End Date,Active-hours</Option>
                     </Select>
             </Form.Item>
             <Form.Item
+                id="schedule"
                 colon={false}
                 label=" "
                 style={{
                     marginTop:'0px'
                 }}
-            >
-
-                <SchedulePickerWithType type={type} onChange={value => console.log(value)} />
-
+                >
+                    <SchedulePickerWithType type={type}/>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Space>
-                    <Form.Item name="isUnicode" valuePropName="checked" style={{ margin: 0 }}>
+                    <Form.Item name="isUnicode" valuePropName="checked" initialValue={true} style={{ margin: 0 }}>
                         <Checkbox children={<Tooltip title="using unicode charecters">Unicode</Tooltip>} />
                     </Form.Item>
 
@@ -321,7 +358,7 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks 
                 bordered
             >
                 <Card bordered={false} style={{margin:"0px"}}>
-                    <Space direction="horizontal" size={"large"} style={{alignItems:'start'}}>
+                    <Space split={<Divider type="vertical" style={{height:"18vh"}} />} size={"large"} style={{alignItems:'start'}}>
                         <div
                             children={
                                 [
@@ -355,7 +392,6 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks 
                         />
                     </Space>
                 </Card>
-                <Divider style={{ margin: 0 }} />
             </List>
         </Card>
 
