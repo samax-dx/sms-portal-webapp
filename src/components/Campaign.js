@@ -337,6 +337,15 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks 
     const viewError = context.error;
     const { Title } = Typography;
 
+    // const [showHeader, setShowHeader] = useState(true);
+
+    function hasSubTask(task) {
+        if(task.status !== "sent"){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     return (<>
         <Card bordered={false} bodyStyle={{ padding: 0 }}>
@@ -405,19 +414,27 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks 
         <Card title="Campaign Tasks">
             <Table
                 size="small"
-                dataSource={viewResult.tasks}
+                dataSource={viewResult.tasks.map(task => {
+                    if (hasSubTask(task)) {
+                        return task;
+                    }
+
+                    const newTask = { ...task };
+                    const children = [{ ...task }];
+                    newTask.children = children;
+                    return newTask;
+                })}
                 rowKey={"phoneNumber"}
                 locale={{ emptyText: viewError && `[ ${viewError.message} ]` }}
                 pagination={false}
                 style={{paddingBottom:8}}
             >
                 <Table.Column
-                    dataIndex={undefined}
                     title={"#"}
                     render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
                 />
 
-                <Table.Column title="Phone Number" dataIndex={"phoneNumber"} />
+                <Table.Column title="Phone Number"  dataIndex={"phoneNumber"} />
                 <Table.Column title="Task Status" dataIndex={"status"} render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>sent</Tag>, <Tag color={"error"}>error</Tag>][[v === "pending", v === "sent", v === "failed"].indexOf(!0)]} />
                 <Table.Column title="Status Message" dataIndex={undefined} render={(v, r, i) => (r.statusExternal && "sent") || (r.errorCode || r.errorCodeExternal)} />
                 <Table.Column title="Pakcage" dataIndex={"packageId"} />
