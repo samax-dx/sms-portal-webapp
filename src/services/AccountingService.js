@@ -2,11 +2,11 @@ import axios from "axios";
 import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
-export const Accounting = ({
-    fetchBalanceRequests: (ctx, ev) => axios
+export const AccountingNew = ({
+    fetchBalanceRequests: (payload) => axios
         .post(
             `${SERVER_URL}/Accounting/listPartyBalanceRequests`,
-            { orderBy: "date DESC", ...ev.data },
+            { ...payload},
             {
                 headers: {
                     'Content-Type': 'application/json',

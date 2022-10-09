@@ -9,7 +9,7 @@ import getAllConfig from '../config/main'
 
 const { Header, Sider } = Layout;
 
-export const AppLayout = ({ render: PageContent, actor }) => {
+export const AppLayout = ({ render: PageContent, actor,routeComponent }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
 
     return [
@@ -33,6 +33,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
                 </Sider>
                 <Layout style={{ padding: "2px" }}>
                     <PageContent actor={appState.context.actor} />
+                    {routeComponent}
                 </Layout>
             </Layout>
         </Layout>

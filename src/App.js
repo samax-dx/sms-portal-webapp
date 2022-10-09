@@ -1,7 +1,6 @@
 import './App.less';
-
 import { useActor } from '@xstate/react';
-
+import {Routes} from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { Home } from './components/Home';
 import { SendSMS } from './components/SendSMS';
@@ -15,23 +14,29 @@ import { Campaign } from './components/Campaign';
 import { CampaignTaskReport } from './components/CampaignTaskReport';
 import { BuyPackage } from './components/BuyPackage';
 import { MyPackage } from './components/MyPackage';
-import { MyPayment } from './components/MyPayment';
-
+import {BrowserRouter, Route as ReactRoute} from "react-router-dom";
+import * as PropTypes from "prop-types";
+import {MyPaymentNew} from "./components/MyPaymentNew";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
     const component = capitalize(current.value);
 
-    // useEffect(() => {
-    //     const saveApp = () => {
-    //         localStorage.setItem("lastState", JSON.stringify(current));
-    //     };
-
-    //     window.addEventListener('beforeunload', saveApp);
-    //     return () => window.removeEventListener("beforeunload", saveApp);
-    // }, [current]);
+    const createRouteComponent = rc => <AppLayout
+        render={{
+            Home, SendSMS, SmsReport, CashDeposit, Campaign, CampaignTaskReport,
+            Orders, BuyPackage, MyPackage, Login
+        }[component]}
+        actor={actor}
+        routeComponent={rc}
+    />;
 
     return (
-        <AppLayout render={{ Home, SendSMS, SmsReport, CashDeposit, Campaign, CampaignTaskReport, Orders, BuyPackage, MyPackage, MyPayment, Login }[component]} actor={actor} />
+        <BrowserRouter>
+            <Routes>
+                <ReactRoute path="/" element={createRouteComponent(null)} />
+                <ReactRoute path="/paymentHistory" element={createRouteComponent(<MyPaymentNew />)} />
+            </Routes>
+        </BrowserRouter>
     );
 };
