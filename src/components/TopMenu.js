@@ -19,6 +19,7 @@ const QueryPager = (sender, data) => (page, limit) => {
 export function TopMenu({ actor }) {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
     const [profileState, sendProfile] = useActor(appState.context.profileActor);
+    const [inventoryState, sendInventory] = useActor(appState.context.inventoryActor);
 
     const profileView = <Space direction="vertical">
         <div>
@@ -42,13 +43,13 @@ export function TopMenu({ actor }) {
             className="menu"
             selectedKeys={[appState.value]}
         >
-            
             <Popover content={profileView}>
                 <Menu.Item key="profile" onClick={() => sendApp({ type: 'NAV_PROFILE' })}>
                     {profileState.context.result.profile.name}
                 </Menu.Item>
             </Popover>
-            <Menu.Item key="balance" className="balanceView"><strong>Balance: {profileState.context.result.balance} BDT</strong></Menu.Item>
+            <Menu.Item key="balance" className="balanceView"><strong>Balance [main]: {profileState.context.result.balance} BDT</strong></Menu.Item>
+            {inventoryState.context.result.products.map(balance => <Menu.Item key={balance.productId} className="balanceView"><strong>Balance [Package]: {balance.stock} {balance.productId}</strong></Menu.Item>)}
         </Menu>
     );
 }

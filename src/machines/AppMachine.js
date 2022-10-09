@@ -23,6 +23,7 @@ export const AppMachine = createMachine({
             entry: [
                 "assignStartAction",
                 "assingProfileActor",
+                "assingInventoryActor",
                 send((ctx, ev) => ({ type: ctx.__start_action }))
             ],
         },
@@ -57,6 +58,7 @@ export const AppMachine = createMachine({
         __start_action: null,
         actor: null,
         profileActor: null,
+        inventoryActor: null
     },
     initial: "start"
 }, {
@@ -72,15 +74,18 @@ export const AppMachine = createMachine({
                 { message: "Waiting for Profile Query" }
             )
         })),
+        assingInventoryActor: assign((ctx, ev) => ({
+            inventoryActor: spawnFetcher(
+                Inventory.fetchProducts,
+                { data: { page: 1, limit: 10 } },
+                { products: [], count: 0 },
+                { message: "Waiting for Product Search" }
+            )
+        })),
         assignHomeActor: assign((ctx, ev) => ({
             actor: [
                 ctx.profileActor,
-                spawnFetcher(
-                    Inventory.fetchProducts,
-                    { data: { page: 1, limit: 10 } },
-                    { products: [], count: 0 },
-                    { message: "Waiting for Product Search" }
-                ),
+                ctx.inventoryActor,
                 spawnFetcher(
                     Campaign.fetchCampaignTaskReports,
                     { data: { page: 1, limit: 10 } },

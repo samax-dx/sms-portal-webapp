@@ -8,6 +8,7 @@ export const SmsReport = ({ actor }) => {
                 <Row gutter={[8, 8]}>
                     <Col span={6}>Contact Number</Col>
                     <Col span={18}>{report.MobileNumber}</Col>
+                    console.log("hello")
                 </Row>
                 <Row gutter={[8, 8]}>
                     <Col span={6}>Send Status</Col>

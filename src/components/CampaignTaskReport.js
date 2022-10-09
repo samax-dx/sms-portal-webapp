@@ -1,8 +1,25 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col,Typography} from "antd";
+import {
+    Form,
+    Input,
+    Button,
+    Table,
+    Space,
+    Pagination,
+    DatePicker,
+    notification,
+    Collapse,
+    Card,
+    Select,
+    Row,
+    Col,
+    Typography,
+    Tag, Modal
+} from "antd";
 import dayjs from "dayjs";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
+import moment from "moment/moment";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -65,13 +82,44 @@ const SearchForm = ({ onSearch }) => {
 const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
     const viewResult = context.result;
     const viewError = context.error;
+    const unixToMomentTime=(value)=>{
+        if(value==null) return "";
+        const parseValue = parseInt(value)
+        // var dateString = moment.unix(+value).format("MM/DD/YYYY");
+        const finalTime=  moment(parseValue).subtract(6, 'hours').format('YYYY-MM-DD hh:mm:ss A');
+        //return dayjs(parseValue).format("MMM D, YYYY - hh:mm A")
+        return finalTime;
+    }
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
+    function hasSubTask(task) {
+        if(task.instances !=null && task.instances.indexOf(",") >= 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     return (<>
         <Table
             style={{marginLeft:5}}
             size="small"
-            dataSource={viewResult.taskReports}
-            rowKey={taskReport => taskReport.phoneNumber + taskReport.campaignId}
+            dataSource={(viewResult.taskReports || []).map((task, i) => {
+                if (!hasSubTask(task)) {
+                    return { ...task, key: i };
+                }
+
+                const newTask = { ...task, key: i };
+
+                newTask.children = task.instances.split(',').map((msgChunk, i) =>{
+                    const decodedMsgChunk = atob(msgChunk);
+                    return { ...task, key: i+"/"+i, message: decodedMsgChunk };
+                });
+
+                return newTask;
+            })}
             locale={{ emptyText: viewError && `[ ${viewError.message || "Fetch Error"} ]` }}
             pagination={false}
         >
@@ -81,12 +129,81 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
 
-            <Table.Column title="PhoneNumber" dataIndex={"phoneNumber"} />
+            {/*<Table.Column title="PhoneNumber" dataIndex={"phoneNumber"} />
             <Table.Column title="Message" dataIndex={"message"} />
             <Table.Column title="Date" dataIndex={"updatedOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
             <Table.Column title="Campaign" dataIndex={"campaignName"} />
+            <Table.Column title="Package" dataIndex={"packageId"} />*/}
+            <Table.Column title="Originating Called Number" dataIndex={"phoneNumber"}/>
+            <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
+            <Table.Column title="Message" dataIndex={"message"} />
+
+            <Table.Column title="Status" dataIndex={"status"} render={v => [
+                            <Tag color={"processing"}>pending</Tag>,
+                            <Tag color={"success"}>sent</Tag>,
+                            <Tag color={"error"}>error</Tag>][[v === "pending", v === "sent", v === "failed"].indexOf(!0)]} />
+
+            <Table.Column title="Status External" dataIndex={"statusExternal"} render={(v,row) => [
+                            <Tag></Tag>,
+                            <Tag color={"processing"}>pending</Tag>,
+                            <Tag color={"success"}>delivered</Tag>,
+                            <Tag color={"error"}>error</Tag>,
+                            ][[row.status === "failed", v === "pending" || v == null, v ==="delivered", v === "rejected" || v === "undetermined"]
+                                    .indexOf(!0)]} />
+
+            <Table.Column title="External Status Update Time" dataIndex={"updatedOn"} render={(unixToMomentTime)}/>
+
+            <Table.Column title="Error" dataIndex={"errorCode"} />
+            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} />
+            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
             <Table.Column title="Package" dataIndex={"packageId"} />
+            <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
+            <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render= {(unixToMomentTime)}/>
+
+            <Table.Column
+                dataIndex={""}
+                render={(_, campaignTask, i) =>
+                    <Button onClick={() => showModal(campaignTask)} type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}}>
+                        Schedule
+                    </Button>
+                } />
         </Table>
+
+        <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
+               footer={[
+                   <Button key="back" type="primary" onClick={handleCancel}>
+                       Close
+                   </Button>]}
+        >
+            <Table
+                dataSource={((modalData || { allRetryTimes: "" }).allRetryTimes || "")
+                    .split(",").map((value,index) => (
+                        {
+                            key: index,
+                            date: value,
+                            status: 'failed',
+                            errorCode: '111',
+                        }
+                    )) }
+                rowKey={"phoneNumber"}
+                locale={{ emptyText: viewError && `[ ${viewError.message} ]` }}
+                pagination={false}
+                style={{padding:15
+                }}
+            >
+                <Table.Column
+                    title={"#"}
+                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
+                />
+                <Table.Column title="Schedule"  dataIndex={"date"} render={(unixToMomentTime)} />
+                {/*<Table.Column title="Status"  dataIndex={"status"} render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>Success</Tag>, <Tag color={"error"}>Failed</Tag>][[v === "pending", v === "success", v === "failed"].indexOf(!0)]} />
+                <Table.Column title="Error Code"  dataIndex={"errorCode"} />*/}
+                <Table.Column title="Retry History"  dataIndex={""} render={console.log} />
+
+
+            </Table>
+        </Modal>
+
     </>);
 };
 
@@ -112,6 +229,7 @@ export const CampaignTaskReport = ({ actor: [listLoader] }) => {
 
     // Dependent Helper Functions
     const sendPagedQuery = queryData => (page, limit) => {
+        // alert(JSON.stringify(listLoaderContext));
         page === undefined && (page = queryData.page)
         limit === undefined && (limit = queryData.limit)
         console.log(queryData, page, limit);

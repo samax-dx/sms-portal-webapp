@@ -81,7 +81,7 @@ export const Campaign = {
     fetchCampaignTaskReports: (ctx, { data }) => axios
         .post(
             `${SERVER_URL}/Campaign/getPartyCampaignTaskReports`,
-            { ...data, status: "sent", orderBy: "updatedOn DESC" },
+            { ...data, orderBy: "updatedOn DESC" },
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export const Campaign = {
         )
         .then(response => {
             const { data } = response;
-
+            //alert(JSON.stringify(data));
             if (data.taskReports) {
                 return Promise.resolve(data);
             } else {

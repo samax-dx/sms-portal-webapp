@@ -1,4 +1,5 @@
-import { Button, Card, Col, Collapse, Divider, Image, List, Pagination, Row, Space, Statistic, Table, Tag, Typography } from 'antd';
+import { Button, Card, Col, Collapse, Divider, Image, List, Pagination, Row, Space, Statistic, Table, Tag, Typography, Progress  } from 'antd';
+import { ArrowDownOutlined, ArrowUpOutlined, FallOutlined } from '@ant-design/icons'
 import { Dashboard } from "./Dashboard";
 import { PaymentInstrument } from "./paymentInstrument";
 import { CampaignTasks } from "./campaignTasks";
@@ -6,6 +7,7 @@ import { SendSMS } from './SendSMS';
 import { useActor } from '@xstate/react';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import Title from 'antd/lib/skeleton/Title';
 
 
 const CompleteTaskView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
@@ -136,6 +138,91 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
     const [paymentLoaderState, sendPaymentLoader, pagePaymentLoader] = useLoader(paymentLoader);
     const { result: paymentLoaderResult, error: paymentLoaderError } = paymentLoaderState.context;
     const { page: paymentLoaderPage, limit: paymentLoaderLimit } = paymentLoaderState.context.payload.data;
+    const { Title, Text } = Typography;
+    const dashData = [
+        {
+            key: '1',    
+            title: "Active",
+            value: 78
+        },
+        {
+            key: '2',    
+            title: "Idle",
+            value: 27
+        },
+        {
+            key: '3',    
+            title: "Active",
+            value: 75
+        }
+    ]
+    const progressData = [
+        {
+            key:"1",
+            value: 55
+        },
+        {
+            key:"2",
+            value: 70
+        },
+        {
+            key:"3",
+            value: 85
+        },
+        {
+            key:"4",
+            value: 100
+        },
+        {
+            key:"5",
+            value: 65
+        },
+        {
+            key:"6",
+            value: 100
+        }
+    ]
+    const circleProgressData = [
+        {
+            key:'1',
+            value:75
+        },
+        {
+            key: '2',
+            value: 70
+        },
+        {
+            key: '3',
+            value: 100
+        }
+
+    ]
+    const tableData = [
+        {
+            key:'1',
+            name: 'Jhone Dew',
+            paymentId: 17001,
+            amount: 1540,
+            city: 'Dhaka',
+            status: 'Pending'
+        },
+        {
+            key:'2',
+            name: 'Jhone Dew',
+            paymentId: 17002,
+            amount: 1540,
+            city: 'Khulna',
+            status: 'Failed'
+        },
+        {
+            key:'3',
+            name: 'Jhone Dew',
+            paymentId: 17003,
+            amount: 1540,
+            city: 'Rajshahi',
+            status: 'Sent'
+        }
+    ]
 
     useEffect(() => {
         pageInventoryLoader(1, 5);
@@ -146,18 +233,92 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
     return (<>
         <Card title={profileLoaderResult.profile.name}>
             <Row>
-                <Col md={3}>
-                    <Space direction="vertical" size={"small"}>
-                        <Statistic title="Account Code No." value={profileLoaderResult.profile.partyId} groupSeparator="" />
-                        <Statistic title="Account Balance (BDT)" value={profileLoaderResult.balance} precision={2} />
-                    </Space>
-                </Col>
-                <Divider type="vertical" style={{ height: "inherit", marginRight: "24px" }} />
-                <Col md={20}>
-                    <Card title="TopUp / Recharge" size="small">
-                        <img src="/payment-methods.png" style={{ maxWidth: "100%" }} />
+            <Col md={24}>
+                <Space direction="horizontal" size={"small"}>
+                    <Title level={4} style={{display:'block', marginTop: 5}}>Account Code No.</Title>
+                    <Statistic style={{marginRight: 50, marginBottom: 5, display:'block'}} title="" value={profileLoaderResult.profile.partyId} groupSeparator="" />
+                    <Title level={4} style={{display:'block', marginTop: 5}}>Account Balance (BDT)</Title>
+                    <Statistic title="" style={{marginRight: 50, marginBottom: 5}} value={profileLoaderResult.balance} precision={2} />
+                    <Title level={4} style={{marginLeft: 40}}>Recent TopUp / Recharges</Title>
+                </Space>
+            </Col>
+            </Row>
+            <Row gutter={12} style={{marginBottom: 5}} className="site-statistic-demo-card">
+                {/* <Divider type="vertical" style={{ height: "inherit", marginRight: "24px" }} /> */}
+                <Col span={4}>
+                    <Card style={{backgroundColor:'#4F995B'}}>
+                        <Statistic
+                            title={dashData[0].title}
+                            value={dashData[0].value}
+                            precision={2}
+                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
+                            prefix={<ArrowUpOutlined />}
+                            suffix="%"
+                        />
                     </Card>
                 </Col>
+                <Col span={4}>
+                    <Card style={{backgroundColor:'#689dc4'}}>
+                        <Statistic
+                            key={2}
+                            title={dashData[1].title}
+                            value={dashData[1].value}
+                            precision={2}
+                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
+                            prefix={<ArrowDownOutlined />}
+                            suffix="%"
+                        />
+                    </Card>
+                </Col>
+                <Col span={4}>
+                    <Card style={{backgroundColor:'#FF5733'}}>
+                        <Statistic
+                            title={dashData[2].title}
+                            value={dashData[2].value}
+                            precision={2}
+                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
+                            titleStyle={{color: 'white'}}
+                            prefix={<ArrowUpOutlined />}
+                            suffix="%"
+                        />
+                    </Card>
+                </Col>
+                <Col style={{marginLeft: 140}}>
+                    <Progress type="circle" percent={circleProgressData[0].value} />
+                    <Progress type="circle" percent={circleProgressData[1].value} status="exception" />
+                    <Progress type="circle" percent={circleProgressData[2].value} />
+                </Col>
+                <Col>
+                    <Table 
+                        size="small"
+                        style={{marginTop: 30, marginRight: 70}}
+                        dataSource={tableData}
+                        rowKey={"paymentId"} 
+                    >
+                        <Table.Column title="Payment ID" dataIndex={"paymentId"}/>
+                        <Table.Column title="Customers" dataIndex={"name"}/>
+                        <Table.Column title="From" dataIndex={"city"}/>
+                        <Table.Column title="Amount" dataIndex={"amount"}/>
+                        <Table.Column title="Status" dataIndex={"status"} render={v => [
+                            <Tag color={"#108ee9"}>Pending</Tag>,
+                            <Tag color={"#87d068"}>Sent</Tag>,
+                            <Tag color={"#f50"}>Failed</Tag>][[v === "Pending", v === "Sent", v === "Failed"].indexOf(!0)]} />
+                    </Table>
+                </Col>
+                <Col style={{width: 500, marginTop: 30, marginLeft: 40}}>
+                    <Title level={5}> Active Packages </Title>
+                    <Progress percent={progressData[0].value} />
+                    <Progress percent={progressData[1].value} status="active" />
+                    <Progress percent={progressData[2].value} status="exception" />
+                    <Progress percent={progressData[4].value} />
+                    <Progress percent={progressData[5].value} showInfo={true} />
+                </Col>
+
+                {/* <Row md={3} style={{marginTop:15}}>
+                <Card title="TopUp / Recharge" size="small">
+                    <img src="/payment-methods.png" style={{ maxWidth: '100%'}} />
+                </Card>
+                </Row> */}
             </Row>
         </Card>
         <Space children={<><p /><p /></>} />

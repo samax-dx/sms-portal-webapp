@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, Space, Tooltip, Checkbox, notification, Select, Upload, message } from "antd";
+import { Button, Card,Typography, Form, Input,Text, Space, Tooltip, Checkbox, notification, Select, Upload, message } from "antd";
 import { useActor } from "@xstate/react";
 import { useEffect, useState } from "react";
 import { Campaign } from "../services/Campaign";
@@ -7,6 +7,7 @@ import { SmsTask } from "../services/SmsTask";
 import * as sheetjs from "xlsx";
 import { FileTextTwoTone } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
+import Paragraph from "antd/lib/skeleton/Paragraph";
 
 
 export const SendSMS = ({ actor: editorActor }) => {
@@ -67,6 +68,7 @@ export const SendSMS = ({ actor: editorActor }) => {
     // }, [])
 
     const onEdited = () => editorState.matches("isEditing") || emitEditor("EDIT_RECORD");
+    const { Title,Text } = Typography;
 
     return (<>
         <Card style={{marginLeft:5}} title={<Title level={5}>Send SMS</Title>}
@@ -185,13 +187,18 @@ export const SendSMS = ({ actor: editorActor }) => {
                                             data: { ...campaignForm.getFieldsValue() }
                                         }))
                                         .then(result => {
+                                            console.log(result)
                                             notification.success({
                                                 key: `csend_${Date.now()}`,
                                                 message: "Task Finished",
                                                 description: <>
-                                                    {JSON.stringify(result)}
+                                                <Text type="default">CampaignId: {JSON.parse(result.report.campaignId)}</Text><br></br>
+                                                <Text type="success">Success: {JSON.parse(result.report.success)}</Text><br></br>
+                                                <Text type="danger">Failure: {JSON.parse(result.report.failure)}</Text><br></br>
+                                                <Text type="default">TaskCount: {JSON.parse(result.report.taskCount)}</Text><br></br>
+                                                    {/* {JSON.stringify(result)} */}
                                                 </>,
-                                                duration: 5
+                                                duration: 5,
                                             });
                                             campaignForm.resetFields();
                                         })

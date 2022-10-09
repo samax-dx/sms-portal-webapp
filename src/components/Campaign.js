@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useActor } from "@xstate/react";
 import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, DatePicker, notification, Checkbox, Tooltip, Collapse, Card, Breadcrumb, List, Divider, Statistic, Tag, Select, Modal, Spin, Upload, message,TimePicker,Descriptions } from "antd";
-import { PlusCircleFilled } from '@ant-design/icons';
+import { AlignLeftOutlined, PlusCircleFilled } from '@ant-design/icons';
 import moment from 'moment';
 import dayjs from "dayjs";
 import { Br } from "./Br";
@@ -336,16 +336,35 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks 
     const viewResult = context.result;
     const viewError = context.error;
     const { Title } = Typography;
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // const [showHeader, setShowHeader] = useState(true);
+    const unixToMomentTime=(value)=>{
+        if(value==null) return "";
+        const parseValue = parseInt(value)
+        const finalTime=  moment(parseValue).format('MMMM Do YYYY, h:mm:ss a');
+        return finalTime;
+    } 
+    // const UnixTimeConverterFromTimeList = (value)=>{
+    //     const dates = value.split(',');
+    //     const result = dates.map(unixToMomentTime)
+    //     return result;
+    //
+    // }
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
 
     function hasSubTask(task) {
-        if(task.status !== "sent"){
+        if(task.instances !=null){
             return true;
         } else {
             return false;
         }
     }
+    const tableHeaderFont = [{
+        font: '25px',
+    }]
 
     return (<>
         <Card bordered={false} bodyStyle={{ padding: 0 }}>
@@ -354,15 +373,21 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks 
                     <span>Campaign Overview</span>
                     &nbsp;
                     <Tag >{viewResult.campaign.campaignId}</Tag>
-                </Typography.Text>}
-                footer={<Space>
                     <Button
                         type="primary"
                         onClick={() => onCampaignStart({ campaignId: viewResult.campaign.campaignId })}
                         children={"Start Campaign"}
                         disabled={viewResult.campaign.createdOn !== viewResult.campaign.updatedOn}
                     />
-                </Space>}
+                </Typography.Text>}
+                /*footer={<Space>
+                    <Button
+                        type="primary"
+                        onClick={() => onCampaignStart({ campaignId: viewResult.campaign.campaignId })}
+                        children={"Start Campaign"}
+                        disabled={viewResult.campaign.createdOn !== viewResult.campaign.updatedOn}
+                    />
+                </Space>}*/
                 size="large"
                 bordered
             >
@@ -415,37 +440,93 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks 
             <Table
                 size="small"
                 dataSource={viewResult.tasks.map(task => {
-                    if (hasSubTask(task)) {
+                    //alert(JSON.stringify(task));
+
+                    if (!hasSubTask(task)) {
                         return task;
                     }
 
                     const newTask = { ...task };
-                    const children = [{ ...task }];
+                    //const children = [{ ...task }];
+
+
+                    const children=task.instances.split(',').map(msgChunk=>{
+                        const decodedMsgChunk = atob(msgChunk);
+                        const clonedTask = { ...task };
+                        clonedTask.message=decodedMsgChunk;
+                        return clonedTask;
+                    })
                     newTask.children = children;
                     return newTask;
                 })}
                 rowKey={"phoneNumber"}
                 locale={{ emptyText: viewError && `[ ${viewError.message} ]` }}
                 pagination={false}
-                style={{paddingBottom:8}}
+
             >
                 <Table.Column
                     title={"#"}
                     render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
                 />
 
-                <Table.Column title="Phone Number"  dataIndex={"phoneNumber"} />
+                <Table.Column title="Phone Number"  dataIndex={"phoneNumber"}  />
                 <Table.Column title="Task Status" dataIndex={"status"} render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>sent</Tag>, <Tag color={"error"}>error</Tag>][[v === "pending", v === "sent", v === "failed"].indexOf(!0)]} />
                 <Table.Column title="Status Message" dataIndex={undefined} render={(v, r, i) => (r.statusExternal && "sent") || (r.errorCode || r.errorCodeExternal)} />
-                <Table.Column title="Pakcage" dataIndex={"packageId"} />
+                <Table.Column title="Package" dataIndex={"packageId"} />
+                <Table.Column title="External Status Update Time" dataIndex={"lastUpdatedTxStamp"} render={(unixToMomentTime)} />
+                <Table.Column title="Error Code" dataIndex={"errorCode"} />
+                <Table.Column title="External Error Code" dataIndex={"errorCodeExternal"} />
+                <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
+                <Table.Column title="Message" dataIndex={"message"} />
+                <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
+                <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render= {(unixToMomentTime)}/>
+                <Table.Column title="Terminated Calling Number" dataIndex={"terminatingCalledNumber"} />
 
                 <Table.Column
                     dataIndex={undefined}
                     render={(_, campaignTask, i) => <Button onClick={_ => onDeleteTask(viewResult.campaign, campaignTask)} type="primary" disabled={campaignTask.status === "sent"}>Delete</Button>}
                 />
+                <Table.Column
+                    dataIndex={""}
+                    render={(_, campaignTask, i) => <Button onClick={() => showModal(campaignTask)} type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}}>Schedule</Button>}
+                    
+                />
             </Table>
             {/*<FilterTaskDataPager totalPagingItems={50} />*/}
         </Card>
+        <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
+            footer={[
+                <Button key="back" type="primary" onClick={handleCancel}>
+                  Close
+                </Button>]}
+        >
+            <Table
+                dataSource={((modalData || { allRetryTimes: "" }).allRetryTimes || "")
+                    .split(",").map((value,index) => (
+                        {
+                            key: index,
+                            date: value,
+                            status: 'failed',
+                            errorCode: '111',
+                        }
+                    )) }
+                rowKey={"phoneNumber"}
+                locale={{ emptyText: viewError && `[ ${viewError.message} ]` }}
+                pagination={false}
+                style={{padding:15
+            }}
+            >
+                <Table.Column
+                    title={"#"}
+                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
+                />
+                <Table.Column title="Schedule"  dataIndex={"date"} render={(unixToMomentTime)} />
+                {/*<Table.Column title="Status"  dataIndex={"status"} render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>Success</Tag>, <Tag color={"error"}>Failed</Tag>][[v === "pending", v === "success", v === "failed"].indexOf(!0)]} />
+                <Table.Column title="Error Code"  dataIndex={"errorCode"} />*/}
+
+                
+            </Table>
+        </Modal>
 
     </>);
 };
