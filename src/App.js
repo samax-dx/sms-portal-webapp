@@ -17,6 +17,9 @@ import { MyPackage } from './components/MyPackage';
 import {BrowserRouter, Route as ReactRoute} from "react-router-dom";
 import * as PropTypes from "prop-types";
 import {MyPaymentNew} from "./components/MyPaymentNew";
+import {OrdersNew} from "./components/OrdersNew";
+import {MyPackageNew} from "./components/MyPackageNew";
+import {BuyPackageNew} from "./components/BuyPackageNew";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -36,6 +39,9 @@ export const App = ({ actor }) => {
             <Routes>
                 <ReactRoute path="/" element={createRouteComponent(null)} />
                 <ReactRoute path="/paymentHistory" element={createRouteComponent(<MyPaymentNew />)} />
+                <ReactRoute path="/orderHistory" element={createRouteComponent(<OrdersNew />)} />
+                <ReactRoute path="/myPackage" element={createRouteComponent(<MyPackageNew />)} />
+                <ReactRoute path="/buyPackage" element={createRouteComponent(<BuyPackageNew />)} />
             </Routes>
         </BrowserRouter>
     );
