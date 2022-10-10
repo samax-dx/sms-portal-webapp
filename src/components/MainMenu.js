@@ -18,9 +18,12 @@ export const MainMenu = ({ actor }) => {
             selectedKeys={[appState.value]}
         >
             <Menu.SubMenu key="messaging" icon={<MailOutlined />} title="SMS Task">
-                <Menu.Item key="sendSMS" icon={<RocketTwoTone />} onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>
-                <Menu.Item key="campaign" icon={<FileTextTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN' })}>Campaigns</Menu.Item>
-                <Menu.Item key="campaignTaskReport" icon={<InfoCircleTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN_TASK_REPORT' })}>SMS History</Menu.Item>
+                {/*<Menu.Item key="sendSMS" icon={<RocketTwoTone />} onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>*/}
+                <Menu.Item key="sendSms" icon={<FileTextTwoTone />}><Link to={"/sendSms"}>Send SMS</Link></Menu.Item>
+                {/*<Menu.Item key="campaign" icon={<FileTextTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN' })}>Campaigns</Menu.Item>*/}
+                <Menu.Item icon={<FileTextTwoTone />}><Link to={"/campaign"}>Campaigns</Link></Menu.Item>
+                {/*<Menu.Item key="campaignTaskReport" icon={<InfoCircleTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN_TASK_REPORT' })}>SMS History</Menu.Item>*/}
+                <Menu.Item icon={<InfoCircleTwoTone />}><Link to={"/smsHistory"}>SMS History</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="order" icon={<DatabaseFilled />} title="Orders">
                 {/*<Menu.Item key="buyPackage" icon={<ShoppingTwoTone />} onClick={() => sendApp({ type: 'NAV_BUY_PACKAGE' })}>Buy Package</Menu.Item>*/}

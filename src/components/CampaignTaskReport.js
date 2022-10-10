@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     Form,
     Input,
@@ -6,34 +6,34 @@ import {
     Table,
     Space,
     Pagination,
-    DatePicker,
-    notification,
-    Collapse,
     Card,
     Select,
     Row,
     Col,
-    Typography,
-    Tag, Modal
+    Modal, Typography, DatePicker, notification, List, Tag, Divider, Statistic
 } from "antd";
+import Title from "antd/es/typography/Title";
+import {Br} from "./Br";
 import dayjs from "dayjs";
-import { useActor } from "@xstate/react";
-import { Br } from "./Br";
+import {ProductService} from "../services/ProductService";
+import {TaskSearchForm} from "./TaskSearch";
+import {CampaignService} from "../services/CampaignService";
+import {useParams} from "react-router-dom";
 import moment from "moment/moment";
 
 
-const SearchForm = ({ onSearch }) => {
+const SearchForm = ({onSearch}) => {
     const [searchForm] = Form.useForm();
 
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        ["updatedOn_fld0_value", "updatedOn_fld1_value"].forEach((n, i) => {
+        ["orderDate_fld0_value", "orderDate_fld1_value"].forEach((n, i) => {
             const date = formData[n];
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const queryData = ["phoneNumber", "campaignName", "packageId", "updatedOn_fld0_value", "updatedOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["orderId", "orderName", "productName", "orderDate_fld0_value", "orderDate_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -53,21 +53,23 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 15 }}
-            wrapperCol={{ span: 20}}
+            labelCol={{span: 15}}
+            wrapperCol={{span: 23}}
             labelAlign="left"
         >
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="phoneNumber" label="Phone Number" children={<Input />} />
-            <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="campaignName" label="Campaign" children={<Input />} />
-            <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />
-            <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
-            <Form.Item name="updatedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
-            <Form.Item name="updatedOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 2 }} colon={false} label=' '>
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="productName" label="Name"
+                       children={<Input/>}/>
+            <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input/>}/>
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="packagePrefixes" label="Prefix"
+                       children={<Input/>}/>
+            <Form.Item name="packagePrefixes_op" initialValue={"contains"} hidden children={<Input/>}/>
+            <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="date_fld1_value" label="To Date" hidden
+                       children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} wrapperCol={{offset: 4}} colon={false}
+                       label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -79,137 +81,10 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
-    const viewResult = context.result;
-    const viewError = context.error;
-    const unixToMomentTime=(value)=>{
-        if(value==null) return "";
-        const parseValue = parseInt(value)
-        // var dateString = moment.unix(+value).format("MM/DD/YYYY");
-        const finalTime=  moment(parseValue).subtract(6, 'hours').format('YYYY-MM-DD hh:mm:ss A');
-        //return dayjs(parseValue).format("MMM D, YYYY - hh:mm A")
-        return finalTime;
-    }
-    const [modalData, setModalData] = useState(null);
-    const showModal = data => setModalData(data);
-    const handleOk = () => setModalData(null);
-    const handleCancel = () => setModalData(null);
-    function hasSubTask(task) {
-        if(task.instances !=null && task.instances.indexOf(",") >= 0){
-            return true;
-        } else {
-            return false;
-        }
-    }
 
+const DataPager = ({totalPagingItems, currentPage, onPagingChange}) => {
     return (<>
-        <Table
-            style={{marginLeft:5}}
-            size="small"
-            dataSource={(viewResult.taskReports || []).map((task, i) => {
-                if (!hasSubTask(task)) {
-                    return { ...task, key: i };
-                }
-
-                const newTask = { ...task, key: i };
-
-                newTask.children = task.instances.split(',').map((msgChunk, i) =>{
-                    const decodedMsgChunk = atob(msgChunk);
-                    return { ...task, key: i+"/"+i, message: decodedMsgChunk };
-                });
-
-                return newTask;
-            })}
-            locale={{ emptyText: viewError && `[ ${viewError.message || "Fetch Error"} ]` }}
-            pagination={false}
-        >
-            <Table.Column
-                dataIndex={undefined}
-                title={"#"}
-                render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-            />
-
-            {/*<Table.Column title="PhoneNumber" dataIndex={"phoneNumber"} />
-            <Table.Column title="Message" dataIndex={"message"} />
-            <Table.Column title="Date" dataIndex={"updatedOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
-            <Table.Column title="Campaign" dataIndex={"campaignName"} />
-            <Table.Column title="Package" dataIndex={"packageId"} />*/}
-            <Table.Column title="Originating Called Number" dataIndex={"phoneNumber"}/>
-            <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
-            <Table.Column title="Message" dataIndex={"message"} />
-
-            <Table.Column title="Status" dataIndex={"status"} render={v => [
-                            <Tag color={"processing"}>pending</Tag>,
-                            <Tag color={"success"}>sent</Tag>,
-                            <Tag color={"error"}>error</Tag>][[v === "pending", v === "sent", v === "failed"].indexOf(!0)]} />
-
-            <Table.Column title="Status External" dataIndex={"statusExternal"} render={(v,row) => [
-                            <Tag></Tag>,
-                            <Tag color={"processing"}>pending</Tag>,
-                            <Tag color={"success"}>delivered</Tag>,
-                            <Tag color={"error"}>error</Tag>,
-                            ][[row.status === "failed", v === "pending" || v == null, v ==="delivered", v === "rejected" || v === "undetermined"]
-                                    .indexOf(!0)]} />
-
-            <Table.Column title="External Status Update Time" dataIndex={"updatedOn"} render={(unixToMomentTime)}/>
-
-            <Table.Column title="Error" dataIndex={"errorCode"} />
-            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} />
-            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
-            <Table.Column title="Package" dataIndex={"packageId"} />
-            <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
-            <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render= {(unixToMomentTime)}/>
-
-            <Table.Column
-                dataIndex={""}
-                render={(_, campaignTask, i) =>
-                    <Button onClick={() => showModal(campaignTask)} type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}}>
-                        Schedule
-                    </Button>
-                } />
-        </Table>
-
-        <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
-               footer={[
-                   <Button key="back" type="primary" onClick={handleCancel}>
-                       Close
-                   </Button>]}
-        >
-            <Table
-                dataSource={((modalData || { allRetryTimes: "" }).allRetryTimes || "")
-                    .split(",").map((value,index) => (
-                        {
-                            key: index,
-                            date: value,
-                            status: 'failed',
-                            errorCode: '111',
-                        }
-                    )) }
-                rowKey={"phoneNumber"}
-                locale={{ emptyText: viewError && `[ ${viewError.message} ]` }}
-                pagination={false}
-                style={{padding:15
-                }}
-            >
-                <Table.Column
-                    title={"#"}
-                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
-                />
-                <Table.Column title="Schedule"  dataIndex={"date"} render={(unixToMomentTime)} />
-                {/*<Table.Column title="Status"  dataIndex={"status"} render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>Success</Tag>, <Tag color={"error"}>Failed</Tag>][[v === "pending", v === "success", v === "failed"].indexOf(!0)]} />
-                <Table.Column title="Error Code"  dataIndex={"errorCode"} />*/}
-                <Table.Column title="Retry History"  dataIndex={""} render={console.log} />
-
-
-            </Table>
-        </Modal>
-
-    </>);
-};
-
-const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
-    return (<>
-        <Space align="end" direction="vertical" style={{ width: "100%" }}>
+        <Space align="end" direction="vertical" style={{width: "100%"}}>
             <Pagination
                 total={totalPagingItems}
                 defaultPageSize={10}
@@ -222,48 +97,221 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const CampaignTaskReport = ({ actor: [listLoader] }) => {
+export const CampaignTaskReport = () => {
+    const {campaignId} = useParams();
+
     // Component States
-    const [{ context: listLoaderContext }] = useActor(listLoader);
+    const [lastQuery, setLastQuery] = useState({});
+    const [campaign, setCampaign] = useState([]);
+    const [campaignFetchError, setCampaignFetchError] = useState(null);
 
+    const [tasks, setTasks] = useState([]);
+    const [campaignTasksFetchCount, setCampaignTasksFetchCount] = useState(0);
 
-    // Dependent Helper Functions
-    const sendPagedQuery = queryData => (page, limit) => {
-        // alert(JSON.stringify(listLoaderContext));
-        page === undefined && (page = queryData.page)
-        limit === undefined && (limit = queryData.limit)
-        console.log(queryData, page, limit);
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
 
-        const query = { data: { ...queryData, page, limit }, type: "LOAD" };
-        return listLoader.send(query);
+    const hasSubTask = task => {
+        if(task.instances !=null){
+            return true;
+        } else {
+            return false;
+        }
     };
 
+    const unixToMomentTime = value => {
+        if(value==null) return "";
+        const parseValue = parseInt(value)
+        const finalTime=  moment(parseValue).format('MMMM Do YYYY, h:mm:ss a');
+        return finalTime;
+    }
 
-    // Initializers
-    useEffect(() => sendPagedQuery(listLoaderContext.payload.data)(), []);
+    useEffect(() => {
+        CampaignService.fetchCampaignTasks({ ...lastQuery, campaignId })
+            .then((data) => {
+                setCampaign(data.campaign);
+                setTasks(data.tasks);
+                setCampaignTasksFetchCount(data.count);
+                setCampaignFetchError(null);
+            })
+            .catch(error => {
+                setCampaign([]);
+                setCampaignTasksFetchCount(0);
+                setCampaignFetchError(error);
+            });
+    }, [lastQuery]);
+
+    useEffect(() => {
+        setLastQuery({ page: 1, limit: 10 })
+    }, []);
 
 
-    // Component Current Properties
-    const onClickView = data => console.log("view", data);
-    const onClickEdit = data => console.log("edit", data);
-    const onClickDelete = data => console.log("delete", data);
-
-    const viewPage = listLoaderContext.payload.data.page;
-    const viewLimit = listLoaderContext.payload.data.limit;
-    const { Title } = Typography;
     return (<>
-        <Row style={{marginLeft:5}}>
-            <Col md={24}>
-                <Card title={<Title level={5}>SMS History</Title>}
-                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
-                      size='small'>
-                    <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+        <Card bordered={false} bodyStyle={{padding: 0}}>
+            <List
+                header={
+                    <Typography.Text strong>
+                        <span>Campaign Overview</span>
+                        &nbsp;
+                        <Tag>{campaignId}</Tag>
+                        <Button
+                            type="primary"
+                            // onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}
+                            children={"Start Campaign"}
+                            disabled={campaign.createdOn !== campaign.updatedOn}
+                        />
+                    </Typography.Text>
+                }
+                bordered
+            >
+                <Card bordered={false} style={{margin: "0px"}}>
+                    <Space split={<Divider type="vertical" style={{height: "18vh"}}/>} size={"large"}
+                           style={{alignItems: 'start'}}>
+                        <div
+                            children={
+                                [
+                                    ["campaignName", "Campaign Name"],
+                                    ["createdOn", "Date", d => dayjs(d).format("MMM D, YYYY - hh:mm A")],
+                                    ["message", "Message"]
+                                ].map(([k, l, toValue = v => v]) => (<Row gutter={[10]} key={k}>
+                                    <Col><Typography.Paragraph strong>{l}</Typography.Paragraph></Col>
+                                    <Col>&nbsp;:&nbsp;</Col>
+                                    <Col><Typography.Text>{toValue(campaign[k])}</Typography.Text></Col>
+                                </Row>))
+                            }
+                        />
+                        <List
+                            grid={{gutter: 24}}
+                            dataSource={[
+                                [
+                                    ["sentTaskCount", "Sent", "success", v => v || 0],
+                                    ["failedTaskCount", "Failed", "secondary", v => v || 0],
+                                    ["pendingTaskCount", "Pending", "warning", v => v || 0],
+                                    ["totalTaskCount", "Total Task", "danger", v => v],
+                                ]
+                            ]}
+                            renderItem={item => item.map(([key, label, type, toValue]) => (<Col>
+                                <Statistic
+                                    title={<Typography.Text type={type} strong>{label}</Typography.Text>}
+                                    value={toValue(campaign[key])}
+                                    key={key}
+                                />
+                            </Col>))}
+                        />
+                    </Space>
                 </Card>
-            </Col>
-        </Row>
-        {/*<Br />*/}
-        <DataView context={listLoaderContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
-        <Br />
-        <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />
+            </List>
+        </Card>
+
+        <Card title={<Title style={{marginLeft: 12}} level={5}>Search Task</Title>}
+              headStyle={{/*backgroundColor:"#f0f2f5",*/ border: 0, padding: '0px'}}
+              size="small"
+        >
+            <TaskSearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+        </Card>
+
+        <Card title="Campaign Tasks">
+            <Table
+                size="small"
+                dataSource={tasks.map(task => {
+                    //alert(JSON.stringify(task));
+
+                    if (!hasSubTask(task)) {
+                        return task;
+                    }
+
+                    const newTask = {...task};
+                    //const children = [{ ...task }];
+
+
+                    const children = task.instances.split(',').map(msgChunk => {
+                        const decodedMsgChunk = atob(msgChunk);
+                        const clonedTask = {...task};
+                        clonedTask.message = decodedMsgChunk;
+                        return clonedTask;
+                    })
+                    newTask.children = children;
+                    return newTask;
+                })}
+                rowKey={"phoneNumber"}
+                locale={{emptyText: campaign === null ? "E" : "NO DATA"}}
+                pagination={false}
+
+            >
+                <Table.Column
+                    title={"#"}
+                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
+                />
+
+                <Table.Column title="Phone Number" dataIndex={"phoneNumber"}/>
+                <Table.Column title="Task Status" dataIndex={"status"}
+                              render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>sent</Tag>,
+                                  <Tag
+                                      color={"error"}>error</Tag>][[v === "pending", v === "sent", v === "failed"].indexOf(!0)]}/>
+                <Table.Column title="Status Message" dataIndex={undefined}
+                              render={(v, r, i) => (r.statusExternal && "sent") || (r.errorCode || r.errorCodeExternal)}/>
+                <Table.Column title="Package" dataIndex={"packageId"}/>
+                <Table.Column title="External Status Update Time" dataIndex={"lastUpdatedTxStamp"}
+                              render={(unixToMomentTime)}/>
+                <Table.Column title="Error Code" dataIndex={"errorCode"}/>
+                <Table.Column title="External Error Code" dataIndex={"errorCodeExternal"}/>
+                <Table.Column title="External Task Id" dataIndex={"taskIdExternal"}/>
+                <Table.Column title="Message" dataIndex={"message"}/>
+                <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)}/>
+                <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render={(unixToMomentTime)}/>
+                <Table.Column title="Terminated Calling Number" dataIndex={"terminatingCalledNumber"}/>
+
+                <Table.Column
+                    dataIndex={undefined}
+                    render={(_, campaignTask, i) => <Button
+                        // onClick={_ => onDeleteTask(viewResult.campaign, campaignTask)} type="primary"
+                        disabled={campaignTask.status === "sent"}>Delete</Button>}
+                />
+                <Table.Column
+                    dataIndex={""}
+                    render={(_, campaignTask, i) => <Button onClick={() => showModal(campaignTask)} type="primary"
+                                                            style={{
+                                                                background: "#1890ff",
+                                                                borderColor: "#1890ff"
+                                                            }}>Schedule</Button>}
+
+                />
+            </Table>
+            <DataPager totalPagingItems={campaignTasksFetchCount} currentPage={lastQuery.page}
+                       onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+        </Card>
+        <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
+               footer={[
+                   <Button key="back" type="primary" onClick={handleCancel}>
+                       Close
+                   </Button>]}
+        >
+            <Table
+                dataSource={((modalData || {allRetryTimes: ""}).allRetryTimes || "")
+                    .split(",").map((value, index) => (
+                        {
+                            key: index,
+                            date: value,
+                            status: 'failed',
+                            errorCode: '111',
+                        }
+                    ))}
+                rowKey={"phoneNumber"}
+                locale={{emptyText: campaign === null ? "E" : "NO DATA"}}
+                pagination={false}
+                style={{
+                    padding: 15
+                }}
+            >
+                <Table.Column
+                    title={"#"}
+                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
+                />
+                <Table.Column title="Schedule" dataIndex={"date"} render={(unixToMomentTime)}/>
+            </Table>
+        </Modal>
+
     </>);
 };

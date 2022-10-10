@@ -89,7 +89,7 @@ export const AppMachine = createMachine({
                 spawnFetcher(
                     Campaign.fetchCampaignTaskReports,
                     { data: { page: 1, limit: 10 } },
-                    { campaigns: [], count: 0 },
+                    { taskReports: [], count: 0 },
                     { message: "Waiting for Campaign-Task Search" }
                 ),
                 spawnFetcher(

@@ -16,6 +16,7 @@ import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
 import dayjs from "dayjs";
 import {ProductService} from "../services/ProductService";
+import {OrderService} from "../services/OrderService";
 
 
 
@@ -75,7 +76,6 @@ const SearchForm = ({ onSearch }) => {
 };
 
 const DataView = ({ products, viewPage, viewLimit}) => {
-
     return (<>
         <Table
             style={{marginLeft:'6px'}}
@@ -98,7 +98,30 @@ const DataView = ({ products, viewPage, viewLimit}) => {
 
             <Table.Column
                 dataIndex={undefined}
-                render={(_, product, i) => <Button onClick type="primary">Buy Package</Button>}
+                render={(_, product, i) => (
+                    <Button
+                        onClick={() => OrderService
+                            .createOrder({ ...product, quantity: 1 })
+                            .then(order => {
+                                notification.success({
+                                    key: `corder_${Date.now()}`,
+                                    message: "Task Complete",
+                                    description: <>Order created: {order.orderId}</>,
+                                    duration: 5
+                                });
+                            })
+                            .catch(error => {
+                                notification.error({
+                                    key: `corder_${Date.now()}`,
+                                    message: "Task Failed",
+                                    description: <>Error placing order.<br />{error.message}</>,
+                                    duration: 5
+                                });
+                            })
+                        }
+                        type="primary"
+                    >Buy Package</Button>
+                )}
             />
         </Table>
     </>);

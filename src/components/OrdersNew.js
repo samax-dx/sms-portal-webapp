@@ -128,7 +128,6 @@ export const OrdersNew = () => {
     useEffect(() => {
         OrderService.fetchOrders(lastQuery)
             .then((data) => {
-                console.log(data)
                 setOrders(data.orders);
                 setOrdersFetchCount(data.count);
                 setOrdersFetchError(null);

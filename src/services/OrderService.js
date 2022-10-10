@@ -42,6 +42,7 @@ export const OrderService = {
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.orderId) {
                 return Promise.resolve(data);
