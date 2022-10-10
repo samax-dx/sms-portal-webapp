@@ -5,6 +5,7 @@ import { Col, Row, Layout, Breadcrumb } from 'antd';
 import { TopMenu } from "./TopMenu";
 import { MainMenu } from './MainMenu';
 import getAllConfig from '../config/main'
+import {Link} from "react-router-dom";
 
 
 const { Header, Sider } = Layout;
@@ -20,9 +21,9 @@ export const AppLayout = ({ render: PageContent, actor,routeComponent }) => {
             <Header className="header" style={{paddingLeft:'5px',paddingRight:'5px'}}>
                 <Row>
                     <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
-                        <img src={getAllConfig.logo} style={{ marginBottom: "4px" }} />
+                        <Link to='/'><img src={getAllConfig.logo} style={{ marginBottom: "4px" }} /></Link>
                         &nbsp;
-                        <span>SMS-Portal Client</span>
+                        <Link to="/" style={{color:'white'}}><span>SMS-Portal Client</span></Link>
                     </Col>
                     <Col xs={14} sm={20} className="menu"><TopMenu actor={actor} /></Col>
                 </Row>
@@ -32,7 +33,8 @@ export const AppLayout = ({ render: PageContent, actor,routeComponent }) => {
                     <MainMenu actor={actor} />
                 </Sider>
                 <Layout style={{ padding: "2px" }}>
-                    <PageContent actor={appState.context.actor} />
+                    {window.location.href.match(/^(?:.*?:\/\/)?(?:[^\/]+)\/?$/)
+                        ? <PageContent actor={appState.context.actor}/> : null}
                     {routeComponent}
                 </Layout>
             </Layout>
