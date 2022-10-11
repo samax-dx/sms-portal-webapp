@@ -1,16 +1,32 @@
-import { Button, Card,Typography, Form, Input,Text, Space, Tooltip, Checkbox, notification, Select, Upload, message } from "antd";
+import {
+    Button,
+    Card,
+    Typography,
+    Form,
+    Input,
+    Text,
+    Space,
+    Tooltip,
+    Checkbox,
+    notification,
+    Select,
+    Upload,
+    message,
+    Spin
+} from "antd";
 import * as sheetjs from "xlsx";
 import { FileTextTwoTone } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import {SmsTaskService} from "../services/SmsTaskService";
+import React, {useState} from "react";
 
 
 export const SendSmsNew = () => {
     const [campaignForm] = Form.useForm();
+    const [spinning, setSpinning] = useState(false);
 
     const { Title, Text } = Typography;
-
-    return (<>
+    const dataForm = (
         <Card style={{marginLeft:5}} title={<Title level={5}>Send SMS</Title>}
               headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
             <Form
@@ -111,23 +127,24 @@ export const SendSmsNew = () => {
                                 onClick={() => {
                                     campaignForm
                                         .validateFields()
-                                        .then(_ => SmsTaskService.sendSms(campaignForm.getFieldsValue()))
+                                        .then(_ =>setSpinning(true) || SmsTaskService.sendSms(campaignForm.getFieldsValue()))
                                         .then(report => {
+                                            setSpinning(false);
                                             notification.success({
                                                 key: `csend_${Date.now()}`,
                                                 message: "Task Finished",
                                                 description: <>
-                                                <Text type="default">CampaignId: {report.campaignId}</Text><br></br>
-                                                <Text type="success">Success: {report.success}</Text><br></br>
-                                                <Text type="danger">Failure: {report.failure}</Text><br></br>
-                                                <Text type="default">TaskCount: {report.taskCount}</Text><br></br>
+                                                    <Text type="default">CampaignId: {report.campaignId}</Text><br></br>
+                                                    <Text type="success">Success: {report.success}</Text><br></br>
+                                                    <Text type="danger">Failure: {report.failure}</Text><br></br>
+                                                    <Text type="default">TaskCount: {report.taskCount}</Text><br></br>
                                                 </>,
                                                 duration: 15,
                                             });
                                             campaignForm.resetFields();
                                         })
                                         .catch(error => {
-                                            notification.error({
+                                            setSpinning(false) ||notification.error({
                                                 key: `csend_${Date.now()}`,
                                                 message: "Task Failed",
                                                 description: <>
@@ -144,5 +161,9 @@ export const SendSmsNew = () => {
                 </Form.Item>
             </Form>
         </Card>
+    );
+
+    return (<>
+        {spinning ? <Spin tip="Sending SMS..." size="large">{dataForm}</Spin> : dataForm}
     </>)
 };

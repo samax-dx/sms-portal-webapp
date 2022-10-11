@@ -3,7 +3,7 @@ import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const AccountingNew = ({
-    fetchBalanceRequests: (payload) => axios
+    fetchBalanceRequests: (payload) =>console.log(payload) || axios
         .post(
             `${SERVER_URL}/Accounting/listPartyBalanceRequests`,
             { ...payload},
@@ -31,12 +31,15 @@ export const AccountingNew = ({
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
-    requestDeposit: (ctx, ev) => axios
+    requestDeposit: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Accounting/addPartyBalanceRequest`,
-            { ...ev.data },
+            { ...payload },
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,6 +49,7 @@ export const AccountingNew = ({
         )
         .then(response => {
             const { data } = response;
+            console.log(data);
 
             if (data.paymentId) {
                 return Promise.resolve(data);
@@ -56,6 +60,9 @@ export const AccountingNew = ({
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         })
 });

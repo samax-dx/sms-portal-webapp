@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification
+    Modal, Typography, DatePicker, notification, Spin
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -76,7 +76,9 @@ const SearchForm = ({ onSearch }) => {
 };
 
 const DataView = ({ products, viewPage, viewLimit}) => {
-    return (<>
+    const [spinning, setSpinning] = useState(false);
+
+    const dataTable = (
         <Table
             style={{marginLeft:'6px'}}
             size="small"
@@ -100,9 +102,10 @@ const DataView = ({ products, viewPage, viewLimit}) => {
                 dataIndex={undefined}
                 render={(_, product, i) => (
                     <Button
-                        onClick={() => OrderService
+                        onClick={() =>setSpinning(true) || OrderService
                             .createOrder({ ...product, quantity: 1 })
                             .then(order => {
+                                setSpinning(false);
                                 notification.success({
                                     key: `corder_${Date.now()}`,
                                     message: "Task Complete",
@@ -111,7 +114,7 @@ const DataView = ({ products, viewPage, viewLimit}) => {
                                 });
                             })
                             .catch(error => {
-                                notification.error({
+                                setSpinning(false) ||notification.error({
                                     key: `corder_${Date.now()}`,
                                     message: "Task Failed",
                                     description: <>Error placing order.<br />{error.message}</>,
@@ -124,6 +127,9 @@ const DataView = ({ products, viewPage, viewLimit}) => {
                 )}
             />
         </Table>
+    );
+    return (<>
+        {spinning ? <Spin tip="Placing Package Order..." size="large">{dataTable}</Spin> : dataTable}
     </>);
 };
 

@@ -25,15 +25,15 @@ import moment from "moment/moment";
 const SearchForm = ({onSearch}) => {
     const [searchForm] = Form.useForm();
 
-    const performSearch = () => {
+    const performSearch = () => {// {[fieldName]: value}
         const formData = searchForm.getFieldsValue();
 
-        ["orderDate_fld0_value", "orderDate_fld1_value"].forEach((n, i) => {
+        ["cratedOn_fld0_value", "cratedOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const queryData = ["orderId", "orderName", "productName", "orderDate_fld0_value", "orderDate_fld1_value"].reduce((acc, v) => {
+        const queryData = ["phoneNumber", "cratedOn_fld0_value", "cratedOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -53,23 +53,13 @@ const SearchForm = ({onSearch}) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{span: 15}}
-            wrapperCol={{span: 23}}
+            labelCol={{ span: 22 }}
+            wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="productName" label="Name"
-                       children={<Input/>}/>
-            <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input/>}/>
-            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="packagePrefixes" label="Prefix"
-                       children={<Input/>}/>
-            <Form.Item name="packagePrefixes_op" initialValue={"contains"} hidden children={<Input/>}/>
-            <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
-            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="date_fld1_value" label="To Date" hidden
-                       children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>
-            <Form.Item style={{display: 'inline-block', margin: '0px'}} wrapperCol={{offset: 4}} colon={false}
-                       label=' '>
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="phoneNumber" label="Campaign Phone Number" children={<Input />} />
+            <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item wrapperCol={{ offset: 5 }} style={{display:'inline-block', margin:'0px'}} colon={false} label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -114,7 +104,7 @@ export const CampaignTaskReport = () => {
     const handleCancel = () => setModalData(null);
 
     const hasSubTask = task => {
-        if(task.instances !=null){
+        if(task.instances && task.instances.split(",").length > 1){
             return true;
         } else {
             return false;
@@ -209,7 +199,7 @@ export const CampaignTaskReport = () => {
               headStyle={{/*backgroundColor:"#f0f2f5",*/ border: 0, padding: '0px'}}
               size="small"
         >
-            <TaskSearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+            <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
         </Card>
 
         <Card title="Campaign Tasks">
@@ -265,28 +255,51 @@ export const CampaignTaskReport = () => {
 
                 <Table.Column
                     dataIndex={undefined}
-                    render={(_, campaignTask, i) => <Button
-                        // onClick={_ => onDeleteTask(viewResult.campaign, campaignTask)} type="primary"
-                        disabled={campaignTask.status === "sent"}>Delete</Button>}
+                    render={(value, record, index) =>
+                        <Button
+                            onClick={_ => CampaignService
+                                .removeCampaignTask(record)
+                                .then(data => {
+                                    notification.success({
+                                        key: `dtask_${Date.now()}`,
+                                        message: "Task Finished",
+                                        description: `Task deleted: ${record.phoneNumber}`,
+                                        duration: 5
+                                    });
+                                })
+                                .catch(error => {
+                                    notification.error({
+                                        key: `dtask_${Date.now()}`,
+                                        message: "Task Failed",
+                                        description: <>
+                                            Error Deleting Task.<br />{JSON.stringify(error)}
+                                        </>,
+                                        duration: 5
+                                    });
+                                })
+                            }
+                            type="primary"
+                            disabled={record.status !== "pending"}
+                            style={{display: "none"}}
+                        >Delete</Button>
+                    }
                 />
                 <Table.Column
-                    dataIndex={""}
-                    render={(_, campaignTask, i) => <Button onClick={() => showModal(campaignTask)} type="primary"
-                                                            style={{
-                                                                background: "#1890ff",
-                                                                borderColor: "#1890ff"
-                                                            }}>Schedule</Button>}
-
+                    dataIndex={undefined}
+                    render={(_, record, i) =>
+                        <Button onClick={() => showModal(record)} type="primary"
+                                style={{
+                                    background: "#1890ff",
+                                    borderColor: "#1890ff"
+                        }}>Schedule</Button>
+                    }
                 />
             </Table>
             <DataPager totalPagingItems={campaignTasksFetchCount} currentPage={lastQuery.page}
                        onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         </Card>
         <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
-               footer={[
-                   <Button key="back" type="primary" onClick={handleCancel}>
-                       Close
-                   </Button>]}
+               footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} maskClosable={false} closable={false}
         >
             <Table
                 dataSource={((modalData || {allRetryTimes: ""}).allRetryTimes || "")

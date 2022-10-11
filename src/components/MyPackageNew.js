@@ -78,6 +78,7 @@ const DataView = ({ products, viewPage, viewLimit}) => {
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
+    console.log(products)
 
     return (<>
         <Table
@@ -104,8 +105,8 @@ const DataView = ({ products, viewPage, viewLimit}) => {
                                       overflow:"hidden",
                                       verticalAlign:"middle"
                                   }}
-                              >017,015,018,019</span>
-                              <Button type="link" onClick={() => showModal(v)}>show all</Button>
+                              >{v}</span>
+                              <Button type="link" onClick={() => showModal(v)}>Show all</Button>
                           </>} />
             <Table.Column title="Total" dataIndex={undefined} render={() => "Unknown"}/>
             <Table.Column title="Remaining" dataIndex={"stock"} />

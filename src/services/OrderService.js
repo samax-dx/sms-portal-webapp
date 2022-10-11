@@ -27,9 +27,12 @@ export const OrderService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
-    createOrder: (payload) => axios
+    createOrder: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Order/createPartyOrder`,
             { ...payload },
@@ -53,6 +56,9 @@ export const OrderService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
 };

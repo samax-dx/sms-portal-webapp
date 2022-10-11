@@ -42,14 +42,14 @@ export const App = ({ actor }) => {
         <BrowserRouter>
             <Routes>
                 <ReactRoute path="/" element={createRouteComponent(null)} />
-                <ReactRoute path="/paymentHistory" element={createRouteComponent(<MyPaymentNew />)} />
-                <ReactRoute path="/orderHistory" element={createRouteComponent(<OrdersNew />)} />
-                <ReactRoute path="/myPackage" element={createRouteComponent(<MyPackageNew />)} />
-                <ReactRoute path="/buyPackage" element={createRouteComponent(<BuyPackageNew />)} />
-                <ReactRoute path="/smsHistory" element={createRouteComponent(<SmsHistory />)} />
-                <ReactRoute path="/campaign" element={createRouteComponent(<CampaignNew />)} />
-                <ReactRoute path="/campaign/:campaignId" element={createRouteComponent(<CampaignTaskReport />)} />
-                <ReactRoute path="/sendSms" element={createRouteComponent(<SendSmsNew />)} />
+                <ReactRoute path="/balance/paymentHistory" element={createRouteComponent(<MyPaymentNew />)} />
+                <ReactRoute path="/order/orderHistory" element={createRouteComponent(<OrdersNew />)} />
+                <ReactRoute path="/order/myPackage" element={createRouteComponent(<MyPackageNew />)} />
+                <ReactRoute path="/order/buyPackage" element={createRouteComponent(<BuyPackageNew />)} />
+                <ReactRoute path="/messaging/smsHistory" element={createRouteComponent(<SmsHistory />)} />
+                <ReactRoute path="/messaging/campaign" element={createRouteComponent(<CampaignNew />)} />
+                <ReactRoute path="/messaging/campaign/:campaignId" element={createRouteComponent(<CampaignTaskReport />)} />
+                <ReactRoute path="/messaging/sendSms" element={createRouteComponent(<SendSmsNew />)} />
             </Routes>
         </BrowserRouter>
     );

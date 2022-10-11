@@ -285,10 +285,24 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                             .validateFields()
                             .then(_ => CampaignService.saveCampaign(writeForm.getFieldsValue()))
                             .then(campaign => {
-                                alert(campaign);
+                                // alert(campaign);
                                 onRecordSaved(campaign);
+                                notification.success({
+                                    key: `corder_${Date.now()}`,
+                                    message: "Task Complete",
+                                    description: <>Campaign created: {campaign.campaignId}</>,
+                                    duration: 5
+                                });
                             })
-                            .catch(error => {alert(error.message)}))
+                            // .catch(error => {alert(error.message)}))
+                            .catch(error => {
+                                notification.error({
+                                    key: `corder_${Date.now()}`,
+                                    message: "Task Failed",
+                                    description: <>Error placing order.<br />{error.message}</>,
+                                    duration: 5
+                                });
+                            }))
                         .catch(_ => { })
                     }
                     children={"Submit"}
@@ -319,7 +333,7 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
                 dataIndex={undefined}
                 render={(_, campaign, i) => {
                     return (
-                        <Link to={`/campaign/${campaign.campaignId}`}>{campaign.campaignId}</Link>
+                        <Link to={`/messaging/campaign/${campaign.campaignId}`}>{campaign.campaignId}</Link>
                         // <Button onClick={() => onView(campaign)} type="link">{campaign.campaignId}</Button>
                     );
                 }}
@@ -401,7 +415,7 @@ export const CampaignNew = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} onOk={handleOk} onCancel={handleCancel}>
+            <Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>

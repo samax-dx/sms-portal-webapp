@@ -165,10 +165,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
         </Table>
 
         <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
-               footer={[
-                   <Button key="back" type="primary" onClick={handleCancel}>
-                       Close
-                   </Button>]}
+               footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} maskClosable={false} closable={false}
         >
             <Table
                 dataSource={((modalData || { allRetryTimes: "" }).allRetryTimes || "")
