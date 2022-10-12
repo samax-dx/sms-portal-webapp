@@ -24,6 +24,7 @@ import {SmsHistory} from "./components/SmsHistory";
 import {CampaignNew} from "./components/CampaignNew";
 import {CampaignTaskReport} from "./components/CampaignTaskReport";
 import {SendSmsNew} from "./components/SendSmsNew";
+import {Groups} from "./components/Group";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -50,6 +51,8 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/messaging/campaign" element={createRouteComponent(<CampaignNew />)} />
                 <ReactRoute path="/messaging/campaign/:campaignId" element={createRouteComponent(<CampaignTaskReport />)} />
                 <ReactRoute path="/messaging/sendSms" element={createRouteComponent(<SendSmsNew />)} />
+                <ReactRoute path="/contactBook/groups" element={createRouteComponent(<Groups />)} />
+                {/*<ReactRoute path="/contactBook/groups/:groupId" element={} />*/}
             </Routes>
         </BrowserRouter>
     );

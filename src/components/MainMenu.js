@@ -27,6 +27,10 @@ export const MainMenu = ({ actor }) => {
                 {/*<Menu.Item key="campaignTaskReport" icon={<InfoCircleTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN_TASK_REPORT' })}>SMS History</Menu.Item>*/}
                 <Menu.Item key="smsHistory"  icon={<InfoCircleTwoTone />}><Link to={"/messaging/smsHistory"}>SMS History</Link></Menu.Item>
             </Menu.SubMenu>
+            <Menu.SubMenu key="contactBook" icon={<MailOutlined />} title="Contact Book">
+                {/*<Menu.Item key="sendSMS" icon={<RocketTwoTone />} onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>*/}
+                <Menu.Item key="groups" icon={<FileTextTwoTone />}><Link to={"/contactBook/groups"}>Groups</Link></Menu.Item>
+            </Menu.SubMenu>
             <Menu.SubMenu key="order" icon={<DatabaseFilled />} title="Orders">
                 {/*<Menu.Item key="buyPackage" icon={<ShoppingTwoTone />} onClick={() => sendApp({ type: 'NAV_BUY_PACKAGE' })}>Buy Package</Menu.Item>*/}
                 <Menu.Item key="buyPackage" icon={<ShoppingTwoTone />}> <Link to="/order/buyPackage">Buy Package</Link></Menu.Item>
