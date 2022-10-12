@@ -81,7 +81,6 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
     const [writeForm] = Form.useForm(form);
 
     useEffect(() => writeForm.resetFields(), [record, writeForm]);
-    const [type, setType] = useState('default');
 
     return (<>
         <Form
@@ -92,11 +91,10 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
             style={{
                 padding:'35px'
             }}
+            onFinish={() => writeForm.resetFields()}
         >
-            <Form.Item name="groupName" label="Group Name" rules={[{ required: true }]} children={<Input />} />
-
             <Form.Item name="groupId" label="Group ID" rules={[{ required: false }]} hidden children={<Input />} />
-            <Form.Item name="partyId" label="Party ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="groupName" label="Group Name" rules={[{ required: true }]} children={<Input />} />
 
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Button
@@ -163,7 +161,7 @@ const DataView = ({ groups, viewPage, viewLimit, onView}) => {
             />
 
             <Table.Column title="Group Name" dataIndex={"groupName"} />
-            <Table.Column title="Party ID" dataIndex={"partyId"} />
+            {/*<Table.Column title="Party ID" dataIndex={"partyId"} />*/}
         </Table>
     </>);
 };
@@ -232,7 +230,7 @@ export const Groups = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={1000} key="createGroup" visible={modalData} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
+            <Modal key="createGroup" visible={modalData} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>

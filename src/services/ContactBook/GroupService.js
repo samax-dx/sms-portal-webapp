@@ -2,9 +2,9 @@ import {createOrUpdateMocked} from "../../Util";
 import {deleteOneMocked} from "../../Util";
 
 const groups = [
-    { groupId: "101", partyId: "1001", groupName: "Football Team" },
-    { groupId: "102", partyId: "1002", groupName: "Fakir" },
-    { groupId: "103", partyId: "1003", groupName: "Developer" },
+    { groupId: "101", partyId: "10040", groupName: "Football Team" },
+    { groupId: "102", partyId: "10040", groupName: "Fakir" },
+    { groupId: "103", partyId: "10040", groupName: "Developer" },
 ];
 
 export const GroupService = {
@@ -19,7 +19,7 @@ export const GroupService = {
                 }
             }
         )*/
-        Promise.resolve({ groups: groups.filter(group => group.groupName.includes(payload.groupName || "")), count: groups.length })
+        Promise.resolve({ groups: groups.filter(group => group.groupName?.toLowerCase().includes(payload.groupName?.toLowerCase() || "")), count: groups.length })
             .then(response => {
                 const  data  = response;
                 console.log(data)

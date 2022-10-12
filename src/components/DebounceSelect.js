@@ -1,5 +1,6 @@
-import React from 'react';
-import { Select, Spin } from 'antd';
+import React, {useRef} from 'react';
+import {Form, Select, Spin} from 'antd';
+import {PartyService} from "../services/PartyService";
 
 
 const debounce = (cb, timeout = 300, _idle = true, _args) => (...args) => {
@@ -15,10 +16,18 @@ const debounce = (cb, timeout = 300, _idle = true, _args) => (...args) => {
     _args = [...args];
 };
 
-export const DebounceSelect = ({ fetchOptions, debounceTimeout = 500, ...props }) => {
+export const DebounceSelect = ({ query, debounceTimeout = 500, ...props }) => {
+    const fetchOptions = () => PartyService.fetchRecords({})
+        .then(data =>
+            data.parties.map((user) => ({
+                label: `${user.partyId} - ${user.name}`,
+                value: user.partyId,
+            })),
+        );
     const [fetching, setFetching] = React.useState(false);
     const [options, setOptions] = React.useState([]);
     const fetchRef = React.useRef(0);
+    const ref = useRef();
     const debounceFetcher = React.useMemo(() => {
         const loadOptions = (value) => {
             fetchRef.current += 1;
@@ -39,12 +48,17 @@ export const DebounceSelect = ({ fetchOptions, debounceTimeout = 500, ...props }
         return debounce(loadOptions, debounceTimeout);
     }, [fetchOptions, debounceTimeout]);
     return (
-        <Select
-            filterOption={false}
-            onSearch={debounceFetcher}
-            notFoundContent={fetching ? <Spin size="small" /> : null}
-            {...props}
-            options={options}
-        />
+        <Form.Item name="partyId" rules={[{ required: true }]} >
+            <Select
+                ref={ref}
+                mode='multiple'
+                filterOption={false}
+                onSearch={debounceFetcher}
+                notFoundContent={fetching ? <Spin size="small" /> : null}
+                {...props}
+                options={options}
+                onChange={() => ref.current.blur()}
+            />
+        </Form.Item>
     );
 }
