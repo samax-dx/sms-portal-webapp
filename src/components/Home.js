@@ -8,6 +8,8 @@ import { useActor } from '@xstate/react';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import Title from 'antd/lib/skeleton/Title';
+import {CampaignService} from "../services/CampaignService";
+import {SmsReportService} from "../services/SmsReportService";
 
 
 const CompleteTaskView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
@@ -139,23 +141,16 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
     const { result: paymentLoaderResult, error: paymentLoaderError } = paymentLoaderState.context;
     const { page: paymentLoaderPage, limit: paymentLoaderLimit } = paymentLoaderState.context.payload.data;
     const { Title, Text } = Typography;
-    const dashData = [
-        {
-            key: '1',    
-            title: "Active",
-            value: 78
-        },
-        {
-            key: '2',    
-            title: "Idle",
-            value: 27
-        },
-        {
-            key: '3',    
-            title: "Active",
-            value: 75
-        }
-    ]
+
+    const [campaignStatistics,setCampaignStatistics] = useState('');
+
+    useEffect((()=>{
+        SmsReportService.getCampaignStatistics()
+            .then(data=>{
+                setCampaignStatistics(data);
+            })
+    }),[])
+
     const progressData = [
         {
             key:"1",
@@ -246,26 +241,27 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
             <Row gutter={12} style={{marginBottom: 5}} className="site-statistic-demo-card">
                 {/* <Divider type="vertical" style={{ height: "inherit", marginRight: "24px" }} /> */}
                 <Col span={4}>
-                    <Card style={{backgroundColor:'#4F995B'}}>
+                    <Card style={{backgroundColor:'#689dc4'}}>
                         <Statistic
-                            title={dashData[0].title}
-                            value={dashData[0].value}
-                            precision={2}
+                            key={1}
+                            title={'Campaigns Total'}
+                            value={campaignStatistics.campaignCount}
+                            // precision={2}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            prefix={<ArrowUpOutlined />}
-                            suffix="%"
+                            // prefix={<ArrowUpOutlined />}
+                            // suffix="%"
                         />
                     </Card>
                 </Col>
                 <Col span={4}>
-                    <Card style={{backgroundColor:'#689dc4'}}>
+                    <Card style={{backgroundColor:'#4F995B'}}>
                         <Statistic
                             key={2}
-                            title={dashData[1].title}
-                            value={dashData[1].value}
+                            title={"Avg Success Rate"}
+                            value={campaignStatistics.avgSuccessRate}
                             precision={2}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            prefix={<ArrowDownOutlined />}
+                            prefix={<ArrowUpOutlined />}
                             suffix="%"
                         />
                     </Card>
@@ -273,12 +269,13 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
                 <Col span={4}>
                     <Card style={{backgroundColor:'#FF5733'}}>
                         <Statistic
-                            title={dashData[2].title}
-                            value={dashData[2].value}
+                            key ={3}
+                            title={"Avg Failure Rate"}
+                            value={campaignStatistics.avgFailureRate}
                             precision={2}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                             titleStyle={{color: 'white'}}
-                            prefix={<ArrowUpOutlined />}
+                            prefix={<ArrowDownOutlined />}
                             suffix="%"
                         />
                     </Card>
