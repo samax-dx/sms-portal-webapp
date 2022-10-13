@@ -1,11 +1,8 @@
 import {createOrUpdateMocked, findListMocked} from "../../Util";
 import {deleteOneMocked} from "../../Util";
+import {contactBookGroups} from "./ContactBookDB";
 
-const groups = [
-    { groupId: "101", partyId: "10040", groupName: "Football Team" },
-    { groupId: "102", partyId: "10040", groupName: "Fakir" },
-    { groupId: "103", partyId: "10040", groupName: "Developer" },
-];
+const groups =contactBookGroups;
 
 export const GroupService = {
     fetchRecords: (payload) =>  console.log(payload) || /*axios

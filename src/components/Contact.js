@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import {useParams} from "react-router-dom";
 import moment from "moment/moment";
 import {ContactBookService} from "../services/ContactBook/ContactBookService";
+import {ContactService} from "../services/ContactBook/ContactService";
 
 
 const SearchForm = ({onSearch}) => {
@@ -84,8 +85,67 @@ const DataPager = ({totalPagingItems, currentPage, onPagingChange}) => {
     </>);
 };
 
+const WriteForm = ({ form, record, onRecordSaved,groupId }) => {
+    const { Option } = Select;
+    const [writeForm] = Form.useForm(form);
+    useEffect(() => writeForm.resetFields(), [record, writeForm]);
+
+    return (<>
+        <Form
+            form={writeForm}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 20 }}
+            labelAlign={"left"}
+            style={{
+                padding:'35px'
+            }}
+            onFinish={() => writeForm.resetFields()}
+        >
+            <Form.Item name="contactId" label="Contact ID" rules={[{ required: false }]} hidden children={<Input />} />
+            <Form.Item name="contactName" label="Contact Name" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="contactNumber" label="Contact Number" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="groupId" label="Group ID" initialValue={groupId} hidden children={<Input />} />
+
+            <Form.Item wrapperCol={{ offset: 8 }}>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => writeForm
+                        .validateFields()
+                        .then(_ => writeForm
+                            .validateFields()
+                            .then(_ => ContactService.saveRecord(writeForm.getFieldsValue()))
+                            .then(contacts => {
+                                console.log(contacts);
+                                onRecordSaved(contacts);
+                                notification.success({
+                                    key: `ccontact_${contacts.contactId}`,
+                                    message: "Task Complete",
+                                    description: <>Contact Saved: {contacts.contactId}</>,
+                                    duration: 5
+                                });
+                            })
+                            // .catch(error => {alert(error.message)}))
+                            .catch(error => {
+                                notification.error({
+                                    key: `ccontact_${Date.now()}`,
+                                    message: "Task Failed",
+                                    description: <>Error creating group.<br />{error.message}</>,
+                                    duration: 5
+                                });
+                            }))
+                        .catch(_ => { })
+                    }
+                    children={"Submit"}
+                />
+            </Form.Item>
+        </Form>
+    </>);
+};
+
 export const Contact = () => {
     const {groupId} = useParams();
+    const [writeForm] = Form.useForm();
 
     // Component States
     const [lastQuery, setLastQuery] = useState({});
@@ -94,6 +154,11 @@ export const Contact = () => {
 
     const [contacts, setContacts] = useState([]);
     const [contactFetchCount, setContactFetchCount] = useState(0);
+
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
 
     const hasSubTask = task => {
         if(task.instances && task.instances.split(",").length > 1){
@@ -134,19 +199,19 @@ export const Contact = () => {
         <Card bordered={false} bodyStyle={{padding: 0}}>
             <Space direction="horizontal" size={"small"}>
                 <Title level={4} style={{display:'block', marginTop: 5}}>Group:</Title>
-                <Statistic style={{marginRight: 50, marginBottom: 5, display:'block'}} title="" value={groupId} groupSeparator="" />
+                <Statistic style={{marginRight: 50, marginBottom: 5, display:'block'}} title="" value={group.groupName} groupSeparator="" />
                 <Title level={4} style={{display:'block', marginTop: 5, color: "green"}}>Total Contact:</Title>
-                <Statistic title="" style={{marginRight: 50, marginBottom: 5}} value={"20"} valueStyle={{color: "green"}}/>
+                <Statistic title="" style={{marginRight: 50, marginBottom: 5}} value={contactFetchCount} valueStyle={{color: "green"}}/>
             </Space>
         </Card>
 
         <Card size="small">
             <Row justify="space-between">
-                <Col>
+                <Col style={{display: "flex", alignItems: "end"}}>
                     <SearchForm style={{margin: 0, marginBottom: 0}} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Col>
-                <Col style={{display: "flex", alignItems: "end"}}>
-                    <Button type={"primary"}>Create Contact</Button>
+                <Col>
+                    <Button style={{marginTop: 18}} type={"primary"} onClick={showModal}>Create Contact</Button>
                 </Col>
             </Row>
 
@@ -185,8 +250,12 @@ export const Contact = () => {
 
                 <Table.Column title="Contact Id" dataIndex={"contactId"}/>
                 <Table.Column title="Contact Name" dataIndex={"contactName"}/>
+                <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
                 <Table.Column title="Group ID" dataIndex={"groupId"}/>
             </Table>
+            <Modal key="createGroup" visible={modalData} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
+                <WriteForm form={writeForm} groupId={groupId} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
+            </Modal>
             <DataPager totalPagingItems={contactFetchCount} currentPage={lastQuery.page}
                        onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         </Card>
