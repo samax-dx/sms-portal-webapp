@@ -92,7 +92,7 @@ export const CampaignTaskReport = () => {
 
     // Component States
     const [lastQuery, setLastQuery] = useState({});
-    const [campaign, setCampaign] = useState([]);
+    const [campaign, setCampaign] = useState({});
     const [campaignFetchError, setCampaignFetchError] = useState(null);
 
     const [tasks, setTasks] = useState([]);

@@ -1,20 +1,13 @@
 import {createOrUpdateMocked} from "../../Util";
 import {deleteOneMocked} from "../../Util";
+import {contactBookContacts} from "./ContactBookDB";
 
-const contacts = [
-    { contactId: "101", groupId: "101", contactName: "Shabbir Ahmed", contactNumber: "01717590703" },
-    { contactId: "102", groupId: "102", contactName: "Mustafa Rahman", contactNumber: "0182947393" },
-    { contactId: "103", groupId: "103", contactName: "Grad Mon", contactNumber: "03947264837" },
-    { contactId: "104", groupId: "101", contactName: "Yent Sie", contactNumber: "01836982733" },
-    { contactId: "105", groupId: "102", contactName: "Gery Nikol", contactNumber: "04833973937" },
-    { contactId: "106", groupId: "103", contactName: "Fez humer", contactNumber: "04826382424" },
-    { contactId: "107", groupId: "101", contactName: "Nub garet", contactNumber: "90183783782" },
-];
+const contacts = contactBookContacts;
 
-export const SenderIdService = {
+export const ContactService = {
     fetchRecords: (payload) =>  console.log(payload) || /*axios
         .post(
-            `${SERVER_URL}/Party/findParties`,
+            `${SERVER_URL}/ContactBook/findContacts`,
             { ...payload },
             {
                 headers: {
@@ -23,7 +16,7 @@ export const SenderIdService = {
                 }
             }
         )*/
-        Promise.resolve({ contacts: contacts.filter(contact => contact.contactName.includes(payload.contactName || "")), count: contacts.length })
+        Promise.resolve({ contacts: contacts.filter(contact => contact.contactName?.toLowerCase().includes(payload.contactName?.toLowerCase() || "")), count: contacts.length })
         .then(response => {
             const  data  = response;
             console.log(data)
