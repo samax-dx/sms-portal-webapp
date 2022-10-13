@@ -1,6 +1,6 @@
 import React, {useRef} from 'react';
 import {Form, Select, Spin} from 'antd';
-import {PartyService} from "../services/PartyService";
+import {GroupService} from "../services/ContactBook/GroupService";
 
 
 const debounce = (cb, timeout = 300, _idle = true, _args) => (...args) => {
@@ -17,11 +17,11 @@ const debounce = (cb, timeout = 300, _idle = true, _args) => (...args) => {
 };
 
 export const DebounceSelect = ({ query, debounceTimeout = 500, ...props }) => {
-    const fetchOptions = () => PartyService.fetchRecords({})
+    const fetchOptions = () => GroupService.fetchRecords({})
         .then(data =>
-            data.parties.map((user) => ({
-                label: `${user.partyId} - ${user.name}`,
-                value: user.partyId,
+            data.groups.map((user) => ({
+                label: `${user.groupId} - ${user.groupName}`,
+                value: user.groupId,
             })),
         );
     const [fetching, setFetching] = React.useState(false);
@@ -48,16 +48,16 @@ export const DebounceSelect = ({ query, debounceTimeout = 500, ...props }) => {
         return debounce(loadOptions, debounceTimeout);
     }, [fetchOptions, debounceTimeout]);
     return (
-        <Form.Item name="partyId" rules={[{ required: true }]} >
+        <Form.Item name="groupId" rules={[{ required: true }]} >
             <Select
-                ref={ref}
-                mode='multiple'
+                // ref={ref}
+                showSearch
                 filterOption={false}
                 onSearch={debounceFetcher}
                 notFoundContent={fetching ? <Spin size="small" /> : null}
                 {...props}
                 options={options}
-                onChange={() => ref.current.blur()}
+                // onChange={() => ref.current.blur()}
             />
         </Form.Item>
     );

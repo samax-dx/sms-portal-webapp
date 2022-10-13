@@ -21,6 +21,7 @@ import * as sheetjs from "xlsx";
 import {Link} from "react-router-dom";
 import {GroupService} from "../services/ContactBook/GroupService";
 import {ContactService} from "../services/ContactBook/ContactService";
+import {DebounceSelect} from "./DebounceSelect";
 
 
 
@@ -96,7 +97,7 @@ const WriteForm = ({ form, record, onRecordSaved,groupId }) => {
             <Form.Item name="contactId" label="Contact ID" rules={[{ required: false }]} hidden children={<Input />} />
             <Form.Item name="contactName" label="Contact Name" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="contactNumber" label="Contact Number" rules={[{ required: true }]} children={<Input />} />
-            <Form.Item name="groupId" label="Group ID" initialValue={groupId} hidden children={<Input />} />
+            <Form.Item name="groupId" label="Group ID" rules={[{ required: true }]} children={<DebounceSelect />} />
 
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Button

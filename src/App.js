@@ -54,7 +54,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/messaging/campaign/:campaignId" element={createRouteComponent(<CampaignTaskReport />)} />
                 <ReactRoute path="/messaging/sendSms" element={createRouteComponent(<SendSmsNew />)} />
                 <ReactRoute path="/contactBook/groups" element={createRouteComponent(<Groups />)} />
-                <ReactRoute path="/contactBook/contacts" element={createRouteComponent(<AllContact />)} />
+                <ReactRoute path="/contactBook/allContact" element={createRouteComponent(<AllContact />)} />
                 <ReactRoute path="/contactBook/groups/:groupId" element={createRouteComponent(<Contact/>)} />
             </Routes>
         </BrowserRouter>

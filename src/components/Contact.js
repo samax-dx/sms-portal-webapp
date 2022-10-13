@@ -207,11 +207,11 @@ export const Contact = () => {
 
         <Card size="small">
             <Row justify="space-between">
-                <Col style={{display: "flex", alignItems: "end"}}>
+                <Col>
                     <SearchForm style={{margin: 0, marginBottom: 0}} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Col>
-                <Col>
-                    <Button style={{marginTop: 18}} type={"primary"} onClick={showModal}>Create Contact</Button>
+                <Col style={{display: "flex", alignItems: "end"}}>
+                    <Button type={"primary"} onClick={showModal}>Create Contact</Button>
                 </Col>
             </Row>
 
