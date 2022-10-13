@@ -245,7 +245,7 @@ export const Contact = () => {
             >
                 <Table.Column
                     title={"#"}
-                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
+                    render={(_, __, i) => (lastQuery.page - 1) * lastQuery.limit + (++i)}
                 />
 
                 <Table.Column title="Contact Id" dataIndex={"contactId"}/>

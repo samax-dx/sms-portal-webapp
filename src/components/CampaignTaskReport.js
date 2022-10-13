@@ -232,7 +232,7 @@ export const CampaignTaskReport = () => {
             >
                 <Table.Column
                     title={"#"}
-                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
+                    render={(_, __, i) => (lastQuery.page - 1) * lastQuery.limit + (++i)}
                 />
 
                 <Table.Column title="Phone Number" dataIndex={"phoneNumber"}/>
@@ -320,7 +320,7 @@ export const CampaignTaskReport = () => {
             >
                 <Table.Column
                     title={"#"}
-                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
+                    render={(_, __, i) => (lastQuery.page - 1) * lastQuery.limit + (++i)}
                 />
                 <Table.Column title="Schedule" dataIndex={"date"} render={(unixToMomentTime)}/>
             </Table>

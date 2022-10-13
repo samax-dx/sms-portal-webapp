@@ -1,4 +1,5 @@
 import {contactBookContacts, contactBookGroups} from "./ContactBookDB";
+import {findListMocked} from "../../Util";
 
 const contacts = contactBookContacts;
 const groups = contactBookGroups;
@@ -15,7 +16,7 @@ export const ContactBookService = {
                 }
             }
         )*/
-        Promise.resolve({ group: contactBookGroups.find(g => g.groupId == payload.groupId), contacts: contactBookContacts.filter(contact => contact.contactName?.toLowerCase().includes(payload.contactName?.toLowerCase() || "")), count: contactBookContacts.length })
+        Promise.resolve({ group: contactBookGroups.find(g => g.groupId == payload.groupId), ...findListMocked(contactBookContacts, payload, "contactName", "contacts") })
             .then(response => {
                 const  data  = response;
                 console.log(data)

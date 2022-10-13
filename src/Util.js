@@ -4,7 +4,7 @@ export const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const findListMocked = (dataTable, query, searchField, outputName) => {
     const records = dataTable.filter(record => record[searchField]?.toLowerCase().includes(query[searchField]?.toLowerCase() || ""));
-    return { [outputName]: records, count: records.length };
+    return { [outputName]: [...records.slice((query.page - 1) * query.limit, query.page * query.limit)], count: records.length };
 };
 
 export const createOrUpdateMocked = (dataTable, idField, record) => {

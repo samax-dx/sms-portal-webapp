@@ -185,7 +185,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             >
                 <Table.Column
                     title={"#"}
-                    render={(_, __, i) => (/*viewPage*/1 - 1) * /*viewLimit*/10 + (++i)}
+                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
                 />
                 <Table.Column title="Schedule"  dataIndex={"date"} render={(unixToMomentTime)} />
                 {/*<Table.Column title="Status"  dataIndex={"status"} render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>Success</Tag>, <Tag color={"error"}>Failed</Tag>][[v === "pending", v === "success", v === "failed"].indexOf(!0)]} />
