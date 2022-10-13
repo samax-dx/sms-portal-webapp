@@ -77,62 +77,63 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-// const WriteForm = ({ form, record, onRecordSaved }) => {
-//     const { Option } = Select;
-//     const [writeForm] = Form.useForm(form);
-//
-//     useEffect(() => writeForm.resetFields(), [record, writeForm]);
-//
-//     return (<>
-//         <Form
-//             form={writeForm}
-//             labelCol={{ span: 8 }}
-//             wrapperCol={{ span: 20 }}
-//             labelAlign={"left"}
-//             style={{
-//                 padding:'35px'
-//             }}
-//             onFinish={() => writeForm.resetFields()}
-//         >
-//             <Form.Item name="groupId" label="Group ID" rules={[{ required: false }]} hidden children={<Input />} />
-//             <Form.Item name="groupName" label="Group Name" rules={[{ required: true }]} children={<Input />} />
-//
-//             <Form.Item wrapperCol={{ offset: 8 }}>
-//                 <Button
-//                     type="primary"
-//                     htmlType="submit"
-//                     onClick={() => writeForm
-//                         .validateFields()
-//                         .then(_ => writeForm
-//                             .validateFields()
-//                             .then(_ => GroupService.saveRecord(writeForm.getFieldsValue()))
-//                             .then(groups => {
-//                                 // alert(groups);
-//                                 onRecordSaved(groups);
-//                                 notification.success({
-//                                     key: `cgroup_${groups.groupId}`,
-//                                     message: "Task Complete",
-//                                     description: <>Group Saved: {groups.groupId}</>,
-//                                     duration: 5
-//                                 });
-//                             })
-//                             // .catch(error => {alert(error.message)}))
-//                             .catch(error => {
-//                                 notification.error({
-//                                     key: `cgroup_${Date.now()}`,
-//                                     message: "Task Failed",
-//                                     description: <>Error creating group.<br />{error.message}</>,
-//                                     duration: 5
-//                                 });
-//                             }))
-//                         .catch(_ => { })
-//                     }
-//                     children={"Submit"}
-//                 />
-//             </Form.Item>
-//         </Form>
-//     </>);
-// };
+const WriteForm = ({ form, record, onRecordSaved,groupId }) => {
+    const { Option } = Select;
+    const [writeForm] = Form.useForm(form);
+    useEffect(() => writeForm.resetFields(), [record, writeForm]);
+
+    return (<>
+        <Form
+            form={writeForm}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 20 }}
+            labelAlign={"left"}
+            style={{
+                padding:'35px'
+            }}
+            onFinish={() => writeForm.resetFields()}
+        >
+            <Form.Item name="contactId" label="Contact ID" rules={[{ required: false }]} hidden children={<Input />} />
+            <Form.Item name="contactName" label="Contact Name" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="contactNumber" label="Contact Number" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="groupId" label="Group ID" initialValue={groupId} hidden children={<Input />} />
+
+            <Form.Item wrapperCol={{ offset: 8 }}>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => writeForm
+                        .validateFields()
+                        .then(_ => writeForm
+                            .validateFields()
+                            .then(_ => ContactService.saveRecord(writeForm.getFieldsValue()))
+                            .then(contacts => {
+                                console.log(contacts);
+                                onRecordSaved(contacts);
+                                notification.success({
+                                    key: `ccontact_${contacts.contactId}`,
+                                    message: "Task Complete",
+                                    description: <>Contact Saved: {contacts.contactId}</>,
+                                    duration: 5
+                                });
+                            })
+                            // .catch(error => {alert(error.message)}))
+                            .catch(error => {
+                                notification.error({
+                                    key: `ccontact_${Date.now()}`,
+                                    message: "Task Failed",
+                                    description: <>Error creating group.<br />{error.message}</>,
+                                    duration: 5
+                                });
+                            }))
+                        .catch(_ => { })
+                    }
+                    children={"Submit"}
+                />
+            </Form.Item>
+        </Form>
+    </>);
+};
 
 const DataView = ({ contacts, viewPage, viewLimit, onView}) => {
 
@@ -175,7 +176,7 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
 
 export const AllContact = () => {
 
-    // const [writeForm] = Form.useForm();
+    const [writeForm] = Form.useForm();
     // Component States
     const [lastQuery, setLastQuery] = useState({});
     const [contacts, setContacts] = useState([]);
@@ -223,7 +224,7 @@ export const AllContact = () => {
                 </Card>
             </Col>
             <Modal key="createGroup" visible={modalData} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
-                {/*<WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />*/}
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>
         <DataView contacts={contacts} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
