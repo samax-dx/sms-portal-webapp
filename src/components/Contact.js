@@ -134,7 +134,7 @@ export const Contact = () => {
         <Card bordered={false} bodyStyle={{padding: 0}}>
             <Space direction="horizontal" size={"small"}>
                 <Title level={4} style={{display:'block', marginTop: 5}}>Group:</Title>
-                <Statistic style={{marginRight: 50, marginBottom: 5, display:'block'}} title="" value={group} groupSeparator="" />
+                <Statistic style={{marginRight: 50, marginBottom: 5, display:'block'}} title="" value={groupId} groupSeparator="" />
                 <Title level={4} style={{display:'block', marginTop: 5, color: "green"}}>Total Contact:</Title>
                 <Statistic title="" style={{marginRight: 50, marginBottom: 5}} value={"20"} valueStyle={{color: "green"}}/>
             </Space>
