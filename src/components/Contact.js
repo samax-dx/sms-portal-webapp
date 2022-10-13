@@ -132,33 +132,21 @@ export const Contact = () => {
 
     return (<>
         <Card bordered={false} bodyStyle={{padding: 0}}>
-                <Card bordered={false} style={{margin: "0px"}}>
-                        <List
-                            grid={{gutter: 24}}
-                            dataSource={[
-                                [
-                                    ["sentTaskCount", "Group", "success", v => v || 0],
-                                    ["pendingTaskCount", "Total Contact", "warning", v => v || 0],
-                                ]
-                            ]}
-                            renderItem={item => item.map(([key, label, type, toValue]) => (<Col>
-                                <Statistic
-                                    title={<Typography.Text type={type} strong>{label}</Typography.Text>}
-                                    value={toValue(contacts[key])}
-                                    key={key}
-                                />
-                            </Col>))}
-                        />
-                </Card>
+            <Space direction="horizontal" size={"small"}>
+                <Title level={4} style={{display:'block', marginTop: 5}}>Group:</Title>
+                <Statistic style={{marginRight: 50, marginBottom: 5, display:'block'}} title="" value={group} groupSeparator="" />
+                <Title level={4} style={{display:'block', marginTop: 5, color: "green"}}>Total Contact:</Title>
+                <Statistic title="" style={{marginRight: 50, marginBottom: 5}} value={"20"} valueStyle={{color: "green"}}/>
+            </Space>
         </Card>
 
         <Card size="small">
             <Row justify="space-between">
-                <Col style={{display: "flex", alignItems: "end"}}>
+                <Col>
                     <SearchForm style={{margin: 0, marginBottom: 0}} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Col>
-                <Col>
-                    <Button style={{marginTop: 18}} type={"primary"}>Create Contact</Button>
+                <Col style={{display: "flex", alignItems: "end"}}>
+                    <Button type={"primary"}>Create Contact</Button>
                 </Col>
             </Row>
 

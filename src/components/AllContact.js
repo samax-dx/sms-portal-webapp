@@ -10,13 +10,17 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Spin
+    Modal, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
 import dayjs from "dayjs";
-import {ProductService} from "../services/ProductService";
-import {OrderService} from "../services/OrderService";
+import {CampaignService} from "../services/CampaignService";
+import {FileDoneOutlined, FileTextOutlined, FileTextTwoTone, PlusCircleFilled} from "@ant-design/icons";
+import * as sheetjs from "xlsx";
+import {Link} from "react-router-dom";
+import {GroupService} from "../services/ContactBook/GroupService";
+import {ContactService} from "../services/ContactBook/ContactService";
 
 
 
@@ -26,12 +30,12 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        ["date_fld0_value", "date_fld1_value"].forEach((n, i) => {
-            const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
-        });
+        // ["cratedOn_fld0_value", "cratedOn_fld1_value"].forEach((n, i) => {
+        //     const date = formData[n];
+        //     formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
+        // });
 
-        const queryData = ["productName", "packagePrefixes", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
+        const queryData = ["ContactName", "cratedOn_fld0_value", "cratedOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -51,19 +55,17 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 15}}
+            labelCol={{ span: 22 }}
             wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="productName" label="Name" children={<Input />} />
-            <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="packagePrefixes" label="Prefix" children={<Input />} />
-            <Form.Item name="packagePrefixes_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
-            <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld1_value" label="To Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
-            <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 4 }} colon={false} label=' '>
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="contactName" label="Contact Name" children={<Input />} />
+            <Form.Item name="contactName_op" initialValue={"contains"} hidden children={<Input />} />
+            {/*<Form.Item style={{display:'inline-block', margin:'0px'}} name="cratedOn_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item name="cratedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="cratedOn_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item name="cratedOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />*/}
+            <Form.Item wrapperCol={{ offset: 5 }} style={{display:'inline-block', margin:'0px'}} colon={false} label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -75,16 +77,72 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const DataView = ({ products, viewPage, viewLimit}) => {
-    const [spinning, setSpinning] = useState(false);
+// const WriteForm = ({ form, record, onRecordSaved }) => {
+//     const { Option } = Select;
+//     const [writeForm] = Form.useForm(form);
+//
+//     useEffect(() => writeForm.resetFields(), [record, writeForm]);
+//
+//     return (<>
+//         <Form
+//             form={writeForm}
+//             labelCol={{ span: 8 }}
+//             wrapperCol={{ span: 20 }}
+//             labelAlign={"left"}
+//             style={{
+//                 padding:'35px'
+//             }}
+//             onFinish={() => writeForm.resetFields()}
+//         >
+//             <Form.Item name="groupId" label="Group ID" rules={[{ required: false }]} hidden children={<Input />} />
+//             <Form.Item name="groupName" label="Group Name" rules={[{ required: true }]} children={<Input />} />
+//
+//             <Form.Item wrapperCol={{ offset: 8 }}>
+//                 <Button
+//                     type="primary"
+//                     htmlType="submit"
+//                     onClick={() => writeForm
+//                         .validateFields()
+//                         .then(_ => writeForm
+//                             .validateFields()
+//                             .then(_ => GroupService.saveRecord(writeForm.getFieldsValue()))
+//                             .then(groups => {
+//                                 // alert(groups);
+//                                 onRecordSaved(groups);
+//                                 notification.success({
+//                                     key: `cgroup_${groups.groupId}`,
+//                                     message: "Task Complete",
+//                                     description: <>Group Saved: {groups.groupId}</>,
+//                                     duration: 5
+//                                 });
+//                             })
+//                             // .catch(error => {alert(error.message)}))
+//                             .catch(error => {
+//                                 notification.error({
+//                                     key: `cgroup_${Date.now()}`,
+//                                     message: "Task Failed",
+//                                     description: <>Error creating group.<br />{error.message}</>,
+//                                     duration: 5
+//                                 });
+//                             }))
+//                         .catch(_ => { })
+//                     }
+//                     children={"Submit"}
+//                 />
+//             </Form.Item>
+//         </Form>
+//     </>);
+// };
 
-    const dataTable = (
+const DataView = ({ contacts, viewPage, viewLimit, onView}) => {
+
+    return (<>
         <Table
             style={{marginLeft:'6px'}}
             size="small"
-            dataSource={products}
-            rowKey={"productId"}
-            locale={{ emptyText: products ===null? "E": "NO DATA" }}
+            dataSource={contacts}
+            rowKey={"contactId"}
+            locale={{ emptyText: contacts ===null? "E": "NO DATA" }}
             pagination={false}
         >
             <Table.Column
@@ -92,44 +150,11 @@ const DataView = ({ products, viewPage, viewLimit}) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Package Name" dataIndex={"productName"} />
-            <Table.Column title="Prefixes" dataIndex={"packagePrefixes"} />
-            <Table.Column title="Volume" dataIndex={"volume"} />
-            <Table.Column title="Price" dataIndex={"price"} />
-            <Table.Column title="Details" dataIndex={"description"} />
-
-            <Table.Column
-                dataIndex={undefined}
-                render={(_, product, i) => (
-                    <Button
-                        onClick={() =>setSpinning(true) || OrderService
-                            .createOrder({ ...product, quantity: 1 })
-                            .then(order => {
-                                setSpinning(false);
-                                notification.success({
-                                    key: `corder_${Date.now()}`,
-                                    message: "Task Complete",
-                                    description: <>Order created: {order.orderId}</>,
-                                    duration: 5
-                                });
-                            })
-                            .catch(error => {
-                                setSpinning(false) ||notification.error({
-                                    key: `corder_${Date.now()}`,
-                                    message: "Task Failed",
-                                    description: <>Error placing order.<br />{error.message}</>,
-                                    duration: 5
-                                });
-                            })
-                        }
-                        type="primary"
-                    >Buy Package</Button>
-                )}
-            />
+            <Table.Column title="Contact ID" dataIndex={"contactId"}/>
+            <Table.Column title="Contact Name" dataIndex={"contactName"} />
+            <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
+            <Table.Column title="Group Id" dataIndex={"groupId"} />
         </Table>
-    );
-    return (<>
-        {spinning ? <Spin tip="Placing Package Order..." size="large">{dataTable}</Spin> : dataTable}
     </>);
 };
 
@@ -148,26 +173,33 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const BuyPackageNew = () => {
+export const AllContact = () => {
+
+    // const [writeForm] = Form.useForm();
     // Component States
     const [lastQuery, setLastQuery] = useState({});
-    const [products, setProducts] = useState([]);
-    const [ProductsFetchCount, setProductsFetchCount] = useState(0);
-    const [productsFetchError, setProductsFetchError] = useState(null);
+    const [contacts, setContacts] = useState([]);
+    const [contactsFetchCount, setContactsFetchCount] = useState(0);
+    const [contactsFetchError, setContactsFetchError] = useState(null);
+
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
 
 
     useEffect(() => {
-        ProductService.fetchProducts(lastQuery)
+        ContactService.fetchRecords(lastQuery)
             .then((data) => {
                 console.log(data)
-                setProducts(data.products);
-                setProductsFetchCount(data.count);
-                setProductsFetchError(null);
+                setContacts(data.contacts);
+                setContactsFetchCount(data.count);
+                setContactsFetchError(null);
             })
             .catch(error => {
-                setProducts([]);
-                setProductsFetchCount(0);
-                setProductsFetchError(error);
+                setContacts([]);
+                setContactsFetchCount(0);
+                setContactsFetchError(error);
             });
     }, [lastQuery]);
 
@@ -177,17 +209,26 @@ export const BuyPackageNew = () => {
 
 
     return (<>
-        <Row>
+        <Row >
             <Col md={24} style={{marginLeft:'5px'}}>
-                <Card title={<Title level={5}>Packages</Title>}
-                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size='small'>
+                <Card title={<Title level={5}>All Contact</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
+                      size="small"
+                      extra={
+                          <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
+                              Create Contact
+                          </Button>}
+                >
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
+            <Modal key="createGroup" visible={modalData} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
+                {/*<WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />*/}
+            </Modal>
         </Row>
-        <DataView products={products} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
+        <DataView contacts={contacts} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
         <Br />
-        <DataPager totalPagingItems={ProductsFetchCount} currentPage={lastQuery.page}
-                              onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+        <DataPager totalPagingItems={contactsFetchCount} currentPage={lastQuery.page}
+                   onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
 };

@@ -1,4 +1,4 @@
-import {createOrUpdateMocked} from "../../Util";
+import {createOrUpdateMocked, findListMocked} from "../../Util";
 import {deleteOneMocked} from "../../Util";
 
 const groups = [
@@ -19,7 +19,7 @@ export const GroupService = {
                 }
             }
         )*/
-        Promise.resolve({ groups: groups.filter(group => group.groupName?.toLowerCase().includes(payload.groupName?.toLowerCase() || "")), count: groups.length })
+        Promise.resolve(findListMocked(groups, payload, "groupName", "groups"))
             .then(response => {
                 const  data  = response;
                 console.log(data)
@@ -52,7 +52,7 @@ export const GroupService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/createOrUpdateMocked(groups, "groupId", payload).then(record => ({ data: record }))
+        )*/createOrUpdateMocked(groups, "groupId", payload).then(({ record }) => ({ data: record }))
         .then(response => {
             const { data } = response;
             console.log(data)

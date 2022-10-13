@@ -1,4 +1,4 @@
-import {createOrUpdateMocked} from "../../Util";
+import {createOrUpdateMocked, findListMocked} from "../../Util";
 import {deleteOneMocked} from "../../Util";
 import {contactBookContacts} from "./ContactBookDB";
 
@@ -16,7 +16,7 @@ export const ContactService = {
                 }
             }
         )*/
-        Promise.resolve({ contacts: contacts.filter(contact => contact.contactName?.toLowerCase().includes(payload.contactName?.toLowerCase() || "")), count: contacts.length })
+        Promise.resolve(findListMocked(contacts, payload, "contactName", "contacts"))
         .then(response => {
             const  data  = response;
             console.log(data)
@@ -49,7 +49,7 @@ export const ContactService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/createOrUpdateMocked(contacts, "contactId", payload).then(record => ({ data: record }))
+        )*/createOrUpdateMocked(contacts, "contactId", payload).then(({ record }) => ({ data: record }))
         .then(response => {
             const { data } = response;
             console.log(data)

@@ -30,6 +30,7 @@ export const MainMenu = ({ actor }) => {
             <Menu.SubMenu key="contactBook" icon={<MailOutlined />} title="Contact Book">
                 {/*<Menu.Item key="sendSMS" icon={<RocketTwoTone />} onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>*/}
                 <Menu.Item key="groups" icon={<FileTextTwoTone />}><Link to={"/contactBook/groups"}>Groups</Link></Menu.Item>
+                <Menu.Item key="contacts" icon={<FileTextTwoTone />}><Link to={"/contactBook/contacts"}>All Contacts</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="order" icon={<DatabaseFilled />} title="Orders">
                 {/*<Menu.Item key="buyPackage" icon={<ShoppingTwoTone />} onClick={() => sendApp({ type: 'NAV_BUY_PACKAGE' })}>Buy Package</Menu.Item>*/}
