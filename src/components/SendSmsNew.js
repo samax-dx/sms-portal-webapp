@@ -26,7 +26,7 @@ export const SendSmsNew = () => {
     const [spinning, setSpinning] = useState(false);
 
     const { Title, Text } = Typography;
-    const dataForm = (
+    return (
         <Card style={{marginLeft:5}} title={<Title level={5}>Send SMS</Title>}
               headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
             <Form
@@ -127,8 +127,9 @@ export const SendSmsNew = () => {
                                 onClick={() => {
                                     campaignForm
                                         .validateFields()
-                                        .then(_ =>setSpinning(true) || SmsTaskService.sendSms(campaignForm.getFieldsValue()))
-                                        .then(report => {
+                                        .then(_ => setSpinning(true) || SmsTaskService.sendSms(campaignForm.getFieldsValue()))
+                                        .then(report => {console.log("success");
+                                            campaignForm.resetFields();
                                             setSpinning(false);
                                             notification.success({
                                                 key: `csend_${Date.now()}`,
@@ -141,10 +142,9 @@ export const SendSmsNew = () => {
                                                 </>,
                                                 duration: 15,
                                             });
-                                            campaignForm.resetFields();
                                         })
                                         .catch(error => {
-                                            setSpinning(false) ||notification.error({
+                                            setSpinning(false) || notification.error({
                                                 key: `csend_${Date.now()}`,
                                                 message: "Task Failed",
                                                 description: <>
@@ -162,8 +162,4 @@ export const SendSmsNew = () => {
             </Form>
         </Card>
     );
-
-    return (<>
-        {spinning ? <Spin tip="Sending SMS..." size="large">{dataForm}</Spin> : dataForm}
-    </>)
 };
