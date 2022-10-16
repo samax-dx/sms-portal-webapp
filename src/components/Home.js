@@ -278,14 +278,18 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
             <Row gutter={16}>
                 <Col md={8}>
                     <Title level={5}> SMS History </Title>
-                    <Progress type="circle" width={100}  percent={circleProgressData[0].value} />
-                    <Progress type="circle" width={100}  percent={circleProgressData[1].value} strokeColor={"Green"} />
-                    <Progress type="circle" width={100}  percent={circleProgressData[2].value} strokeColor={"Red"}/>
-                    <Space direction="vertical">
-                        <Badge color="#4F995B" status="success" text="Sent" />
-                        <Badge color="#FF5733" status="error" text="Failed" />
-                        <Badge color="#689dc4" status="processing" text="Pending" />
-                    </Space>
+                        <Space direction="vertical">
+                            <Progress type="circle" width={100}  percent={circleProgressData[0].value} />
+                            <Badge color="#689dc4" status="processing" text="Pending" style={{paddingLeft: 10}}/>
+                        </Space>
+                        <Space direction="vertical" style={{padding: 5}}>
+                            <Progress type="circle" width={100}  percent={circleProgressData[1].value} strokeColor={"Green"} />
+                            <Badge color="#4F995B" status="success" text="Sent" style={{paddingLeft: 10}} />
+                        </Space>
+                        <Space direction="vertical">
+                            <Progress type="circle" width={100}  percent={circleProgressData[2].value} strokeColor={"Red"}/>
+                            <Badge color="#FF5733" status="error" text="Failed" style={{paddingLeft: 10}} />
+                        </Space>
 
                 </Col>
                 <Col md={8}>
@@ -296,9 +300,9 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
                     <Progress size="medium" percent={progressData[4].value} />
                     <Progress size="medium" percent={progressData[5].value} showInfo={true} />
                     <Space direction="vertical">
-                        <Badge color="#4F995B" status="success" text="Sent" />
-                        <Badge color="#FF5733" status="error" text="Failed" />
                         <Badge color="#689dc4" status="processing" text="Pending" />
+                        <Badge color="#FF5733" status="error" text="Failed" />
+                        <Badge color="#4F995B" status="success" text="Sent" />
                     </Space>
                 </Col>
                 <Col md={8}>
