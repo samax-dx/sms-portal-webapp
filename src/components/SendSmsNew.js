@@ -27,7 +27,7 @@ export const SendSmsNew = () => {
 
     const { Title, Text } = Typography;
     return (
-        <Spin spinning={spinning}>
+        <Spin spinning={spinning} size={"large"}>
         <Card style={{marginLeft:5}} title={<Title level={5}>Send SMS</Title>}
               headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
             <Form
@@ -129,7 +129,7 @@ export const SendSmsNew = () => {
                                     campaignForm
                                         .validateFields()
                                         .then(_ => setSpinning(true) || SmsTaskService.sendSms(campaignForm.getFieldsValue()))
-                                        .then(report => {console.log("success");
+                                        .then(report => {
                                             campaignForm.resetFields();
                                             setSpinning(false);
                                             notification.success({

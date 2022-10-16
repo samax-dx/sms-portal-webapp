@@ -19,8 +19,7 @@ import {ProductService} from "../services/ProductService";
 import {OrderService} from "../services/OrderService";
 
 
-
-const SearchForm = ({ onSearch }) => {
+const SearchForm = ({onSearch}) => {
     const [searchForm] = Form.useForm();
 
     const performSearch = () => {
@@ -51,19 +50,23 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 15}}
-            wrapperCol={{ span: 23 }}
+            labelCol={{span: 15}}
+            wrapperCol={{span: 23}}
             labelAlign="left"
         >
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="productName" label="Name" children={<Input />} />
-            <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="packagePrefixes" label="Prefix" children={<Input />} />
-            <Form.Item name="packagePrefixes_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
-            <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld1_value" label="To Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
-            <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 4 }} colon={false} label=' '>
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="productName" label="Name"
+                       children={<Input/>}/>
+            <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input/>}/>
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="packagePrefixes" label="Prefix"
+                       children={<Input/>}/>
+            <Form.Item name="packagePrefixes_op" initialValue={"contains"} hidden children={<Input/>}/>
+            <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="date_fld1_value" label="To Date" hidden
+                       children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} wrapperCol={{offset: 4}} colon={false}
+                       label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -75,67 +78,66 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const DataView = ({ products, viewPage, viewLimit}) => {
+const DataView = ({products, viewPage, viewLimit}) => {
     const [spinning, setSpinning] = useState(false);
 
-    const dataTable = (
-        <Table
-            style={{marginLeft:'6px'}}
-            size="small"
-            dataSource={products}
-            rowKey={"productId"}
-            locale={{ emptyText: products ===null? "E": "NO DATA" }}
-            pagination={false}
-        >
-            <Table.Column
-                dataIndex={undefined}
-                title={"#"}
-                render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-            />
-            <Table.Column title="Package Name" dataIndex={"productName"} />
-            <Table.Column title="Prefixes" dataIndex={"packagePrefixes"} />
-            <Table.Column title="Volume" dataIndex={"volume"} />
-            <Table.Column title="Price" dataIndex={"price"} />
-            <Table.Column title="Details" dataIndex={"description"} />
+    return (
+        <Spin spinning={spinning} size={"large"}>
+            <Table
+                style={{marginLeft: '6px'}}
+                size="small"
+                dataSource={products}
+                rowKey={"productId"}
+                locale={{emptyText: products === null ? "E" : "NO DATA"}}
+                pagination={false}
+            >
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"#"}
+                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+                />
+                <Table.Column title="Package Name" dataIndex={"productName"}/>
+                <Table.Column title="Prefixes" dataIndex={"packagePrefixes"}/>
+                <Table.Column title="Volume" dataIndex={"volume"}/>
+                <Table.Column title="Price" dataIndex={"price"}/>
+                <Table.Column title="Details" dataIndex={"description"}/>
 
-            <Table.Column
-                dataIndex={undefined}
-                render={(_, product, i) => (
-                    <Button
-                        onClick={() =>setSpinning(true) || OrderService
-                            .createOrder({ ...product, quantity: 1 })
-                            .then(order => {
-                                setSpinning(false);
-                                notification.success({
-                                    key: `corder_${Date.now()}`,
-                                    message: "Task Complete",
-                                    description: <>Order created: {order.orderId}</>,
-                                    duration: 5
-                                });
-                            })
-                            .catch(error => {
-                                setSpinning(false) ||notification.error({
-                                    key: `corder_${Date.now()}`,
-                                    message: "Task Failed",
-                                    description: <>Error placing order.<br />{error.message}</>,
-                                    duration: 5
-                                });
-                            })
-                        }
-                        type="primary"
-                    >Buy Package</Button>
-                )}
-            />
-        </Table>
+                <Table.Column
+                    dataIndex={undefined}
+                    render={(_, product, i) => (
+                        <Button
+                            onClick={() => setSpinning(true) || OrderService
+                                .createOrder({...product, quantity: 1})
+                                .then(order => {
+                                    setSpinning(false);
+                                    notification.success({
+                                        key: `corder_${Date.now()}`,
+                                        message: "Task Complete",
+                                        description: <>Order created: {order.orderId}</>,
+                                        duration: 5
+                                    });
+                                })
+                                .catch(error => {
+                                    setSpinning(false) || notification.error({
+                                        key: `corder_${Date.now()}`,
+                                        message: "Task Failed",
+                                        description: <>Error placing order.<br/>{error.message}</>,
+                                        duration: 5
+                                    });
+                                })
+                            }
+                            type="primary"
+                        >Buy Package</Button>
+                    )}
+                />
+            </Table>
+        </Spin>
     );
-    return (<>
-        {spinning ? <Spin tip="Placing Package Order..." size="large">{dataTable}</Spin> : dataTable}
-    </>);
 };
 
-const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
+const DataPager = ({totalPagingItems, currentPage, onPagingChange}) => {
     return (<>
-        <Space align="end" direction="vertical" style={{ width: "100%" }}>
+        <Space align="end" direction="vertical" style={{width: "100%"}}>
             <Pagination
                 total={totalPagingItems}
                 defaultPageSize={10}
@@ -172,22 +174,22 @@ export const BuyPackageNew = () => {
     }, [lastQuery]);
 
     useEffect(() => {
-        setLastQuery({ page: 1, limit: 10 })
+        setLastQuery({page: 1, limit: 10})
     }, []);
 
 
     return (<>
         <Row>
-            <Col md={24} style={{marginLeft:'5px'}}>
+            <Col md={24} style={{marginLeft: '5px'}}>
                 <Card title={<Title level={5}>Packages</Title>}
-                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size='small'>
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                      headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}} size='small'>
+                    <SearchForm onSearch={data => setLastQuery({...(data || {}), page: 1, limit: lastQuery.limit})}/>
                 </Card>
             </Col>
         </Row>
         <DataView products={products} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
-        <Br />
+        <Br/>
         <DataPager totalPagingItems={ProductsFetchCount} currentPage={lastQuery.page}
-                              onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+                   onPagingChange={(page, limit) => setLastQuery({...lastQuery, page, limit})}/>
     </>);
 };
