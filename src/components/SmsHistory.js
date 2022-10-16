@@ -136,20 +136,21 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             <Table.Column title="Status" dataIndex={"status"} render={v => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>sent</Tag>,
-                <Tag color={"error"}>error</Tag>][[v === "pending", v === "sent", v === "failed"].indexOf(!0)]} />
+                <Tag color={"warning"}>undetermined</Tag>,
+                <Tag color={"error"}>error</Tag>,
+                <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
 
             <Table.Column title="Status External" dataIndex={"statusExternal"} render={(v,row) => [
-                <Tag></Tag>,
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>delivered</Tag>,
+                <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>error</Tag>,
-            ][[row.status === "failed", v === "pending" || v == null, v ==="delivered", v === "rejected" || v === "undetermined"]
-                .indexOf(!0)]} />
+            ][[v === "pending", v ==="delivered", v === "undetermined", row.status === "failed"].indexOf(!0)]} />
 
             <Table.Column title="External Status Update Time" dataIndex={"updatedOn"} render={(unixToMomentTime)}/>
 
             <Table.Column title="Error" dataIndex={"errorCode"} />
-            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} />
+            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} ellipsis />
             <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
             <Table.Column title="Package" dataIndex={"packageId"} />
             <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />

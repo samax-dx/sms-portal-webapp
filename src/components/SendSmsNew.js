@@ -27,6 +27,7 @@ export const SendSmsNew = () => {
 
     const { Title, Text } = Typography;
     return (
+        <Spin spinning={spinning}>
         <Card style={{marginLeft:5}} title={<Title level={5}>Send SMS</Title>}
               headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
             <Form
@@ -161,5 +162,6 @@ export const SendSmsNew = () => {
                 </Form.Item>
             </Form>
         </Card>
+        </Spin>
     );
 };
