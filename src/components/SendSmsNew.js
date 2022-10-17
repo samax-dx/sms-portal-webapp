@@ -26,10 +26,15 @@ export const SendSmsNew = () => {
     const [spinning, setSpinning] = useState(false);
     const [encoding,setencoding] = useState('GSM7');
     const [length,setLength] = useState(0);
-    const handleRadioChange = (e) =>{
-        setencoding(e.target.value)
+    const resetMsgField = () =>{
+        campaignForm.setFieldsValue({message:''})
+        setLength(0);
     }
-    console.log(encoding)
+    const handleRadioChange = (e) =>{
+        setencoding(e.target.value);
+        resetMsgField();
+    }
+
     const handleTextChange =e=>{
         calculateLength(e.target.value.length,encoding)
     }
@@ -139,7 +144,7 @@ export const SendSmsNew = () => {
                 <Form.Item>
                     <Space style={{ width: "100%"}}>
                         <span style={{marginRight:5}}>SMS Count:{length}</span>
-                            <Form.Item name="radiogroup" style={{ margin: 0}}>
+                            <Form.Item name="radiogroup" initialValue={"GSM7"} style={{ margin: 0}}>
                                 <Radio.Group name="radio" onChange={handleRadioChange} style={{display:"inline-flex"}}>
                                     <Radio value={"GSM7"}>GSM7</Radio>
                                     <Radio value={"UCS2"}>UCS2</Radio>
