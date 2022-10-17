@@ -1,5 +1,5 @@
 import { Button, Card, Col, Collapse, Divider, Image, List, Pagination, Row, Space, Statistic, Table, Tag, Typography, Progress, Badge  } from 'antd';
-import { ArrowDownOutlined, ArrowUpOutlined, FallOutlined } from '@ant-design/icons'
+import { ArrowDownOutlined, ArrowUpOutlined, FallOutlined, ArrowRightOutlined } from '@ant-design/icons'
 import { Dashboard } from "./Dashboard";
 import { PaymentInstrument } from "./paymentInstrument";
 import { CampaignTasks } from "./campaignTasks";
@@ -226,8 +226,8 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
     }, []);
 
     return (<>
-        <Card title={profileLoaderResult.profile.name}>
-            <Row gutter={16}>
+        <Card>
+            <Row gutter={8}>
                 <Col md={5}>
                     <Space direction="vertical" size={"small"}>
                         <Statistic title="Account Code No." value={profileLoaderResult.profile.partyId} groupSeparator="" />
@@ -235,8 +235,13 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
                     </Space>
                 </Col>
                 <Divider type="vertical" style={{ height: "inherit", marginRight: "24px" }} />
-                <Col md={6}>
-                    <Card style={{backgroundColor:'#689dc4', paddingBottom: 20}}>
+                <Col md={3}>
+                    <Title level={3} style={{color: "#492D3A", marginLeft: 20}}>Today</Title>
+                    <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#689dc4", marginLeft: 35}} /></Space>
+                </Col>
+
+                <Col md={5}>
+                    <Card style={{backgroundColor:'#689dc4'}}>
                         <Statistic
                             key={1}
                             title={'Campaigns Total'}
@@ -245,11 +250,11 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
                         />
                     </Card>
                 </Col>
-                <Col md={6}>
-                    <Card style={{backgroundColor:'#4F995B', paddingBottom: 20}}>
+                <Col md={5}>
+                    <Card style={{backgroundColor:'#4F995B'}}>
                         <Statistic
                             key={2}
-                            title={"Avg. Success Rate"}
+                            title={"Success Rate"}
                             value={campaignStatistics.avgSuccessRate}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                             precision={2}
@@ -258,11 +263,54 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
                         />
                     </Card>
                 </Col>
-                <Col md={6}>
-                    <Card style={{backgroundColor:'#FF5733', paddingBottom: 20}}>
+                <Col md={5}>
+                    <Card style={{backgroundColor:'#FF5733'}}>
                         <Statistic
                             key={3}
-                            title={"Avg. Failure Rate"}
+                            title={"Failure Rate"}
+                            value={campaignStatistics.avgFailureRate}
+                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
+                            precision={2}
+                            prefix={<ArrowDownOutlined />}
+                            suffix="%"
+                        />
+                    </Card>
+                </Col>
+            {/*    This week*/}
+                <Col md={5}></Col>
+                <Divider type="vertical" style={{ height: "inherit", marginRight: "20px" }} />
+                <Col md={3}>
+                    <Title level={3} style={{color: "#492D3A"}}>This Week</Title>
+                    <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#4F995B", marginLeft: 35}} /></Space>
+                </Col>
+                <Col md={5}>
+                    <Card style={{backgroundColor:'#689dc4'}}>
+                        <Statistic
+                            key={1}
+                            title={'Campaigns Total'}
+                            value={campaignStatistics.campaignCount}
+                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
+                        />
+                    </Card>
+                </Col>
+                <Col md={5}>
+                    <Card style={{backgroundColor:'#4F995B'}}>
+                        <Statistic
+                            key={2}
+                            title={"Success Rate"}
+                            value={campaignStatistics.avgSuccessRate}
+                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
+                            precision={2}
+                            prefix={<ArrowUpOutlined />}
+                            suffix="%"
+                        />
+                    </Card>
+                </Col>
+                <Col md={5}>
+                    <Card style={{backgroundColor:'#FF5733'}}>
+                        <Statistic
+                            key={3}
+                            title={"Failure Rate"}
                             value={campaignStatistics.avgFailureRate}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                             precision={2}
