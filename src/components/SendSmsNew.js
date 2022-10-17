@@ -12,18 +12,41 @@ import {
     Select,
     Upload,
     message,
-    Spin
+    Spin, Radio
 } from "antd";
 import * as sheetjs from "xlsx";
 import { FileTextTwoTone } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import {SmsTaskService} from "../services/SmsTaskService";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 
 export const SendSmsNew = () => {
     const [campaignForm] = Form.useForm();
     const [spinning, setSpinning] = useState(false);
+    const [encoding,setencoding] = useState('GSM7');
+    const [length,setLength] = useState(0);
+    const handleRadioChange = (e) =>{
+        setencoding(e.target.value)
+    }
+    console.log(encoding)
+    const handleTextChange =e=>{
+        calculateLength(e.target.value.length,encoding)
+    }
+    const calculateLength = (msg,encoding) =>{
+        switch(encoding) {
+        case "GSM7":
+             setLength(Math.ceil(msg / (msg <= 160 ? 160 : 153)));
+            break;
+        case "UCS2":
+            setLength(Math.ceil(msg/ (msg <= 70 ? 70 : 67)));
+            break;
+        case "UTF8":
+            setLength(Math.ceil(msg / (msg <= 140 ? 140 : 137)));
+            break;
+        }
+    }
+
 
     const { Title, Text } = Typography;
     return (
@@ -35,6 +58,7 @@ export const SendSmsNew = () => {
                 initialValues={{ senderId: "8801552146283", isUnicode: true/*, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null*/ }}
                 layout="vertical"
                 wrapperCol={{ span: 8 }}
+                style={{width:'92rem'}}
             >
                 <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input />} />
 
@@ -109,15 +133,18 @@ export const SendSmsNew = () => {
                     </>}
                     rules={[{ required: true }]}
                 >
-                    <Input.TextArea />
+                    <Input.TextArea onChange={handleTextChange}/>
                 </Form.Item>
 
                 <Form.Item>
-                    <Space style={{ width: "100%", justifyContent: "space-between" }}>
-                        <span>SMS Count: ...</span>
-                        <Space>
-                            <Form.Item name="isUnicode" valuePropName="checked" style={{ margin: 0 }}>
-                                <Checkbox><Tooltip title="using unicode charecters">Unicode</Tooltip></Checkbox>
+                    <Space style={{ width: "100%"}}>
+                        <span style={{marginRight:5}}>SMS Count:{length}</span>
+                            <Form.Item name="radiogroup" style={{ margin: 0}}>
+                                <Radio.Group name="radio" onChange={handleRadioChange} style={{display:"inline-flex"}}>
+                                    <Radio value={"GSM7"}>GSM7</Radio>
+                                    <Radio value={"UCS2"}>UCS2</Radio>
+                                    <Radio value={"UTF8"}>UTF8</Radio>
+                                </Radio.Group>
                             </Form.Item>
                             <Form.Item name="isFlash" valuePropName="checked" style={{ margin: 0 }}>
                                 <Checkbox><Tooltip title="is a flash sms">Flash</Tooltip></Checkbox>
@@ -128,10 +155,11 @@ export const SendSmsNew = () => {
                                 onClick={() => {
                                     campaignForm
                                         .validateFields()
-                                        .then(_ => setSpinning(true) || SmsTaskService.sendSms(campaignForm.getFieldsValue()))
+                                        .then(_ =>setSpinning(true) || SmsTaskService.sendSms(campaignForm.getFieldsValue()))
                                         .then(report => {
                                             campaignForm.resetFields();
                                             setSpinning(false);
+                                            setLength(0);
                                             notification.success({
                                                 key: `csend_${Date.now()}`,
                                                 message: "Task Finished",
@@ -145,6 +173,7 @@ export const SendSmsNew = () => {
                                             });
                                         })
                                         .catch(error => {
+                                            setLength(0);
                                             setSpinning(false) || notification.error({
                                                 key: `csend_${Date.now()}`,
                                                 message: "Task Failed",
@@ -157,7 +186,6 @@ export const SendSmsNew = () => {
                                 }}
                                 children="Send"
                             />
-                        </Space>
                     </Space>
                 </Form.Item>
             </Form>
