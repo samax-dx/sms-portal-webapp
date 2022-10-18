@@ -76,7 +76,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved }) => {
+const WriteForm = ({ form, record, onRecordSaved,close }) => {
     const { Option } = Select;
     const [writeForm] = Form.useForm(form);
 
@@ -96,7 +96,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
             <Form.Item name="groupId" label="Group ID" rules={[{ required: false }]} hidden children={<Input />} />
             <Form.Item name="groupName" label="Group Name" rules={[{ required: true }]} children={<Input />} />
 
-            <Form.Item wrapperCol={{ offset: 8 }}>
+            <Form.Item wrapperCol={{ offset: 15 }}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -128,6 +128,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     }
                     children={"Submit"}
                 />
+                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:5}} onClick={close}>Close</Button>
             </Form.Item>
         </Form>
     </>);
@@ -230,8 +231,8 @@ export const Groups = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal key="createGroup" visible={modalData} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
+            <Modal key="createGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} close={handleCancel} />
             </Modal>
         </Row>
         <DataView groups={groups} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>

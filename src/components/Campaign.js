@@ -748,7 +748,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
                         <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                     </Card>
                 </Col>
-                    <Modal width={1000} header="Create Campaign" key="createCampaign" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                    <Modal width={1000} key="createCampaign" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                         <EditForm form={editForm} record={{}} onSave={saveRecord} />
                     </Modal>
             </Row>

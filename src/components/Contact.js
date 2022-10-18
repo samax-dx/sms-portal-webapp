@@ -85,7 +85,7 @@ const DataPager = ({totalPagingItems, currentPage, onPagingChange}) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved,groupId }) => {
+const WriteForm = ({ form, record, onRecordSaved,groupId,close }) => {
     const { Option } = Select;
     const [writeForm] = Form.useForm(form);
     useEffect(() => writeForm.resetFields(), [record, writeForm]);
@@ -106,7 +106,7 @@ const WriteForm = ({ form, record, onRecordSaved,groupId }) => {
             <Form.Item name="contactNumber" label="Contact Number" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="groupId" label="Group ID" initialValue={groupId} hidden children={<Input />} />
 
-            <Form.Item wrapperCol={{ offset: 8 }}>
+            <Form.Item wrapperCol={{ offset: 15 }}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -138,6 +138,7 @@ const WriteForm = ({ form, record, onRecordSaved,groupId }) => {
                     }
                     children={"Submit"}
                 />
+                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:5}} onClick={close}>Close</Button>
             </Form.Item>
         </Form>
     </>);
@@ -253,8 +254,8 @@ export const Contact = () => {
                 <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
                 <Table.Column title="Group ID" dataIndex={"groupId"}/>
             </Table>
-            <Modal key="createGroup" visible={modalData} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
-                <WriteForm form={writeForm} groupId={groupId} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
+            <Modal key="createGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
+                <WriteForm form={writeForm} groupId={groupId} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} close={handleCancel} />
             </Modal>
             <DataPager totalPagingItems={contactFetchCount} currentPage={lastQuery.page}
                        onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
