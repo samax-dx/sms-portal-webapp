@@ -149,7 +149,7 @@ export const SendSMS = ({ actor: editorActor }) => {
                 <Form.Item
                     name="message"
                     label={<>
-                        <span>Message Text</span>
+                        <span>Message Texts</span>
                         <span style={{ display: "none" }}>
                             &nbsp;
                             <Button type="link" onClick={() => console.log("Import Draft")}>
