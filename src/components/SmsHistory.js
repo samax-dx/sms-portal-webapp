@@ -15,10 +15,10 @@ import {
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
 import dayjs from "dayjs";
-import moment from "moment";
 import {SmsTaskService} from "../services/SmsTaskService";
 import {CampaignService} from "../services/CampaignService";
 import {useParams} from "react-router-dom";
+import moment from "moment";
 
 
 
@@ -28,12 +28,12 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        ["date_fld0_value", "date_fld1_value"].forEach((n, i) => {
+        ["updatedStamp_fld0_value", "updatedStamp_fld1_value"].forEach((n, i) => {
             const date = formData[n];
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const queryData = ["phoneNumber", "campaignName", "packageId", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
+        const queryData = ["phoneNumber", "campaignName", "packageId", "updatedStamp_fld0_value", "updatedStamp_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -54,8 +54,9 @@ const SearchForm = ({ onSearch }) => {
         <Form
             form={searchForm}
             labelCol={{ span: 15}}
-            wrapperCol={{ span: 23 }}
+            wrapperCol={{span:23}}
             labelAlign="left"
+            initialValues={{ updatedStamp_fld0_value: moment(new Date()),updatedStamp_fld1_value:moment(new Date()) }}
         >
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="phoneNumber" label="Phone Number" children={<Input />} />
             <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
@@ -63,11 +64,11 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />
             <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="date_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
-            <Form.Item name="date_fld0_value_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="ate_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
-            <Form.Item name="ate_fld1_value_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 4 }} colon={false} label=' '>
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedStamp_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>   {/*DatePicker format="YYYY-MM-DD HH:mm:ss" showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss'),}}/>} */}
+            <Form.Item name="updatedStamp_fld0_value_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedStamp_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format={"YYYY-MM-DD HH:mm:ss"} />} />
+            <Form.Item name="updatedStamp_fld1_value_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 1 }} colon={false} label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
