@@ -15,7 +15,7 @@ import {
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
 import dayjs from "dayjs";
-import {ProductService} from "../services/ProductService";
+import {Inventory as InventoryService} from "../services/Inventory";
 
 
 
@@ -78,7 +78,6 @@ const DataView = ({ products, viewPage, viewLimit}) => {
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
-    console.log(products)
 
     return (<>
         <Table
@@ -108,8 +107,7 @@ const DataView = ({ products, viewPage, viewLimit}) => {
                               >{v}</span>
                               <Button type="link" onClick={() => showModal(v)}>Show all</Button>
                           </>} />
-            <Table.Column title="Total" dataIndex={undefined} render={() => "Unknown"}/>
-            <Table.Column title="Remaining" dataIndex={"stock"} />
+            <Table.Column title="Balance" dataIndex={"stock"} />
             <Table.Column title="Details" dataIndex={"description"} />
         </Table>
         <Modal title="Package Prefixes" key="createCampaign" visible={!!modalData} onOk={handleOk} onCancel={handleCancel}>
@@ -142,7 +140,7 @@ export const MyPackageNew = () => {
 
 
     useEffect(() => {
-        ProductService.fetchProducts(lastQuery)
+        InventoryService.fetchProducts({}, { data: lastQuery })
             .then((data) => {
                 console.log(data)
                 setProducts(data.products);
