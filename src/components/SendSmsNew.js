@@ -138,7 +138,7 @@ export const SendSmsNew = () => {
                     </>}
                     rules={[{ required: true }]}
                 >
-                    <Input.TextArea onChange={handleTextChange}/>
+                    <Input.TextArea onChange={handleTextChange} autoSize={{ minRows: 3, maxRows: 6 }}/>
                 </Form.Item>
 
                 <Form.Item>
