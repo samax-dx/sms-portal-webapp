@@ -9,7 +9,7 @@ import {Link, NavLink, useLocation } from "react-router-dom";
 
 export const MainMenu = ({ actor }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
-    const location = useLocation();console.log(location.pathname.replace("/", ""))
+    const location = useLocation();
     const paths = location.pathname.split("/").slice(1);
 
     return (

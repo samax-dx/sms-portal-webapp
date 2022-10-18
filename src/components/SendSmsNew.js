@@ -18,6 +18,7 @@ import * as sheetjs from "xlsx";
 import { FileTextTwoTone } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import {SmsTaskService} from "../services/SmsTaskService";
+import {SenderIdService} from "../services/SenderIdService";
 import React, {useEffect, useState} from "react";
 
 
@@ -26,6 +27,15 @@ export const SendSmsNew = () => {
     const [spinning, setSpinning] = useState(false);
     const [encoding,setencoding] = useState('GSM7');
     const [length,setLength] = useState(0);
+
+    const [senderIds, setSenderIds] = useState([]);
+    useEffect(()=> {
+        SenderIdService.fetchRecords({})
+            .then(data=>{
+                setSenderIds(data.senderIds);
+            })
+    },[])
+
     const resetMsgField = () =>{
         campaignForm.setFieldsValue({message:''})
         setLength(0);
@@ -60,12 +70,16 @@ export const SendSmsNew = () => {
               headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
             <Form
                 form={campaignForm}
-                initialValues={{ senderId: "8801552146283", isUnicode: true/*, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null*/ }}
+                initialValues={{ senderId: "111", isUnicode: true/*, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null*/ }}
                 layout="vertical"
                 wrapperCol={{ span: 8 }}
                 style={{width:'92rem'}}
             >
-                <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input />} />
+                <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]}>
+                    <Select style={{ minWidth: 150 }}>
+                        {senderIds.map((v, i) => <Select.Option value={v.senderIdId} key={i}>{v.senderId}</Select.Option>)}
+                    </Select>
+                </Form.Item>
 
                 <Form.Item
                     name="phoneNumbers"
