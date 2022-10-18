@@ -27,6 +27,7 @@ import {SendSmsNew} from "./components/SendSmsNew";
 import {Groups} from "./components/Group";
 import {Contact} from "./components/Contact";
 import {AllContact} from "./components/AllContact";
+import {HomeNew} from "./components/HomeNew";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -44,7 +45,7 @@ export const App = ({ actor }) => {
     return (
         <BrowserRouter>
             <Routes>
-                <ReactRoute path="/" element={createRouteComponent(null)} />
+                <ReactRoute path="/" element={createRouteComponent(<HomeNew />)} />
                 <ReactRoute path="/balance/paymentHistory" element={createRouteComponent(<MyPaymentNew />)} />
                 <ReactRoute path="/order/orderHistory" element={createRouteComponent(<OrdersNew />)} />
                 <ReactRoute path="/order/myPackage" element={createRouteComponent(<MyPackageNew />)} />

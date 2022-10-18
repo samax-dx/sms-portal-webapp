@@ -6,6 +6,7 @@ import { TopMenu } from "./TopMenu";
 import { MainMenu } from './MainMenu';
 import getAllConfig from '../config/main'
 import {Link} from "react-router-dom";
+import {TopMenuNew} from "./TopMenuNew";
 
 
 const { Header, Sider } = Layout;
@@ -25,7 +26,7 @@ export const AppLayout = ({ render: PageContent, actor,routeComponent }) => {
                         &nbsp;
                         <Link to="/" style={{color:'white'}}><span>SMS-Portal Client</span></Link>
                     </Col>
-                    <Col xs={14} sm={20} className="menu"><TopMenu actor={actor} /></Col>
+                    <Col xs={14} sm={20} className="menu"><TopMenuNew actor={actor} /></Col>
                 </Row>
             </Header>
             <Layout>
@@ -33,7 +34,7 @@ export const AppLayout = ({ render: PageContent, actor,routeComponent }) => {
                     <MainMenu actor={actor} />
                 </Sider>
                 <Layout style={{ padding: "2px" }}>
-                    {window.location.href.match(/^(?:.*?:\/\/)?(?:[^\/]+)\/?$/)
+                    {false && window.location.href.match(/^(?:.*?:\/\/)?(?:[^\/]+)\/?$/)
                         ? <PageContent actor={appState.context.actor}/> : null}
                     {routeComponent}
                 </Layout>
