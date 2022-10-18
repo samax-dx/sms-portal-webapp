@@ -146,7 +146,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>failed</Tag>,
                 <span></span>,
-            ][[v === "pending", v ==="delivered", v === "undetermined", row.status === "failed", !row.status].indexOf(!0)]} />
+            ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed", !v].indexOf(!0)]} />
 
             <Table.Column title="External Status Update Time" dataIndex={"updatedOn"} render={(unixToMomentTime)}/>
 
