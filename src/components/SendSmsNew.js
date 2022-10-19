@@ -70,14 +70,14 @@ export const SendSmsNew = () => {
               headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
             <Form
                 form={campaignForm}
-                initialValues={{ senderId: "111", isUnicode: true/*, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null*/ }}
+                initialValues={{ isUnicode: true/*, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null*/ }}
                 layout="vertical"
                 wrapperCol={{ span: 8 }}
                 style={{width:'92rem'}}
             >
                 <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]}>
                     <Select style={{ minWidth: 150 }}>
-                        {senderIds.map((v, i) => <Select.Option value={v.senderIdId} key={i}>{v.senderId}</Select.Option>)}
+                        {senderIds.map((v, i) => <Select.Option key={v.senderId} value={v.senderId}>{v.senderId}</Select.Option>)}
                     </Select>
                 </Form.Item>
 
@@ -158,11 +158,11 @@ export const SendSmsNew = () => {
                 <Form.Item>
                     <Space style={{ width: "100%"}}>
                         <span style={{marginRight:5}}>SMS Count:{length}</span>
-                            <Form.Item name="radiogroup" initialValue={"GSM7"} style={{ margin: 0}}>
+                            <Form.Item name="charEncoding" initialValue={"GSM7"} style={{ margin: 0}}>
                                 <Radio.Group name="radio" onChange={handleRadioChange} style={{display:"inline-flex"}}>
-                                    <Radio value={"GSM7"}>GSM7</Radio>
-                                    <Radio value={"UCS2"}>UCS2</Radio>
-                                    <Radio value={"UTF8"}>UTF8</Radio>
+                                    <Radio value={"gsm7"}>GSM7</Radio>
+                                    <Radio value={"ucs2"}>UCS2</Radio>
+                                    <Radio value={"utf8"}>UTF8</Radio>
                                 </Radio.Group>
                             </Form.Item>
                             <Form.Item name="isFlash" valuePropName="checked" style={{ margin: 0 }}>

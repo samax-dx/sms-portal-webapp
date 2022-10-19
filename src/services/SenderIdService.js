@@ -1,3 +1,6 @@
+import axios from "axios";
+import { SERVER_URL } from "../config";
+import { XAuth } from "./XAuth";
 import {createOrUpdateMocked, findListMocked} from "../Util";
 
 const senderIds = [
@@ -11,38 +14,34 @@ const senderIds = [
 ];
 
 export const SenderIdService = {
-    fetchRecords: (payload) =>  console.log(payload) || /*axios
-        .post(
-            `${SERVER_URL}/Party/findParties`,
-            { ...payload },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${XAuth.token()}`,
-                }
-            }
-        )*/
-        Promise.resolve(findListMocked(senderIds, payload, "senderId", "senderIds"))//senderId.includes(payload.senderId)))
-        .then(response => {
-            const  data  = response;
-            console.log(data)
+    fetchRecords: (payload) =>  console.log(payload) || axios
+       .post(
+           `${SERVER_URL}/SenderId/getSenderIds`,
+           { ...payload },
+           {
+               headers: {
+                   'Content-Type': 'application/json',
+                   'Authorization': `Bearer ${XAuth.token()}`,
+               }
+           }
+       )
+       // Promise.resolve(findListMocked(senderIds, payload, "senderId", "senderIds"))//senderId.includes(payload.senderId)))
+       .then(response => {
+           const { data } = response;
+           console.log(data)
 
-           if (data.senderIds === null) {
-                data.senderIds = [];
-            }
+           if (data.senderIds) {
+               return Promise.resolve(data);  //
+           } else {
+               return Promise.reject({ code: null, message: data.errorMessage });
+           }
+       })
+       .catch(error => {
+           const response = error.response || { data: { error: error.message } };
+           const { status: code, statusText: text, data } = response;
+           const errorEx = { code, message: data.error || text };
+           console.log(errorEx);
 
-            if (data) {
-                return Promise.resolve(data);  //
-            } else {
-                return Promise.reject({ code: null, message: data.errorMessage });
-            }
-        })
-        .catch(error => {
-            const response = error.response || { data: { error: error.message } };
-            const { status: code, statusText: text, data } = response;
-            const errorEx = { code, message: data.error || text };
-            console.log(errorEx);
-
-            return Promise.reject(errorEx);
-        })
+           return Promise.reject(errorEx);
+       }),
 };
