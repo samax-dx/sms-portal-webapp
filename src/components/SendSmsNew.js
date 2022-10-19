@@ -158,7 +158,7 @@ export const SendSmsNew = () => {
                 <Form.Item>
                     <Space style={{ width: "100%"}}>
                         <span style={{marginRight:5}}>SMS Count:{length}</span>
-                            <Form.Item name="charEncoding" initialValue={"GSM7"} style={{ margin: 0}}>
+                            <Form.Item name="charEncoding" initialValue={"gsm7"} style={{ margin: 0}}>
                                 <Radio.Group name="radio" onChange={handleRadioChange} style={{display:"inline-flex"}}>
                                     <Radio value={"gsm7"}>GSM7</Radio>
                                     <Radio value={"ucs2"}>UCS2</Radio>
