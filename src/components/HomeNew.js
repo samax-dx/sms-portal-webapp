@@ -396,7 +396,7 @@ export const HomeNew = () => {
                     <Progress size="medium" percent={progressData[2].value} status="exception" />
                     <Progress size="medium" percent={progressData[4].value} />
                     <Progress size="medium" percent={progressData[5].value} showInfo={true} />
-                    <Space direction="vertical">
+                    <Space direction="horizontal">
                         <Badge color="#689dc4" status="processing" text="Pending" />
                         <Badge color="#FF5733" status="error" text="Failed" />
                         <Badge color="#4F995B" status="success" text="Sent" />
