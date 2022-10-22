@@ -281,7 +281,7 @@ export const HomeNew = () => {
                         <Space direction="vertical" size={"small"}>
                             <Statistic title="Account Code No." value={profile.partyId} groupSeparator="" />
                             <Statistic title="Account Balance (BDT)" value={accountBalance} precision={2} />
-                            <Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +' '+data.productId)} precision={2} />
+                            <Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +'['+data.productId)+']'} precision={2} />
                         </Space>
                     </Space>
                 </Col>
@@ -294,7 +294,7 @@ export const HomeNew = () => {
                 </Col>
 
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #8e2de2, #4a00e0)'}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #2193b0 ,  #6dd5ed)'}}>
                         <Statistic
                             key={1}
                             title={'Campaigns Total'}
@@ -302,7 +302,7 @@ export const HomeNew = () => {
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #8e2de2, #4a00e0)', marginTop: 10}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #2193b0, #6dd5ed)', marginTop: 10}}>
                         <Statistic
                             key={1}
                             title={'Campaigns Total'}
@@ -312,7 +312,7 @@ export const HomeNew = () => {
                     </Card>
                 </Col>
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%)'}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
                         <Statistic
                             key={2}
                             title={"Success Rate"}
@@ -323,7 +323,7 @@ export const HomeNew = () => {
                             suffix="%"
                         />
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%)', marginTop: 10}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
                         <Statistic
                             key={2}
                             title={"Success Rate"}
@@ -336,7 +336,7 @@ export const HomeNew = () => {
                     </Card>
                 </Col>
                 <Col md={5}>
-                    <Card style={{backgroundImage:"linear-gradient(to right, rgb(242, 112, 156), rgb(255, 148, 114))"}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
                         <Statistic
                             key={3}
                             title={"Failure Rate"}
@@ -347,7 +347,7 @@ export const HomeNew = () => {
                             suffix="%"
                         />
                     </Card>
-                    <Card style={{backgroundImage:"linear-gradient(to right, rgb(242, 112, 156), rgb(255, 148, 114))", marginTop: 10}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
                         <Statistic
                             key={3}
                             title={"Failure Rate"}

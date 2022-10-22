@@ -124,6 +124,9 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             })}
             locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
             pagination={false}
+            scroll={{
+                x: 2000,
+            }}
         >
             <Table.Column
                 dataIndex={undefined}
@@ -132,7 +135,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             />
             <Table.Column title="Originating Called Number" dataIndex={"phoneNumber"}/>
             <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
-            <Table.Column title="Message" dataIndex={"message"} />
+            <Table.Column title="Message" dataIndex={"message"}/>
 
             <Table.Column title="Status" dataIndex={"status"} render={v => [
                 <Tag color={"processing"}>pending</Tag>,
@@ -152,7 +155,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             <Table.Column title="External Status Update Time" dataIndex={"updatedOn"} render={(unixToMomentTime)}/>
 
             <Table.Column title="Error" dataIndex={"errorCode"} />
-            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} ellipsis />
+            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} />
             <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
             <Table.Column title="Package" dataIndex={"packageId"} />
             <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
@@ -164,7 +167,8 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                     <Button onClick={() => showModal(campaignTask)} type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}}>
                         Schedule
                     </Button>
-                } />
+                }
+            />
         </Table>
 
         <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
