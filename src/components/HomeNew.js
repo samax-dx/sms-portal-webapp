@@ -132,7 +132,7 @@ export const HomeNew = () => {
     useEffect(() => {
         AccountingNew.fetchBalanceRequests(lastPaymentQuery)
             .then((data) => {
-                console.log(data)
+                console.log(data);
                 setPayments(data.payments);
                 setPaymentsFetchCount(data.count);
                 setPaymentsFetchError(null);
@@ -147,6 +147,7 @@ export const HomeNew = () => {
     useEffect(() => {
         InventoryService.fetchProducts(lastProductQuery)
             .then((data) => {
+                console.log(data);
                 setPartyProducts(data.products);
                 setPartyProductsFetchCount(data.count);
                 setPartyProductsFetchError(null);
@@ -161,7 +162,7 @@ export const HomeNew = () => {
     useEffect(() => {
         CampaignService.fetchCampaignTaskReports(lastTaskReportQuery)
             .then((data) => {
-                console.log(data)
+                console.log(data);
                 setTaskReports(data.taskReports);
                 setTaskReportsFetchCount(data.count);
                 setTaskReportsFetchError(null);
@@ -280,6 +281,7 @@ export const HomeNew = () => {
                         <Space direction="vertical" size={"small"}>
                             <Statistic title="Account Code No." value={profile.partyId} groupSeparator="" />
                             <Statistic title="Account Balance (BDT)" value={accountBalance} precision={2} />
+                            <Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +' '+data.productId)} precision={2} />
                         </Space>
                     </Space>
                 </Col>
@@ -287,6 +289,8 @@ export const HomeNew = () => {
                 <Col md={3}>
                     <Title level={3} style={{color: "#492D3A", marginLeft: 20}}>Today</Title>
                     <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#689dc4", marginLeft: 35}} /></Space>
+                    <Title level={3} style={{color: "#492D3A", marginTop: 48}}>This Week</Title>
+                    <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#4F995B", marginLeft: 35}} /></Space>
                 </Col>
 
                 <Col md={5}>
@@ -298,9 +302,28 @@ export const HomeNew = () => {
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
                     </Card>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #8e2de2, #4a00e0)', marginTop: 10}}>
+                        <Statistic
+                            key={1}
+                            title={'Campaigns Total'}
+                            value={campaignStatistics.campaignCount}
+                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
+                        />
+                    </Card>
                 </Col>
                 <Col md={5}>
                     <Card style={{backgroundImage:'linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%)'}}>
+                        <Statistic
+                            key={2}
+                            title={"Success Rate"}
+                            value={campaignStatistics.avgSuccessRate}
+                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
+                            precision={2}
+                            prefix={<ArrowUpOutlined />}
+                            suffix="%"
+                        />
+                    </Card>
+                    <Card style={{backgroundImage:'linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%)', marginTop: 10}}>
                         <Statistic
                             key={2}
                             title={"Success Rate"}
@@ -324,39 +347,7 @@ export const HomeNew = () => {
                             suffix="%"
                         />
                     </Card>
-                </Col>
-                {/*    This week*/}
-                <Col md={5}></Col>
-                <Divider type="vertical" style={{ height: "inherit", marginRight: "20px" }} />
-                <Col md={3}>
-                    <Title level={3} style={{color: "#492D3A"}}>This Week</Title>
-                    <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#4F995B", marginLeft: 35}} /></Space>
-                </Col>
-                <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #8e2de2, #4a00e0)'}}>
-                        <Statistic
-                            key={1}
-                            title={'Campaigns Total'}
-                            value={campaignStatistics.campaignCount}
-                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                        />
-                    </Card>
-                </Col>
-                <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%)'}}>
-                        <Statistic
-                            key={2}
-                            title={"Success Rate"}
-                            value={campaignStatistics.avgSuccessRate}
-                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowUpOutlined />}
-                            suffix="%"
-                        />
-                    </Card>
-                </Col>
-                <Col md={5}>
-                    <Card style={{backgroundImage:"linear-gradient(to right, rgb(242, 112, 156), rgb(255, 148, 114))"}}>
+                    <Card style={{backgroundImage:"linear-gradient(to right, rgb(242, 112, 156), rgb(255, 148, 114))", marginTop: 10}}>
                         <Statistic
                             key={3}
                             title={"Failure Rate"}

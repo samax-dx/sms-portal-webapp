@@ -76,9 +76,9 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved,close }) => {
+const WriteForm = ({ record, onRecordSaved,close }) => {
     const { Option } = Select;
-    const [writeForm] = Form.useForm(form);
+    const [writeForm] = Form.useForm();
 
     useEffect(() => writeForm.resetFields(), [record, writeForm]);
 
@@ -184,7 +184,6 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
 
 export const Groups = () => {
 
-    const [writeForm] = Form.useForm();
     // Component States
     const [lastQuery, setLastQuery] = useState({});
     const [groups, setGroups] = useState([]);
@@ -232,7 +231,7 @@ export const Groups = () => {
                 </Card>
             </Col>
             <Modal key="createGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} close={handleCancel} />
+                <WriteForm record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} close={handleCancel} />
             </Modal>
         </Row>
         <DataView groups={groups} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>

@@ -104,7 +104,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
 
     return (<>
         <Table
-            style={{marginLeft:'6px'}}
+            style={{marginLeft:'5px'}}
             size="small"
             // dataSource={taskReports}
             // rowKey={"productId"}

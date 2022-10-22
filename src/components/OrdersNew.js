@@ -92,9 +92,7 @@ const DataView = ({ orders, viewPage, viewLimit}) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column
-                title="Order ID" dataIndex={"orderId"}/>
-
+            <Table.Column title="Order ID" dataIndex={"orderId"}/>
             <Table.Column title="Package" dataIndex={"productName"} />
             <Table.Column title="Order Date" dataIndex={"orderDate"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
             <Table.Column title="Price" dataIndex={"grandTotal"} />

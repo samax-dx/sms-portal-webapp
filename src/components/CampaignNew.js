@@ -160,9 +160,9 @@ const SchedulePickerWithType = ({type}) => {
     // return <DatePicker picker={type}={onChange} />;
 };
 
-const WriteForm = ({ form, record, onRecordSaved,close }) => {
+const WriteForm = ({record, onRecordSaved,close }) => {
     const { Option } = Select;
-    const [writeForm] = Form.useForm(form);
+    const [writeForm] = Form.useForm();
 
     useEffect(() => writeForm.resetFields(), [record, writeForm]);
     const [type, setType] = useState('default');
@@ -371,7 +371,6 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
 
 export const CampaignNew = () => {
 
-    const [writeForm] = Form.useForm();
     // Component States
     const [lastQuery, setLastQuery] = useState({});
     const [campaigns, setCampaigns] = useState([]);
@@ -419,7 +418,7 @@ export const CampaignNew = () => {
                 </Card>
             </Col>
             <Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }}>
-                <WriteForm form={writeForm} close={handleCancel} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
+                <WriteForm close={handleCancel} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>
         <DataView campaigns={campaigns} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
