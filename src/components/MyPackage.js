@@ -100,7 +100,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             />
 
             <Table.Column title="Package" dataIndex={"productName"} />
-            <Table.Column width="19%" title="Prefixes" dataIndex={"packagePrefixes"}
+            <Table.Column width="19%" title="Prefixes" dataIndex={"dialPrefixes"}
                           render={(v, r, i) =><>
                               <span
                                   style={{textOverflow:"ellipsis",

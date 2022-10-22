@@ -213,11 +213,9 @@ export const CampaignTaskReport = () => {
                     }
 
                     const newTask = {...task};
-                    //const children = [{ ...task }];
-
 
                     const children = task.instances.split(',').map(msgChunk => {
-                        const decodedMsgChunk = atob(msgChunk);
+                        const decodedMsgChunk = window.atob(msgChunk);
                         const clonedTask = {...task};
                         clonedTask.message = decodedMsgChunk;
                         return clonedTask;
@@ -251,7 +249,7 @@ export const CampaignTaskReport = () => {
                 <Table.Column title="Message" dataIndex={"message"}/>
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)}/>
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render={(unixToMomentTime)}/>
-                <Table.Column title="Terminated Calling Number" dataIndex={"terminatingCalledNumber"}/>
+                <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
 
                 <Table.Column
                     dataIndex={undefined}

@@ -30,7 +30,7 @@ const SearchForm = ({onSearch}) => {
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const queryData = ["productName", "packagePrefixes", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
+        const queryData = ["productName", "dialPrefixes", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -57,9 +57,9 @@ const SearchForm = ({onSearch}) => {
             <Form.Item style={{display: 'inline-block', margin: '0px'}} name="productName" label="Name"
                        children={<Input/>}/>
             <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input/>}/>
-            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="packagePrefixes" label="Prefix"
+            <Form.Item style={{display: 'inline-block', margin: '0px'}} name="dialPrefixes" label="Prefix"
                        children={<Input/>}/>
-            <Form.Item name="packagePrefixes_op" initialValue={"contains"} hidden children={<Input/>}/>
+            <Form.Item name="dialPrefixes_op" initialValue={"contains"} hidden children={<Input/>}/>
             <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"}/>}/>
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
             <Form.Item style={{display: 'inline-block', margin: '0px'}} name="date_fld1_value" label="To Date" hidden
@@ -97,7 +97,7 @@ const DataView = ({products, viewPage, viewLimit}) => {
                     render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
                 />
                 <Table.Column title="Package Name" dataIndex={"productName"}/>
-                <Table.Column title="Prefixes" dataIndex={"packagePrefixes"}/>
+                <Table.Column title="Prefixes" dataIndex={"dialPrefixes"} render={(v, r, i) => v.replace(/\s*,\s*/g, ", ")}/>
                 <Table.Column title="Volume" dataIndex={"volume"}/>
                 <Table.Column title="Price" dataIndex={"price"}/>
                 <Table.Column title="Details" dataIndex={"description"}/>

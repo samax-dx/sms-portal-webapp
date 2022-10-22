@@ -140,7 +140,7 @@ export const OrdersNew = () => {
     }, [lastQuery]);
 
     useEffect(() => {
-        setLastQuery({ page: 1, limit: 10 })
+        setLastQuery({ page: 1, limit: 10, orderBy: "orderDate DESC" })
     }, []);
 
 

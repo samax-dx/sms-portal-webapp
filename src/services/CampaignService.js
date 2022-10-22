@@ -76,7 +76,7 @@ export const CampaignService = {
             const { data } = response;
             console.log(data);
 
-            if (+data.deleted) {
+            if (+data.deleteCount) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });

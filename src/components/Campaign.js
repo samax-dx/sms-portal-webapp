@@ -480,7 +480,7 @@ const DataViewSingle = ({ context, onCampaignStart, onDeleteTask, onFilterTasks 
                 <Table.Column title="Message" dataIndex={"message"} />
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render= {(unixToMomentTime)}/>
-                <Table.Column title="Terminated Calling Number" dataIndex={"terminatingCalledNumber"} />
+                <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"} />
 
                 <Table.Column
                     dataIndex={undefined}

@@ -89,8 +89,8 @@ export const TopMenuNew = () => {
                     {profile.name}
                 </Menu.Item>
             </Popover>
-            <Menu.Item key="balance" className="balanceView"><strong>Balance [main]: {accountBalance} BDT</strong></Menu.Item>
-            {partyProducts.map(product => <Menu.Item key={product.productId} className="balanceView"><strong>Balance [Package]: {product.stock} {product.productId}</strong></Menu.Item>)}
+            <Menu.Item key="balance" className="balanceView"><strong>Balance (main): {accountBalance} BDT</strong></Menu.Item>
+            {partyProducts.map(product => <Menu.Item key={product.productId} className="balanceView"><strong>Balance ({product.productId}): {product.stock}</strong></Menu.Item>)}
         </Menu>
     );
 }

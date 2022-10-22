@@ -132,7 +132,7 @@ export const MyPaymentNew = () => {
     }, [lastQuery]);
 
     useEffect(() => {
-        setLastQuery({ page: 1, limit: 10 })
+        setLastQuery({ page: 1, limit: 10, orderBy: "date DESC" })
     }, []);
 
 

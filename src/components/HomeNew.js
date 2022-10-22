@@ -62,7 +62,7 @@ const PackageView = ({ products, viewPage, viewLimit, onView}) => {
 
             <Table.Column title="Package" dataIndex={"productName"} />
             <Table.Column title="Balance" dataIndex={"stock"} render={v => <Tag color={getBalanceColor(v)}>{v}</Tag>} />
-            <Table.Column title="Prefixes" dataIndex={"packagePrefixes"} />
+            <Table.Column title="Prefixes" dataIndex={"dialPrefixes"} />
         </Table>
     </>);
 };

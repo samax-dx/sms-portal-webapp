@@ -94,7 +94,7 @@ const DataView = ({ products, viewPage, viewLimit}) => {
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
             <Table.Column title="Package" dataIndex={"productName"} />
-            <Table.Column width="19%" title="Prefixes" dataIndex={"packagePrefixes"}
+            <Table.Column width="19%" title="Prefixes" dataIndex={"dialPrefixes"}
                           render={(v, r, i) =><>
                               <span
                                   style={{textOverflow:"ellipsis",
@@ -104,8 +104,8 @@ const DataView = ({ products, viewPage, viewLimit}) => {
                                       overflow:"hidden",
                                       verticalAlign:"middle"
                                   }}
-                              >{v}</span>
-                              <Button type="link" onClick={() => showModal(v)}>Show all</Button>
+                              >{v.replace(/\s*,\s*/g, ", ")}</span>
+                              <Button type="link" onClick={() => showModal(v.replace(/\s*,\s*/g, ", "))}>Show all</Button>
                           </>} />
             <Table.Column title="Balance" dataIndex={"stock"} />
             <Table.Column title="Details" dataIndex={"description"} />
