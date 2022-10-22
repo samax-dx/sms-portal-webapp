@@ -230,7 +230,7 @@ export const Groups = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal key="createGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"28vh"}}>
+            <Modal key="createGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"11rem"}}>
                 <WriteForm record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} close={handleCancel} />
             </Modal>
         </Row>
