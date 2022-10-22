@@ -254,7 +254,7 @@ export const Contact = () => {
                 <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
                 <Table.Column title="Group ID" dataIndex={"groupId"}/>
             </Table>
-            <Modal key="createGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }}>
+            <Modal key="createGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }} >
                 <WriteForm form={writeForm} groupId={groupId} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} close={handleCancel} />
             </Modal>
             <DataPager totalPagingItems={contactFetchCount} currentPage={lastQuery.page}

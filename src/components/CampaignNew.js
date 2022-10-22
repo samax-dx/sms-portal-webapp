@@ -20,6 +20,7 @@ import {CampaignService} from "../services/CampaignService";
 import {FileDoneOutlined, FileTextOutlined, FileTextTwoTone, PlusCircleFilled} from "@ant-design/icons";
 import * as sheetjs from "xlsx";
 import {Link} from "react-router-dom";
+import {SenderIdService} from "../services/SenderIdService";
 
 
 
@@ -164,6 +165,14 @@ const WriteForm = ({record, onRecordSaved,close }) => {
     const { Option } = Select;
     const [writeForm] = Form.useForm();
 
+    const [senderIds, setSenderIds] = useState([]);
+    useEffect(()=> {
+        SenderIdService.fetchRecords({})
+            .then(data=>{
+                setSenderIds(data.senderIds);
+            })
+    },[])
+
     useEffect(() => writeForm.resetFields(), [record, writeForm]);
     const [type, setType] = useState('default');
 
@@ -180,7 +189,11 @@ const WriteForm = ({record, onRecordSaved,close }) => {
         >
             <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input />} />
 
-            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} initialValue={"8801552146283"} children={<Input />} />
+            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]}>
+                <Select style={{ minWidth: 150 }}>
+                    {senderIds.map((v, i) => <Select.Option key={v.senderId} value={v.senderId}>{v.senderId}</Select.Option>)}
+                </Select>
+            </Form.Item>
 
             <Form.Item
                 name="phoneNumbers"
@@ -417,7 +430,7 @@ export const CampaignNew = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }}>
+            <Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"90vh"}}>
                 <WriteForm close={handleCancel} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>

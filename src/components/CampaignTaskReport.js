@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, List, Tag, Divider, Statistic
+    Modal, Typography, DatePicker, notification, List, Tag, Divider, Statistic, Spin
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -20,6 +20,7 @@ import {TaskSearchForm} from "./TaskSearch";
 import {CampaignService} from "../services/CampaignService";
 import {useParams} from "react-router-dom";
 import moment from "moment/moment";
+import {SmsTaskService} from "../services/SmsTaskService";
 
 
 const SearchForm = ({onSearch}) => {
@@ -90,7 +91,6 @@ const DataPager = ({totalPagingItems, currentPage, onPagingChange}) => {
 export const CampaignTaskReport = () => {
     const {campaignId} = useParams();
 
-    // Component States
     const [lastQuery, setLastQuery] = useState({});
     const [campaign, setCampaign] = useState({});
     const [campaignFetchError, setCampaignFetchError] = useState(null);
@@ -102,6 +102,7 @@ export const CampaignTaskReport = () => {
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
+    const [saving,setSaving] = useState(false);
 
     const hasSubTask = task => {
         if(task.instances && task.instances.split(",").length > 1){
@@ -136,6 +137,25 @@ export const CampaignTaskReport = () => {
     useEffect(() => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
+    const onCampaignStart = campaign =>setSaving(true) || SmsTaskService
+        .sendSms(campaign)
+        .then(result => {
+            notification.success({
+                key: `send_${Date.now()}`,
+                message: "Task Finished",
+                description: <>Campaign started: {result.campaignId}</>,
+                duration: 5
+            });
+        })
+        .catch(error => {
+            notification.error({
+                key: `send_${Date.now()}`,
+                message: "Task Failed",
+                description: <>Task Failed: {JSON.stringify(error.code)}</>,
+                duration: 5
+            });
+        })
+        .finally(_ => setSaving(false));
 
 
     return (<>
@@ -148,7 +168,7 @@ export const CampaignTaskReport = () => {
                         <Tag>{campaignId}</Tag>
                         <Button
                             type="primary"
-                            // onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}
+                            onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}
                             children={"Start Campaign"}
                             disabled={campaign.createdOn !== campaign.updatedOn}
                         />
@@ -322,6 +342,9 @@ export const CampaignTaskReport = () => {
                 />
                 <Table.Column title="Schedule" dataIndex={"date"} render={(unixToMomentTime)}/>
             </Table>
+        </Modal>
+        <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
+            <Spin tip="Sending Request" />
         </Modal>
 
     </>);
