@@ -25,7 +25,7 @@ import React, {useEffect, useState} from "react";
 export const SendSmsNew = () => {
     const [campaignForm] = Form.useForm();
     const [spinning, setSpinning] = useState(false);
-    const [encoding,setencoding] = useState('GSM7');
+    const [encoding,setencoding] = useState('gsm7');
     const [length,setLength] = useState(0);
 
     const [senderIds, setSenderIds] = useState([]);
@@ -35,7 +35,7 @@ export const SendSmsNew = () => {
                 setSenderIds(data.senderIds);
             })
     },[])
-
+console.log(length);
     const resetMsgField = () =>{
         campaignForm.setFieldsValue({message:''})
         setLength(0);
@@ -44,19 +44,20 @@ export const SendSmsNew = () => {
         setencoding(e.target.value);
         resetMsgField();
     }
-
+    console.log(length);
+    console.log(encoding);
     const handleTextChange =e=>{
         calculateLength(e.target.value.length,encoding)
     }
     const calculateLength = (msg,encoding) =>{
-        switch(encoding) {
-        case "GSM7":
+        switch(encoding.toLowerCase()) {
+        case "gsm7":
              setLength(Math.ceil(msg / (msg <= 160 ? 160 : 153)));
             break;
-        case "UCS2":
+        case "ucs2":
             setLength(Math.ceil(msg/ (msg <= 70 ? 70 : 67)));
             break;
-        case "UTF8":
+        case "utf8":
             setLength(Math.ceil(msg / (msg <= 140 ? 140 : 137)));
             break;
         }
