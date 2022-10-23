@@ -30,7 +30,11 @@ const SearchForm = ({ onSearch }) => {
 
         ["updatedOn_fld0_value", "updatedOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : "";
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
+
+            if (formData[n] === null) {
+                delete formData[n];
+            }
         });
 
         const queryData = ["phoneNumber", "campaignName", "packageId", "updatedOn_fld0_value", "updatedOn_fld1_value"].reduce((acc, v) => {
@@ -115,9 +119,16 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
 
                 const newTask = { ...task, key: i };
 
-                newTask.children = task.instances.split(',').map((msgChunk, i) =>{
-                    const decodedMsgChunk = atob(msgChunk);
-                    return { ...task, key: i+"/"+i, message: decodedMsgChunk };
+                // newTask.children = task.instances.split(',').map((msgChunk, i) =>{
+                //     const decodedMsgChunk = atob(msgChunk);
+                //     return { ...task, key: i+"/"+i, message: decodedMsgChunk };
+                // });
+                const instances = task.instances.split(',');
+                const charCount = task.message.length;
+                const msgCount = instances.length;
+                const charCountPerMsg = charCount/msgCount;
+                newTask.children = instances.map((msgChunk, i) =>{
+                    return { ...task, key: i+"/"+i, message: task.message.substring(charCountPerMsg * i, charCountPerMsg * (i+1)) };
                 });
 
                 return newTask;

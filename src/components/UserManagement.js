@@ -70,6 +70,10 @@ const SearchForm = ({ onSearch }) => {
         ["date_fld0_value", "date_fld1_value"].forEach((n, i) => {
             const date = formData[n];
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
+
+            if (formData[n] === null) {
+                delete formData[n];
+            }
         });
 
         const queryData = ["productName", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {

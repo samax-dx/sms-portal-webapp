@@ -29,10 +29,14 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        // ["cratedOn_fld0_value", "cratedOn_fld1_value"].forEach((n, i) => {
-        //     const date = formData[n];
-        //     formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
-        // });
+        ["cratedOn_fld0_value", "cratedOn_fld1_value"].forEach((n, i) => {
+            const date = formData[n];
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
+
+            if (formData[n] === null) {
+                delete formData[n];
+            }
+        });
 
         const queryData = ["groupName", "cratedOn_fld0_value", "cratedOn_fld1_value"].reduce((acc, v) => {
             const field = v;
