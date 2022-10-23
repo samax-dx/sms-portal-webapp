@@ -58,8 +58,6 @@ const SearchForm = ({onSearch}) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 22 }}
-            wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
             <Form.Item style={{display:'inline-block', margin:'0px'}} name="phoneNumber" label="Campaign Phone Number" children={<Input />} />
@@ -214,13 +212,16 @@ export const CampaignTaskReport = () => {
                                 />
                             </Col>))}
                         />
-                        <Card title={<Title level={5}>Search Task</Title>}
-                              size="small"
-                              style={{border: 'none'}}
-                              headStyle={{border: 'none'}}
-                        >
-                            <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
-                        </Card>
+                        <Col>
+                            <Card title={<Title style={{lineHeight: '0.5'}} level={4}>Search Task</Title>}
+                                  size="small"
+                                  style={{border: 'none', margin: '0px', padding: '0px'}}
+                                  headStyle={{border: 'none'}}
+                                  bodyStyle={{padding: 0, margin: 0, marginLeft: 10}}
+                            >
+                                <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                            </Card>
+                        </Col>
                     </Space>
                 </Card>
             </List>
