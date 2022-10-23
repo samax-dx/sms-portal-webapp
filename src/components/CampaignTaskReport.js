@@ -210,21 +210,24 @@ export const CampaignTaskReport = () => {
                                 />
                             </Col>))}
                         />
+                        <Card title={<Title level={5}>Search Task</Title>}
+                              size="small"
+                              style={{border: 'none'}}
+                              headStyle={{border: 'none'}}
+                        >
+                            <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                        </Card>
                     </Space>
                 </Card>
             </List>
         </Card>
 
-        <Card title={<Title style={{marginLeft: 12}} level={5}>Search Task</Title>}
-              headStyle={{/*backgroundColor:"#f0f2f5",*/ border: 0, padding: '0px'}}
-              size="small"
-        >
-            <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
-        </Card>
-
         <Card title="Campaign Tasks">
             <Table
                 size="small"
+                scroll={{
+                    x: 1800,
+                }}
                 dataSource={tasks.map(task => {
                     //alert(JSON.stringify(task));
 
@@ -298,7 +301,6 @@ export const CampaignTaskReport = () => {
                             }
                             type="primary"
                             disabled={record.status !== "pending"}
-                            style={{display: "none"}}
                         >Delete</Button>
                     }
                 />

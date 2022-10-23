@@ -125,15 +125,17 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
             pagination={false}
             scroll={{
-                x: 2000,
+                x: 2500,
             }}
+            indentSize= '15'
         >
             <Table.Column
                 dataIndex={undefined}
                 title={"#"}
+                width='100px'
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Originating Called Number" dataIndex={"phoneNumber"}/>
+            <Table.Column title="Originating Called Number" dataIndex={"phoneNumber"} />
             <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
             <Table.Column title="Message" dataIndex={"message"}/>
 
