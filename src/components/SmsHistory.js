@@ -30,7 +30,7 @@ const SearchForm = ({ onSearch }) => {
 
         ["updatedOn_fld0_value", "updatedOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
@@ -68,7 +68,7 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />
             <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>   {/*DatePicker format="YYYY-MM-DD HH:mm:ss" showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss'),}}/>} */}
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
             <Form.Item name="updatedOn_fld0_value_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format={"YYYY-MM-DD HH:mm:ss"} />} />
             <Form.Item name="updatedOn_fld1_value_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
