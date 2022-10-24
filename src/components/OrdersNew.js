@@ -16,6 +16,7 @@ import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
 import dayjs from "dayjs";
 import {OrderService} from "../services/OrderService";
+import moment from "moment";
 
 
 
@@ -27,7 +28,7 @@ const SearchForm = ({ onSearch }) => {
 
         ["orderDate_fld0_value", "orderDate_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
@@ -64,9 +65,9 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="orderName_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', margin:'0px'}} name="productName" label="Package Name" children={<Input />} />
             <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="orderDate_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="orderDate_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
             <Form.Item name="orderDate_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="orderDate_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="orderDate_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
             <Form.Item name="orderDate_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 4 }} colon={false} label=' '>
                 <Button
