@@ -148,7 +148,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             />
             <Table.Column title="Originating Called Number" dataIndex={"phoneNumber"} />
             <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
-            <Table.Column title="Message" dataIndex={"message"}/>
+            <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
 
             <Table.Column title="Status" dataIndex={"status"} render={v => [
                 <Tag color={"processing"}>pending</Tag>,
