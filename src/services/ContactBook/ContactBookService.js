@@ -16,7 +16,7 @@ export const ContactBookService = {
                 }
             }
         )*/
-        Promise.resolve({ group: contactBookGroups.find(g => g.groupId == payload.groupId), ...findListMocked(contactBookContacts, payload, "contactName", "contacts") })
+        Promise.resolve({ group: contactBookGroups.find(g => g.groupId == payload.groupId), ...findListMocked(contactBookContacts, payload, "groupId", "contacts") })
             .then(response => {
                 const  data  = response;
                 console.log(data)

@@ -154,7 +154,7 @@ export const Contact = () => {
 
     // Component States
     const [lastQuery, setLastQuery] = useState({});
-    const [group, setGroup] = useState([]);
+    const [group, setGroup] = useState({});
     const [groupFetchError, setGroupFetchError] = useState(null);
 
     const [contacts, setContacts] = useState([]);
@@ -221,7 +221,6 @@ export const Contact = () => {
             </Row>
 
         </Card>
-
         <Card>
             <Table
                 size="small"
