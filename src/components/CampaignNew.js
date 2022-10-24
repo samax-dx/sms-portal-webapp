@@ -361,7 +361,7 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
 
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} />
             <Table.Column title="Sender" dataIndex={"senderId"} />
-            <Table.Column title="Message" dataIndex={"message"} />
+            <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
             <Table.Column title="Sent" dataIndex={"sentTaskCount"} render={v => v || 0} />
             <Table.Column title="Failed" dataIndex={"failedTaskCount"} render={v => v || 0} />
             <Table.Column title="Pending" dataIndex={"pendingTaskCount"} render={v => v || 0} />
