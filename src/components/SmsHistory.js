@@ -150,14 +150,14 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
             <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
 
-            <Table.Column title="Status" dataIndex={"status"} render={v => [
+            <Table.Column title="Status" dataIndex={"status"} width={"7vw"} render={v => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>sent</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>failed</Tag>,
                 <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
 
-            <Table.Column title="Status External" dataIndex={"statusExternal"} render={(v,row) => [
+            <Table.Column title="Status External" dataIndex={"statusExternal"} width={"7vw"} render={(v,row) => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>delivered</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
@@ -165,12 +165,11 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 <span></span>,
             ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed", !v].indexOf(!0)]} />
 
-            <Table.Column title="External Status Update Time" dataIndex={"updatedOn"} render={(unixToMomentTime)}/>
-
-            <Table.Column title="Error" dataIndex={"errorCode"} />
-            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} />
-            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
+            <Table.Column title="Error" dataIndex={"errorCode"} width={"7vw"} />
+            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"10vw"} ellipsis/>
             <Table.Column title="Package" dataIndex={"packageId"} />
+            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
+            <Table.Column title="External Status Update Time" dataIndex={"updatedOn"} render={(unixToMomentTime)}/>
             <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
             <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render= {(unixToMomentTime)}/>
 
@@ -267,7 +266,7 @@ export const SmsHistory = () => {
             <Col md={24} style={{marginLeft:'5px'}}>
                 <Card title={<Title level={5}>SMS History</Title>}
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size='small'>
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit,orderBy: lastQuery.orderBy })}/>
+                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
         </Row>
