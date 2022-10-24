@@ -136,7 +136,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
             pagination={false}
             scroll={{
-                x: 2500,
+                x: 2000,
             }}
             indentSize= '15'
         >

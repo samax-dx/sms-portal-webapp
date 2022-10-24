@@ -231,8 +231,9 @@ export const CampaignTaskReport = () => {
             <Table
                 size="small"
                 scroll={{
-                    x: 1800,
+                    x: 2000,
                 }}
+                indentSize= '15'
                 dataSource={tasks.map(task => {
                     //alert(JSON.stringify(task));
 

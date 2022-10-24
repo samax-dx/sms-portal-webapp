@@ -26,7 +26,7 @@ const SearchForm = ({ onSearch }) => {
 
         ["date_fld0_value", "date_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
@@ -57,9 +57,9 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
             <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 5 }} colon={false} label=' '>
                 <Button
@@ -145,7 +145,7 @@ export const MyPaymentNew = () => {
             <Col md={24} style={{marginLeft:'5px'}}>
                 <Card title={<Title level={5}>Payment History</Title>}
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size='small'>
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                 </Card>
             </Col>
         </Row>
