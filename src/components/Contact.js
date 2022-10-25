@@ -10,14 +10,16 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, List, Tag, Divider, Statistic
+    Modal, Typography, DatePicker, notification, List, Tag, Divider, Statistic, message, Upload
 } from "antd";
 import Title from "antd/es/typography/Title";
-import dayjs from "dayjs";
+import { UploadOutlined } from '@ant-design/icons';
 import {useParams} from "react-router-dom";
 import moment from "moment/moment";
 import {ContactBookService} from "../services/ContactBook/ContactBookService";
 import {ContactService} from "../services/ContactBook/ContactService";
+import * as sheetjs from "xlsx";
+import {FileTextTwoTone} from "@ant-design/icons";
 
 
 const SearchForm = ({onSearch}) => {
@@ -214,6 +216,48 @@ export const Contact = () => {
             <Row justify="space-between">
                 <Col>
                     <SearchForm style={{margin: 0, marginBottom: 0}} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                </Col>
+                <Col style={{display:"flex", alignItems:"end"}}>
+                    <Upload
+                        maxCount={1}
+                        accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
+                        customRequest={r => {
+                            const reader = new FileReader();
+
+                            reader.onload = () => {
+                                const contactBook = sheetjs.read(reader.result, { sheets: 0 });
+                                const contactSheet = Object.values(contactBook.Sheets)[0];
+
+                                const contacts = sheetjs.utils
+                                    .sheet_to_json(contactSheet, { skipHidden: true })
+                                    .reduce((acc, v) => {
+                                        if (v.msisdn !== undefined) {
+                                            acc.push(v.msisdn);
+                                        }
+                                        return acc;
+                                    }, []);
+
+                                contacts.length ? r.onSuccess(JSON.stringify(contacts)) : r.onError("zero_msisdn_found");
+                            };
+
+                            reader.onerror = () => {
+                                r.onError(reader.error.message);
+                            }
+
+                            reader.readAsArrayBuffer(r.file);
+                        }}
+                        onChange={info => {
+                            if (info.file.status === 'done') {
+                                writeForm.setFieldsValue({ ...writeForm.getFieldsValue, phoneNumbers: info.file.response.join(", ") })
+                                return message.success(`Found ${info.file.response.length} MSISDN(s)`);
+                            }
+                            if (info.file.status === 'error') {
+                                return message.error(`Error: ${info.file.error.toUpperCase()}`);
+                            }
+                        }}
+                        showUploadList={false}
+                        children={<Button icon={<UploadOutlined />}>Upload Contact</Button>}
+                    />
                 </Col>
                 <Col style={{display: "flex", alignItems: "end"}}>
                     <Button type={"primary"} onClick={showModal}>Create Contact</Button>
