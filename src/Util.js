@@ -4,29 +4,41 @@ export const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const findListMocked = (dataTable, query, searchField, outputName) => {
     const records = dataTable.filter(record => record[searchField]?.toLowerCase().includes(query[searchField]?.toLowerCase() || ""));
-    return { [outputName]: [...records.slice(((query.page || 1) - 1) * (query.limit || 10), (query.page || 1) * (query.limit || 10))], count: records.length };
+    return {
+        [outputName]: [...records.slice(((query.page || 1) - 1) * (query.limit || 10), (query.page || 1) * (query.limit || 10))],
+        count: records.length
+    };
 };
 
-export const createOrUpdateMocked = (dataTable, idField, record) => {
+export const createOrUpdateMocked = (dataTable, idField, record, __i=0) => {
     const rowIndex = dataTable.findIndex(r => r[idField] === record[idField]);
 
     if (rowIndex > -1) {
-        dataTable[rowIndex] = { ...dataTable[rowIndex], ...record };
-        return Promise.resolve({ record: dataTable[rowIndex] });
+        dataTable[rowIndex] = {...dataTable[rowIndex], ...record};
+        return Promise.resolve({record: dataTable[rowIndex]});
     } else {
-        record[idField] = Date.now() + "";
+        record[idField] = (Date.now() + __i) + "";
         dataTable.push(record);
-        return Promise.resolve({ record });
+        return Promise.resolve({record});
     }
+};
+
+export const createOrUpdateMockedMulti = (dataTable, idField, records) => {
+    return new Promise((res, rej) => {
+        const recordsRes = records.map((record, i) => createOrUpdateMocked(dataTable, idField, record, i));
+        Promise.all(recordsRes).then(recordList => {
+            res({records:recordList.map(item => ({...item.record, contactId: item.record.contactId}))});
+        });
+    });
 };
 
 export const deleteOneMocked = (dataTable, idField, record) => {
     const rowIndex = dataTable.findIndex(r => r[idField] === record[idField]);
 
     if (rowIndex > -1) {
-        dataTable[rowIndex] = { ...dataTable[rowIndex], ...record };
-        return Promise.resolve({ deleteCount: dataTable.splice(rowIndex, 1).length });
+        dataTable[rowIndex] = {...dataTable[rowIndex], ...record};
+        return Promise.resolve({deleteCount: dataTable.splice(rowIndex, 1).length});
     } else {
-        return Promise.resolve({ deleteCount: 0, errorMessage: "Record not found." });
+        return Promise.resolve({deleteCount: 0, errorMessage: "Record not found."});
     }
 };

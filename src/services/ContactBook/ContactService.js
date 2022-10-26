@@ -1,4 +1,4 @@
-import {createOrUpdateMocked, findListMocked} from "../../Util";
+import {createOrUpdateMocked, createOrUpdateMockedMulti, findListMocked} from "../../Util";
 import {deleteOneMocked} from "../../Util";
 import {contactBookContacts} from "./ContactBookDB";
 
@@ -55,6 +55,35 @@ export const ContactService = {
             console.log(data)
 
             if (data.contactId) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ code: null, message: data.errorMessage });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
+        }),
+    saveRecords: (payload) => console.log(payload) || /*axios
+        .post(
+            `${SERVER_URL}/ContactBook/saveContact`,
+            { ...payload },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        )*/createOrUpdateMockedMulti(contacts, "contactId", payload).then(({ records }) => ({ data: records }))
+        .then(response => {
+            const { data } = response;
+            console.log(data)
+
+            if (data.length>0) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ code: null, message: data.errorMessage });

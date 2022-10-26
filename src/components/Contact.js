@@ -19,7 +19,6 @@ import moment from "moment/moment";
 import {ContactBookService} from "../services/ContactBook/ContactBookService";
 import {ContactService} from "../services/ContactBook/ContactService";
 import * as sheetjs from "xlsx";
-import {FileTextTwoTone} from "@ant-design/icons";
 
 
 const SearchForm = ({onSearch}) => {
@@ -201,7 +200,6 @@ export const Contact = () => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
 
-
     return (<>
         <Card bordered={false} bodyStyle={{padding: 0}}>
             <Space direction="horizontal" size={"small"}>
@@ -231,13 +229,17 @@ export const Contact = () => {
                                 const contacts = sheetjs.utils
                                     .sheet_to_json(contactSheet, { skipHidden: true })
                                     .reduce((acc, v) => {
-                                        if (v.msisdn !== undefined) {
-                                            acc.push(v.msisdn);
+                                        if (v.phone !== undefined) {
+                                            acc.push({
+                                                contactName:v.name,
+                                                contactNumber:v.phone,
+                                                groupId
+                                            })
                                         }
                                         return acc;
                                     }, []);
 
-                                contacts.length ? r.onSuccess(JSON.stringify(contacts)) : r.onError("zero_msisdn_found");
+                                contacts.length>1 ? r.onSuccess(contacts) : r.onError("Not valid Data/Table");
                             };
 
                             reader.onerror = () => {
@@ -248,15 +250,25 @@ export const Contact = () => {
                         }}
                         onChange={info => {
                             if (info.file.status === 'done') {
-                                writeForm.setFieldsValue({ ...writeForm.getFieldsValue, phoneNumbers: info.file.response.join(", ") })
-                                return message.success(`Found ${info.file.response.length} MSISDN(s)`);
+                                ContactService.saveRecords(info.file.response)
+                                    .then(data=>{
+                                        setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 });
+                                        notification.success({
+                                            key: `icontacts_${data.contactId}`,
+                                            message: "Task Complete",
+                                            description: <>Import Contacts : {data.length}</>,
+                                            duration: 5
+                                        });
+                                })
+
+                                return message.success(`Found ${info.file.response.length} CONTACT(s)`);
                             }
                             if (info.file.status === 'error') {
                                 return message.error(`Error: ${info.file.error.toUpperCase()}`);
                             }
                         }}
                         showUploadList={false}
-                        children={<Button icon={<UploadOutlined />}>Upload Contact</Button>}
+                        children={<Button icon={<UploadOutlined />}>Import Contacts</Button>}
                     />
                 </Col>
                 <Col style={{display: "flex", alignItems: "end"}}>
