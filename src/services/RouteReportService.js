@@ -1,16 +1,11 @@
 import {createOrUpdateMocked, findListMocked} from "../Util";
 
-const smsStatistics = {
-    smsCount: 10, avgSuccessRate: 85, avgFailureRate:5
+const routeStatistics = {
+    robi: 40, grameenphone: 30, banglalink: 15, teletalk: 10, others: 5
 }
-// const smsStatistics = {
-//     smsCount: 200, avgSentRate: 75, avgUnsentRate: 25
-// }
 
-
-
-export const SmsReportService = {
-    getSmsStatistics: () =>  console.log() || /*axios
+export const RouteReportService = {
+    getRouteStatistics: () =>  console.log() || /*axios
         .post(
             `${SERVER_URL}/Party/findParties`,
             { ...payload },
@@ -21,7 +16,7 @@ export const SmsReportService = {
                 }
             }
         )*/
-        Promise.resolve({data: smsStatistics})//senderId.includes(payload.senderId)))
+        Promise.resolve({data: routeStatistics})//senderId.includes(payload.senderId)))
             .then(response => {
                 const { data }  = response;
                 console.log(data)

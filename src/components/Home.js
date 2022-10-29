@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import Title from 'antd/lib/skeleton/Title';
 import {CampaignService} from "../services/CampaignService";
-import {SmsReportService} from "../services/SmsReportService";
+import {CampaignReportService} from "../services/CampaignReportService";
 
 
 const CompleteTaskView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
@@ -145,7 +145,7 @@ export const Home = ({ actor: [profileLoader, inventoryLoader, smsReportLoader, 
     const [campaignStatistics,setCampaignStatistics] = useState('');
 
     useEffect((()=>{
-        SmsReportService.getCampaignStatistics()
+        CampaignReportService.getCampaignStatistics()
             .then(data=>{
                 setCampaignStatistics(data);
             })

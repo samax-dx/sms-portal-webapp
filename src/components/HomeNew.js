@@ -11,9 +11,11 @@ import {
 import * as sheetjs from "xlsx";
 import {Link} from "react-router-dom";
 import {ProfileService} from "../services/ProfileService";
-import {SmsReportService} from "../services/SmsReportService";
+import {CampaignReportService} from "../services/CampaignReportService";
 import {AccountingNew} from "../services/AccountingService";
 import {InventoryService} from "../services/InventoryService";
+import {SmsReportService} from "../services/SmsReportService";
+import {RouteReportService} from "../services/RouteReportService";
 
 
 const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
@@ -128,6 +130,10 @@ export const HomeNew = () => {
     const [paymentsFetchCount, setPaymentsFetchCount] = useState(0);
     const [paymentsFetchError, setPaymentsFetchError] = useState(null);
 
+    const [campaignStatistics, setCampaignStatistics] = useState('');
+    const [smsStatistics, setSmsStatistics] = useState('');
+    const [routeStatistics, setRouteStatistics] = useState('');
+
 
     useEffect(() => {
         AccountingNew.fetchBalanceRequests(lastPaymentQuery)
@@ -174,12 +180,24 @@ export const HomeNew = () => {
             });
     }, [lastTaskReportQuery]);
 
-    const [campaignStatistics, setCampaignStatistics] = useState('');
-
     useEffect((()=>{
-        SmsReportService.getCampaignStatistics()
+        CampaignReportService.getCampaignStatistics()
             .then(data=>{
                 setCampaignStatistics(data);
+            })
+    }),[])
+
+    useEffect((()=>{
+        SmsReportService.getSmsStatistics()
+            .then(data=>{
+                setSmsStatistics(data);
+            })
+    }),[])
+
+    useEffect((()=>{
+        RouteReportService.getRouteStatistics()
+            .then(data=>{
+                setRouteStatistics(data);
             })
     }),[])
 
@@ -204,47 +222,6 @@ export const HomeNew = () => {
         setLastPaymentQuery({ page: 1, limit: 10 })
     }, []);
 
-    const progressData = [
-        {
-            key:"1",
-            value: 55
-        },
-        {
-            key:"2",
-            value: 70
-        },
-        {
-            key:"3",
-            value: 85
-        },
-        {
-            key:"4",
-            value: 100
-        },
-        {
-            key:"5",
-            value: 65
-        },
-        {
-            key:"6",
-            value: 100
-        }
-    ]
-    const circleProgressData = [
-        {
-            key:'1',
-            value:75
-        },
-        {
-            key: '2',
-            value: 70
-        },
-        {
-            key: '3',
-            value: 90
-        }
-
-    ]
     const tableData = [
         {
             key:'1',
@@ -367,30 +344,36 @@ export const HomeNew = () => {
                 <Col md={8}>
                     <Title level={5}> SMS History </Title>
                     <Space direction="vertical">
-                        <Progress type="circle" width={100}  percent={circleProgressData[0].value} />
+                        <Progress type="circle" width={100}  percent={smsStatistics.smsCount} strokeColor={"#689dc4"}/>
                         <Badge color="#689dc4" status="processing" text="Pending" style={{paddingLeft: 10}}/>
                     </Space>
                     <Space direction="vertical" style={{padding: 5}}>
-                        <Progress type="circle" width={100}  percent={circleProgressData[1].value} strokeColor={"Green"} />
-                        <Badge color="#4F995B" status="success" text="Sent" style={{paddingLeft: 10}} />
+                        <Progress type="circle" width={100}  percent={smsStatistics.avgSuccessRate} strokeColor={"Green"} />
+                        <Badge color="Green" status="success" text="Sent" style={{paddingLeft: 10}} />
                     </Space>
                     <Space direction="vertical">
-                        <Progress type="circle" width={100}  percent={circleProgressData[2].value} strokeColor={"Red"}/>
-                        <Badge color="#FF5733" status="error" text="Failed" style={{paddingLeft: 10}} />
+                        <Progress type="circle" width={100}  percent={smsStatistics.avgFailureRate} strokeColor={"Red"}/>
+                        <Badge color="Red" status="error" text="Failed" style={{paddingLeft: 10}} />
                     </Space>
 
                 </Col>
                 <Col md={8}>
-                    <Title level={5}> Active Packages </Title>
-                    <Progress size="medium" percent={progressData[0].value} />
-                    <Progress size="medium" percent={progressData[1].value} status="active" />
-                    <Progress size="medium" percent={progressData[2].value} status="exception" />
-                    <Progress size="medium" percent={progressData[4].value} />
-                    <Progress size="medium" percent={progressData[5].value} showInfo={true} />
-                    <Space direction="horizontal">
-                        <Badge color="#689dc4" status="processing" text="Pending" />
-                        <Badge color="#FF5733" status="error" text="Failed" />
-                        <Badge color="#4F995B" status="success" text="Sent" />
+                    <Title level={5}> Route Uses </Title>
+                    <Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.robi} />
+                    <Progress size="medium" strokeColor={'#19AAF8'} percent={routeStatistics.grameenphone} />
+                    <Progress size="medium" strokeColor={'#F26522'} percent={routeStatistics.banglalink} />
+                    <Progress size="medium" strokeColor={'#6AC537'} percent={routeStatistics.teletalk} />
+                    <Progress size="medium" strokeColor={'#ED3D7F'} percent={routeStatistics.others} />
+                    <Space direction="vertical">
+                        <Badge color="#EE0000" status="success" text="Robi" />
+                        <Badge color="#19AAF8" status="success" text="Grameenphone" />
+                    </Space>
+                    <Space direction="vertical" style={{marginLeft: 15}}>
+                        <Badge color="#F26522" status="success" text="Banglalink" />
+                        <Badge color="#6AC537" status="success" text="Teletalk" />
+                    </Space>
+                    <Space direction="vertical" style={{marginLeft: 15}}>
+                        <Badge color="#ED3D7F" status="success" text="Others" />
                     </Space>
                 </Col>
                 <Col md={8}>

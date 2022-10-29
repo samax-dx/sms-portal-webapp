@@ -1,7 +1,7 @@
 import {createOrUpdateMocked, findListMocked} from "../Util";
 
-const smsStatistics = {
-    smsCount: 10, avgSuccessRate: 85, avgFailureRate:5
+const campaignStatistics = {
+    campaignCount: 34, avgSuccessRate: 80, avgFailureRate:20
 }
 // const smsStatistics = {
 //     smsCount: 200, avgSentRate: 75, avgUnsentRate: 25
@@ -9,8 +9,8 @@ const smsStatistics = {
 
 
 
-export const SmsReportService = {
-    getSmsStatistics: () =>  console.log() || /*axios
+export const CampaignReportService = {
+    getCampaignStatistics: () =>  console.log() || /*axios
         .post(
             `${SERVER_URL}/Party/findParties`,
             { ...payload },
@@ -21,7 +21,7 @@ export const SmsReportService = {
                 }
             }
         )*/
-        Promise.resolve({data: smsStatistics})//senderId.includes(payload.senderId)))
+        Promise.resolve({data: campaignStatistics})//senderId.includes(payload.senderId)))
             .then(response => {
                 const { data }  = response;
                 console.log(data)

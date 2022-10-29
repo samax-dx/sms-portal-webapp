@@ -6,7 +6,7 @@ import { Profile } from "./Profile";
 import {AccountingNew} from "../services/AccountingService";
 import {InventoryService} from "../services/InventoryService";
 import {CampaignService} from "../services/CampaignService";
-import {SmsReportService} from "../services/SmsReportService";
+import {CampaignReportService} from "../services/CampaignReportService";
 import {ProfileService} from "../services/ProfileService";
 import {XAuth} from "../services/XAuth";
 
