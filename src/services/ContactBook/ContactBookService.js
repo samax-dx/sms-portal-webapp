@@ -1,13 +1,16 @@
 import {contactBookContacts, contactBookGroups} from "./ContactBookDB";
 import {findListMocked} from "../../Util";
+import {CONTACT_BOOK_EP} from "../../config";
+import axios from "axios";
+import {XAuth} from "../XAuth";
 
 const contacts = contactBookContacts;
 const groups = contactBookGroups;
 
 export const ContactBookService = {
-    fetchGroupRecords: (payload) =>  console.log(payload) || /*axios
+    fetchGroupRecords: (payload) =>  console.log(payload) || axios
         .post(
-            `${SERVER_URL}/ContactBook/findGroupContacts`,
+            `${CONTACT_BOOK_EP}/ContactGroup/listContactGroupContacts`,
             { ...payload },
             {
                 headers: {
@@ -15,10 +18,10 @@ export const ContactBookService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/
-        Promise.resolve({ group: contactBookGroups.find(g => g.groupId == payload.groupId), ...findListMocked(contactBookContacts, payload, "groupId", "contacts") })
+        )
+        // Promise.resolve({ group: contactBookGroups.find(g => g.groupId == payload.groupId), ...findListMocked(contactBookContacts, payload, "groupId", "contacts") })
             .then(response => {
-                const  data  = response;
+                const {data}  = response;
                 console.log(data)
 
                 if (data.contacts === null) {

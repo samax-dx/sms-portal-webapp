@@ -184,6 +184,7 @@ export const Contact = () => {
     useEffect(() => {
         ContactBookService.fetchGroupRecords({ ...lastQuery, groupId })
             .then((data) => {
+                console.log(data);
                 setGroup(data.group);
                 setContacts(data.contacts);
                 setContactFetchCount(data.count);
