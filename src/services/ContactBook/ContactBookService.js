@@ -10,7 +10,7 @@ const groups = contactBookGroups;
 export const ContactBookService = {
     fetchGroupRecords: (payload) =>  console.log(payload) || axios
         .post(
-            `${CONTACT_BOOK_EP}/ContactGroup/listContactGroupContacts`,
+            `${CONTACT_BOOK_EP}/ContactBook/listContactGroupContacts`,
             { ...payload },
             {
                 headers: {

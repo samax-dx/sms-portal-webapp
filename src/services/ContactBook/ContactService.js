@@ -1,13 +1,16 @@
 import {createOrUpdateMocked, createOrUpdateMockedMulti, findListMocked} from "../../Util";
 import {deleteOneMocked} from "../../Util";
 import {contactBookContacts} from "./ContactBookDB";
+import {CONTACT_BOOK_EP} from "../../config";
+import axios from "axios";
+import {XAuth} from "../XAuth";
 
 const contacts = contactBookContacts;
 
 export const ContactService = {
-    fetchRecords: (payload) =>  console.log(payload) || /*axios
+    fetchRecords: (payload) =>  console.log(payload) || axios
         .post(
-            `${SERVER_URL}/ContactBook/findContacts`,
+            `${CONTACT_BOOK_EP}/Contact/listContacts`,
             { ...payload },
             {
                 headers: {
@@ -15,10 +18,10 @@ export const ContactService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/
-        Promise.resolve(findListMocked(contacts, payload, "contactName", "contacts"))
+        )
+        // Promise.resolve(findListMocked(contacts, payload, "contactName", "contacts"))
         .then(response => {
-            const  data  = response;
+            const {data}  = response;
             console.log(data)
 
            if (data.contacts === null) {
@@ -39,9 +42,9 @@ export const ContactService = {
 
             return Promise.reject(errorEx);
         }),
-    saveRecord: (payload) => console.log(payload) || /*axios
+    saveRecord: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/ContactBook/saveContact`,
+            `${CONTACT_BOOK_EP}/Contact/saveContact`,
             { ...payload },
             {
                 headers: {
@@ -49,7 +52,8 @@ export const ContactService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/createOrUpdateMocked(contacts, "contactId", payload).then(({ record }) => ({ data: record }))
+        )
+    // createOrUpdateMocked(contacts, "contactId", payload).then(({ record }) => ({ data: record }))
         .then(response => {
             const { data } = response;
             console.log(data)
