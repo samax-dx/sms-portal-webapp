@@ -81,7 +81,6 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const {Option} = Select;
 const SchedulePickerWithType = ({type}) => {
     if (type === 'default') return (<>
         <Row>

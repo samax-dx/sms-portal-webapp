@@ -1,13 +1,17 @@
 import {createOrUpdateMocked, findListMocked} from "../../Util";
 import {deleteOneMocked} from "../../Util";
+// import {contactBookGroups} from "./ContactBookDB";
+import axios from "axios";
+import {CONTACT_BOOK_EP, OFBIZ_EP} from "../../config";
+import {XAuth} from "../XAuth";
 import {contactBookGroups} from "./ContactBookDB";
 
 const groups =contactBookGroups;
 
 export const GroupService = {
-    fetchRecords: (payload) =>  console.log(payload) || /*axios
+    fetchRecords: (payload) =>  console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Party/findParties`,
+            `${CONTACT_BOOK_EP}/ContactGroup/listContactGroups`,
             { ...payload },
             {
                 headers: {
@@ -15,10 +19,10 @@ export const GroupService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/
-        Promise.resolve(findListMocked(groups, payload, "groupName", "groups"))
+        )
+        // Promise.resolve(findListMocked(groups, payload, "groupName", "groups"))
             .then(response => {
-                const  data  = response;
+                const {data}  = response;
                 console.log(data)
 
                 if (data.groups === null) {
@@ -39,9 +43,9 @@ export const GroupService = {
 
                 return Promise.reject(errorEx);
             }),
-    saveRecord: (payload) => console.log(payload) || /*axios
+    saveRecord: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/ContactBook/saveContact`,
+            `${CONTACT_BOOK_EP}/ContactGroup/saveContactGroup`,
             { ...payload },
             {
                 headers: {
@@ -49,7 +53,8 @@ export const GroupService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/createOrUpdateMocked(groups, "groupId", payload).then(({ record }) => ({ data: record }))
+        )
+        // createOrUpdateMocked(groups, "groupId", payload).then(({ record }) => ({ data: record }))
         .then(response => {
             const { data } = response;
             console.log(data)

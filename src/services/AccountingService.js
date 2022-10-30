@@ -1,11 +1,11 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 import { XAuth } from "./XAuth";
 
 export const AccountingNew = ({
     fetchBalanceRequests: (payload) =>console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Accounting/listPartyBalanceRequests`,
+            `${OFBIZ_EP}/Accounting/listPartyBalanceRequests`,
             { ...payload},
             {
                 headers: {
@@ -38,7 +38,7 @@ export const AccountingNew = ({
         }),
     requestDeposit: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Accounting/addPartyBalanceRequest`,
+            `${OFBIZ_EP}/Accounting/addPartyBalanceRequest`,
             { ...payload },
             {
                 headers: {

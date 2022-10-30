@@ -1,11 +1,11 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Product = {
     fetchProducts: (ctx, ev) => axios
         .post(
-            `${SERVER_URL}/Product/listProducts`,
+            `${OFBIZ_EP}/Product/listProducts`,
             { ...ev.data },
             {
                 headers: {

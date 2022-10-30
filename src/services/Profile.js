@@ -1,11 +1,11 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Profile = {
     fetchProfile: (ctx, ev) => axios
         .post(
-            `${SERVER_URL}/Party/profile`,
+            `${OFBIZ_EP}/Party/profile`,
             { ...ev.data },
             {
                 headers: {

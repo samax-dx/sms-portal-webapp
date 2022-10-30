@@ -1,11 +1,11 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 import { XAuth } from "./XAuth";
 
 export const CampaignService = {
     fetchCampaigns: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Campaign/listPartyCampaigns`,
+            `${OFBIZ_EP}/Campaign/listPartyCampaigns`,
             { orderBy: "createdOn DESC", ...payload },
             {
                 headers: {
@@ -34,7 +34,7 @@ export const CampaignService = {
         }),
     fetchCampaignTasks: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Campaign/getCampaignTasks`,
+            `${OFBIZ_EP}/Campaign/getCampaignTasks`,
             console.log(JSON.stringify({ ...payload })) || { ...payload },
             {
                 headers: {
@@ -63,7 +63,7 @@ export const CampaignService = {
         }),
     removeCampaignTask: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Campaign/deleteCampaignTask`,
+            `${OFBIZ_EP}/Campaign/deleteCampaignTask`,
             { ...payload },
             {
                 headers: {
@@ -92,7 +92,7 @@ export const CampaignService = {
         }),
     fetchCampaignTaskReports: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Campaign/getPartyCampaignTaskReports`,
+            `${OFBIZ_EP}/Campaign/getPartyCampaignTaskReports`,
             { ...payload, orderBy: "updatedOn DESC" },
             {
                 headers: {
@@ -121,7 +121,7 @@ export const CampaignService = {
         }),
     saveCampaign: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Campaign/saveCampaign`,
+            `${OFBIZ_EP}/Campaign/saveCampaign`,
             { ...payload },
             {
                 headers: {

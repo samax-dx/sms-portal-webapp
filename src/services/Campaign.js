@@ -1,11 +1,11 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Campaign = {
     fetchCampigns: (ctx, ev) => axios
         .post(
-            `${SERVER_URL}/Campaign/listPartyCampaigns`,
+            `${OFBIZ_EP}/Campaign/listPartyCampaigns`,
             { orderBy: "createdOn DESC", ...ev.data },
             {
                 headers: {
@@ -30,7 +30,7 @@ export const Campaign = {
         }),
     fetchCampaignTasks: (ctx, ev) => axios
         .post(
-            `${SERVER_URL}/Campaign/getCampaignTasks`,
+            `${OFBIZ_EP}/Campaign/getCampaignTasks`,
             console.log(JSON.stringify({ ...ev.data })) || { ...ev.data },
             {
                 headers: {
@@ -55,7 +55,7 @@ export const Campaign = {
         }),
     removeCampaignTask: (ctx, { data }) => axios
         .post(
-            `${SERVER_URL}/Campaign/deleteCampaignTask`,
+            `${OFBIZ_EP}/Campaign/deleteCampaignTask`,
             { ...data },
             {
                 headers: {
@@ -80,7 +80,7 @@ export const Campaign = {
         }),
     fetchCampaignTaskReports: (ctx, { data }) => axios
         .post(
-            `${SERVER_URL}/Campaign/getPartyCampaignTaskReports`,
+            `${OFBIZ_EP}/Campaign/getPartyCampaignTaskReports`,
             { ...data, orderBy: "updatedOn DESC" },
             {
                 headers: {
@@ -105,7 +105,7 @@ export const Campaign = {
         }),
     saveCampaign: (ctx, ev) => axios
         .post(
-            `${SERVER_URL}/Campaign/saveCampaign`,
+            `${OFBIZ_EP}/Campaign/saveCampaign`,
             { ...ev.data },
             {
                 headers: {

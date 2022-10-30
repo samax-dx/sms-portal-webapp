@@ -1,12 +1,12 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 import { XAuth } from "./XAuth";
 
 
 export const SmsTask = {
     sendSms: (ctx, { data }) => axios
         .post(
-            `${SERVER_URL}/SmsTask/sendSMS`,
+            `${OFBIZ_EP}/SmsTask/sendSMS`,
             { ...data },
             {
                 headers: {

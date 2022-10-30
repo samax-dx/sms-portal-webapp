@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 import { XAuth } from "./XAuth";
 import {createOrUpdateMocked, findListMocked} from "../Util";
 
@@ -16,7 +16,7 @@ const senderIds = [
 export const SenderIdService = {
     fetchRecords: (payload) =>  console.log(payload) || axios
        .post(
-           `${SERVER_URL}/SenderId/getSenderIds`,
+           `${OFBIZ_EP}/SenderId/getSenderIds`,
            { ...payload },
            {
                headers: {

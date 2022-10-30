@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 
 
 const storage = (initialized => {
@@ -35,7 +35,7 @@ const storage = (initialized => {
 export const XAuth = {
     login: (ctx, ev) => axios
         .post(
-            `${SERVER_URL}/Party/login`,
+            `${OFBIZ_EP}/Party/login`,
             { ...ev.data },
             { headers: { 'Content-Type': 'application/json' } }
         )

@@ -1,11 +1,11 @@
 import axios from "axios";
-import { SERVER_URL } from "../config";
+import { OFBIZ_EP } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Order = {
     fetchOrders: (ctx, ev) => axios
         .post(
-            `${SERVER_URL}/Order/listPartyOrders`,
+            `${OFBIZ_EP}/Order/listPartyOrders`,
             { orderBy: "orderDate DESC", ...ev.data },
             {
                 headers: {
@@ -30,7 +30,7 @@ export const Order = {
         }),
     createOrder: (ctx, ev) => axios
         .post(
-            `${SERVER_URL}/Order/createPartyOrder`,
+            `${OFBIZ_EP}/Order/createPartyOrder`,
             { ...ev.data },
             {
                 headers: {

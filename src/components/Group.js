@@ -80,11 +80,24 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ record, onRecordSaved,close }) => {
+const WriteForm = ({ recordArg, onRecordSaved,close }) => {
     const { Option } = Select;
     const [writeForm] = Form.useForm();
 
-    useEffect(() => writeForm.resetFields(), [record, writeForm]);
+    const [isCreateForm, setIsCreateForm] = useState(true);
+
+    const [lastWrite, setLastWrite] = useState(recordArg);
+
+    useEffect(() => {
+        setIsCreateForm(Object.keys(recordArg).length === 0);
+        writeForm.resetFields();
+        writeForm.setFieldsValue(recordArg);
+    }, [recordArg]);
+
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        isCreateForm && writeForm.resetFields();
+    },[lastWrite]);
 
     return (<>
         <Form
@@ -98,6 +111,7 @@ const WriteForm = ({ record, onRecordSaved,close }) => {
             onFinish={() => writeForm.resetFields()}
         >
             <Form.Item name="groupId" label="Group ID" rules={[{ required: false }]} hidden children={<Input />} />
+            <Form.Item name="partyId" label="Party ID" rules={[{ required: false }]} hidden children={<Input />} />
             <Form.Item name="groupName" label="Group Name" rules={[{ required: true }]} children={<Input />} />
 
             <Form.Item wrapperCol={{ offset: 15 }}>
@@ -106,11 +120,10 @@ const WriteForm = ({ record, onRecordSaved,close }) => {
                     htmlType="submit"
                     onClick={() => writeForm
                         .validateFields()
-                        .then(_ => writeForm
-                            .validateFields()
                             .then(_ => GroupService.saveRecord(writeForm.getFieldsValue()))
                             .then(groups => {
                                 // alert(groups);
+                                setLastWrite(groups);
                                 onRecordSaved(groups);
                                 notification.success({
                                     key: `cgroup_${groups.groupId}`,
@@ -121,13 +134,14 @@ const WriteForm = ({ record, onRecordSaved,close }) => {
                             })
                             // .catch(error => {alert(error.message)}))
                             .catch(error => {
+                                console.log(error);
                                 notification.error({
                                     key: `cgroup_${Date.now()}`,
                                     message: "Task Failed",
                                     description: <>Error creating group.<br />{error.message}</>,
                                     duration: 5
                                 });
-                            }))
+                            })
                         .catch(_ => { })
                     }
                     children={"Submit"}
@@ -202,8 +216,8 @@ export const Groups = () => {
 
     useEffect(() => {
         GroupService.fetchRecords(lastQuery)
-            .then((data) => {
-                console.log(data)
+            .then(data => {
+                console.log(data);
                 setGroups(data.groups);
                 setGroupsFetchCount(data.count);
                 setGroupsFetchError(null);
@@ -235,7 +249,7 @@ export const Groups = () => {
                 </Card>
             </Col>
             <Modal key="createGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"11rem"}}>
-                <WriteForm record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} close={handleCancel} />
+                <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} close={handleCancel} />
             </Modal>
         </Row>
         <DataView groups={groups} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
