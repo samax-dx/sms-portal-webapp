@@ -21,7 +21,8 @@ import {FileDoneOutlined, FileTextOutlined, FileTextTwoTone, PlusCircleFilled} f
 import * as sheetjs from "xlsx";
 import {Link} from "react-router-dom";
 import {SenderIdService} from "../services/SenderIdService";
-
+import {unflatten} from "../Util";
+import moment from 'moment';
 
 
 const SearchForm = ({ onSearch }) => {
@@ -85,83 +86,70 @@ const SchedulePickerWithType = ({type}) => {
     if (type === 'default') return (<>
         <Row>
             <Col md={12}>
-                <Form.Item name="pickedSchedule_time">
-                    <TimePicker />
-                </Form.Item>
-            </Col>
-            <Col md={12}>
-                <Form.Item name="pickedSchedule_date">
-                    <DatePicker />
+                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
+                    <DatePicker placeholder="Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
         </Row>
     </>);
-    if (type === 'start&end_date') return (<>
+    if (type === 'start-end') return (<>
         <Row>
             <Col md={12}>
-                <Form.Item name="pickedSchedule_start_date">
-                    <DatePicker placeholder="Start Date"/>
+                <Form.Item name="schedule.props.scheduleStart">
+                    <DatePicker placeholder="Start Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
-                {/*<DatePicker placeholder="start-date"/>*/}
             </Col>
             <Col md={12}>
-                <Form.Item name="pickedSchedule_end_date">
-                    <DatePicker placeholder="End Date"/>
+                <Form.Item name="schedule.props.scheduleEnd">
+                    <DatePicker placeholder="End Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
         </Row>
     </>);
-    if (type === 'start_end_date&hours') return (<>
+    if (type === 'start-end,active-hours') return (<>
         <Row>
             <Descriptions title="Date">
                 <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="pickedSchedule_start_date">
+                    <Form.Item name="schedule.props.scheduleStart">
                         <DatePicker placeholder="Start Date"/>
                     </Form.Item>
-                    {/*<DatePicker placeholder="start-date"/>*/}
                 </Descriptions.Item>
                 <Descriptions.Item label="End-Date" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="pickedSchedule_end_date">
+                    <Form.Item name="schedule.props.scheduleEnd">
                         <DatePicker placeholder="End Date"/>
                     </Form.Item>
-                    {/*<DatePicker placeholder="end-date"/>*/}
                 </Descriptions.Item>
             </Descriptions>
         </Row>
         <Row>
             <Descriptions title="Active Hours" Layout="vertical" >
                 <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="pickedSchedule_start_time">
+                    <Form.Item name="schedule.props.activeHourStart">
                         <TimePicker placeholder="Start Time" />
                     </Form.Item>
-                    {/*<TimePicker style={{width:160}} placeholder="select-time"/>*/}
                 </Descriptions.Item>
                 <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="pickedSchedule_end_time">
+                    <Form.Item name="schedule.props.activeHourEnd">
                         <TimePicker placeholder="End Time"/>
                     </Form.Item>
-                    {/*<TimePicker style={{width:160}} placeholder="select-time" />*/}
                 </Descriptions.Item>
             </Descriptions>
         </Row>
         <Row>
             <Descriptions title="Exclude Hours" Layout="vertical" >
                 <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="pickedSchedule_exclude_start_time">
+                    <Form.Item name="schedule.props.inactiveHourStart">
                         <TimePicker placeholder="Start Time"/>
                     </Form.Item>
-                    {/*<TimePicker style={{width:160}} placeholder="select-time"/>*/}
                 </Descriptions.Item>
                 <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="pickedSchedule_exclude_end_time">
+                    <Form.Item name="schedule.props.inactiveHourEnd">
                         <TimePicker placeholder="End Time"/>
                     </Form.Item>
-                    {/*<TimePicker style={{width:160}} placeholder="select-time" />*/}
                 </Descriptions.Item>
             </Descriptions>
         </Row>
     </>);
-    // return <DatePicker picker={type}={onChange} />;
 };
 
 const WriteForm = ({record, onRecordSaved,close }) => {
@@ -263,21 +251,14 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                 rules={[{ required: true }]}
                 children={<Input.TextArea />}
             />
-            <Form.Item name="selectedPolicy" id="selected" label="Schedule Policy" initialValue={type}>
+            <Form.Item name="schedule.policy" id="selected" label="Schedule Policy" initialValue={type}>
                 <Select onChange={setType} >
-                    <Option value="default">Default</Option>
-                    <Option value="start&end_date">Start Date-End Date</Option>
-                    <Option value="start_end_date&hours">Start Date-End Date,Active-hours</Option>
+                    <Option value="default">Default (Schedule On)</Option>
+                    <Option value="start-end">Start-End Date</Option>
+                    <Option value="start-end,active-hours">Start-End Date, Active-hours</Option>
                 </Select>
             </Form.Item>
-            <Form.Item
-                id="schedule"
-                colon={false}
-                label=" "
-                style={{
-                    marginTop:'0px'
-                }}
-            >
+            <Form.Item colon={false} label=" " style={{ marginTop:'0px' }}>
                 <SchedulePickerWithType type={type}/>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8 }}>
@@ -300,9 +281,23 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                         .validateFields()
                         .then(_ => writeForm
                             .validateFields()
-                            .then(_ => CampaignService.saveCampaign(writeForm.getFieldsValue()))
+                            .then(_ => {
+                                const formData = writeForm.getFieldsValue();
+
+                                for (const [key, value] of Object.entries(formData)) {
+                                    if (key.includes("schedule.props.")) {
+                                        formData[key] = value.format("YYYY-MM-DD HH:mm:ss");
+                                    }
+                                }
+
+                                const formDataUf = unflatten(formData);
+                                const schedule = formDataUf.schedule;
+                                delete formDataUf.schedule;
+                                formDataUf.schedules = [window.btoa(JSON.stringify(schedule))].join(",");
+
+                                return CampaignService.saveCampaign(formDataUf);
+                            })
                             .then(campaign => {
-                                // alert(campaign);
                                 onRecordSaved(campaign);
                                 notification.success({
                                     key: `corder_${Date.now()}`,
@@ -316,7 +311,7 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                                 notification.error({
                                     key: `corder_${Date.now()}`,
                                     message: "Task Failed",
-                                    description: <>Error placing order.<br />{error.message}</>,
+                                    description: <>Error creating order.<br />{error.message}</>,
                                     duration: 5
                                 });
                             }))
@@ -353,7 +348,6 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
                 render={(_, campaign, i) => {
                     return (
                         <Link to={`/messaging/campaign/${campaign.campaignId}`}>{campaign.campaignId}</Link>
-                        // <Button onClick={() => onView(campaign)} type="link">{campaign.campaignId}</Button>
                     );
                 }}
             />

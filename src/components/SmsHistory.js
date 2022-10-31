@@ -69,9 +69,9 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />
             <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
-            <Form.Item name="updatedOn_fld0_value_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
+            <Form.Item name="updatedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format={"YYYY-MM-DD HH:mm:ss"} />} />
-            <Form.Item name="updatedOn_fld1_value_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
+            <Form.Item name="updatedOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 1 }} colon={false} label=' '>
                 <Button
                     type="primary"
@@ -209,7 +209,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 <Table.Column title="Schedule"  dataIndex={"date"} render={(unixToMomentTime)} />
                 {/*<Table.Column title="Status"  dataIndex={"status"} render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>Success</Tag>, <Tag color={"error"}>Failed</Tag>][[v === "pending", v === "success", v === "failed"].indexOf(!0)]} />
                 <Table.Column title="Error Code"  dataIndex={"errorCode"} />*/}
-                <Table.Column title="Retry History"  dataIndex={""} render={console.log} />
+                {/*<Table.Column title="Retry History" render={<></>} />*/}
 
 
             </Table>
