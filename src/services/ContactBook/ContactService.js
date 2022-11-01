@@ -72,17 +72,18 @@ export const ContactService = {
 
             return Promise.reject(errorEx);
         }),
-    saveRecords: (payload) => console.log(payload) || /*axios
+    saveRecords: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/ContactBook/saveContact`,
-            { ...payload },
+            `${CONTACT_BOOK_EP}/Contact/saveContacts`,
+            [ ...payload ],
             {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/createOrUpdateMockedMulti(contacts, "contactId", payload).then(({ records }) => ({ data: records }))
+        )
+        // createOrUpdateMockedMulti(contacts, "contactId", payload).then(({ records }) => ({ data: records }))
         .then(response => {
             const { data } = response;
             console.log(data)

@@ -228,13 +228,13 @@ export const Contact = () => {
                                 const contactSheet = Object.values(contactBook.Sheets)[0];
 
                                 const contacts = sheetjs.utils
-                                    .sheet_to_json(contactSheet, { skipHidden: true })
+                                    .sheet_to_json(contactSheet, { skipHidden: true, raw: false })
                                     .reduce((acc, v) => {
                                         if (v.phone !== undefined) {
                                             acc.push({
                                                 contactName:v.name,
                                                 contactNumber:v.phone,
-                                                groupId
+                                                groupId: +groupId
                                             })
                                         }
                                         return acc;
