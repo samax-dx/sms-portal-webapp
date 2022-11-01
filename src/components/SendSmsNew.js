@@ -68,7 +68,7 @@ console.log(length);
     return (
         <Spin spinning={spinning} size={"large"}>
         <Card style={{marginLeft:5}} title={<Title level={5}>Send SMS</Title>}
-              headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
+              headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size="small">
             <Form
                 form={campaignForm}
                 initialValues={{ isUnicode: true/*, campaignPackage: campaignPackages[0] ? campaignPackages[0].productId : null*/ }}

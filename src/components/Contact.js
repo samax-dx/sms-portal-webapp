@@ -216,7 +216,7 @@ export const Contact = () => {
                 <Col>
                     <SearchForm style={{margin: 0, marginBottom: 0}} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Col>
-                <Col style={{display:"flex", alignItems:"end"}}>
+                <Col style={{display:"flex",alignItems:"end"}}>
                     <Upload
                         maxCount={1}
                         accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
@@ -271,9 +271,7 @@ export const Contact = () => {
                         showUploadList={false}
                         children={<Button icon={<UploadOutlined />}>Import Contacts</Button>}
                     />
-                </Col>
-                <Col style={{display: "flex", alignItems: "end"}}>
-                    <Button type={"primary"} onClick={showModal}>Create Contact</Button>
+                    <Button type={"primary"} onClick={showModal} style={{marginLeft:5}}>Create Contact</Button>
                 </Col>
             </Row>
 

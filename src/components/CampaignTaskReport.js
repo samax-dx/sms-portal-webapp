@@ -124,6 +124,7 @@ export const CampaignTaskReport = () => {
     useEffect(() => {
         CampaignService.fetchCampaignTasks({ ...lastQuery, campaignId })
             .then((data) => {
+                console.log(data);
                 setCampaign(data.campaign);
                 setTasks(data.tasks);
                 setCampaignTasksFetchCount(data.count);
@@ -159,6 +160,15 @@ export const CampaignTaskReport = () => {
         })
         .finally(_ => setSaving(false));
 
+    const getCampaignStatus =(status)=>{
+        console.log(status.pendingTaskCount);
+        if (status.pendingTaskCount === 0){
+            return <Tag color={"success"}>Finished</Tag>
+        }
+        if (![null, "scheduled"].includes(status.scheduleStatus)){
+            return <Tag color={"success"}>Finished</Tag>
+        }
+    }
 
     return (<>
         <Card bordered={false} bodyStyle={{padding: 0}} style={{padding: 0, margin: 0}}>
@@ -174,6 +184,7 @@ export const CampaignTaskReport = () => {
                             children={"Start Campaign"}
                             disabled={campaign.createdOn !== campaign.updatedOn}
                         />
+                        <span style={{padding:5}}>{getCampaignStatus(campaign)}</span>
                     </Typography.Text>
                 }
                 bordered

@@ -261,7 +261,9 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                 </Select>
             </Form.Item>
             <Form.Item colon={false} label=" " style={{ marginTop:'0px' }}>
+                <Col style={{borderStyle:"solid", padding:5,borderColor:'lightgray'}}>
                 <SchedulePickerWithType type={type}/>
+                </Col>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Space>
