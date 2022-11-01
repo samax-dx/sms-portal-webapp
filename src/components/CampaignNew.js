@@ -82,6 +82,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
+const {Option} = Select;
 const SchedulePickerWithType = ({type}) => {
     if (type === 'default') return (<>
         <Row>
@@ -92,7 +93,7 @@ const SchedulePickerWithType = ({type}) => {
             </Col>
         </Row>
     </>);
-    if (type === 'start-end') return (<>
+    if (type === 'DateRange') return (<>
         <Row>
             <Col md={12}>
                 <Form.Item name="schedule.props.scheduleStart">
@@ -106,7 +107,7 @@ const SchedulePickerWithType = ({type}) => {
             </Col>
         </Row>
     </>);
-    if (type === 'start-end,active-hours') return (<>
+    if (type === 'DateRangeAndActiveHours') return (<>
         <Row>
             <Descriptions title="Date">
                 <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
@@ -254,8 +255,8 @@ const WriteForm = ({record, onRecordSaved,close }) => {
             <Form.Item name="schedule.policy" id="selected" label="Schedule Policy" initialValue={type}>
                 <Select onChange={setType}>
                     <Option value="default">Default (Schedule On)</Option>
-                    <Option value="start-end">Start-End Date</Option>
-                    <Option value="start-end,active-hours">Start-End Date, Active-hours</Option>
+                    <Option value="DateRange">Start-End Date</Option>
+                    <Option value="DateRangeAndActiveHours">Start-End Date, Active-hours</Option>
                 </Select>
             </Form.Item>
             <Form.Item colon={false} label=" " style={{ marginTop:'0px' }}>
