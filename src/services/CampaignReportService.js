@@ -1,18 +1,15 @@
-import {createOrUpdateMocked, findListMocked} from "../Util";
+import {OFBIZ_EP} from "../config";
+import axios from "axios";
+import {XAuth} from "./XAuth";
 
 const campaignStatistics = {
     campaignCount: 34, avgSuccessRate: 80, avgFailureRate:20
 }
-// const smsStatistics = {
-//     smsCount: 200, avgSentRate: 75, avgUnsentRate: 25
-// }
-
-
 
 export const CampaignReportService = {
     getCampaignStatistics: () =>  console.log() || /*axios
         .post(
-            `${SERVER_URL}/Party/findParties`,
+            `${OFBIZ_EP}/DashBoard/campaignCount`,
             { ...payload },
             {
                 headers: {

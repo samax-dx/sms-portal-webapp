@@ -144,7 +144,7 @@ export const MyPaymentNew = () => {
         <Row>
             <Col md={24} style={{marginLeft:'5px'}}>
                 <Card title={<Title level={5}>Payment History</Title>}
-                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}} size='small'>
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                 </Card>
             </Col>

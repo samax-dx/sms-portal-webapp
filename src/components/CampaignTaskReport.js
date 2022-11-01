@@ -161,7 +161,7 @@ export const CampaignTaskReport = () => {
 
 
     return (<>
-        <Card bordered={false} bodyStyle={{padding: 0}}>
+        <Card bordered={false} bodyStyle={{padding: 0}} style={{padding: 0, margin: 0}}>
             <List
                 header={
                     <Typography.Text strong>
@@ -179,7 +179,7 @@ export const CampaignTaskReport = () => {
                 bordered
             >
                 <Card bordered={false} style={{margin: "0px"}}>
-                    <Space split={<Divider type="vertical" style={{height: "18vh"}}/>} size={"large"}
+                    <Space split={<Divider type="vertical" style={{height: "16vh"}}/>} size={"large"}
                            style={{alignItems: 'start'}}>
                         <div
                             children={
@@ -227,7 +227,7 @@ export const CampaignTaskReport = () => {
             </List>
         </Card>
 
-        <Card title="Campaign Tasks">
+        <Card title={<Title level={5}>Campaign Tasks</Title>} headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}>
             <Table
                 size="small"
                 scroll={{
@@ -275,7 +275,7 @@ export const CampaignTaskReport = () => {
                 <Table.Column title="Error Code" dataIndex={"errorCode"}/>
                 <Table.Column title="External Error Code" dataIndex={"errorCodeExternal"}/>
                 <Table.Column title="External Task Id" dataIndex={"taskIdExternal"}/>
-                <Table.Column title="Message" dataIndex={"message"}/>
+                <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)}/>
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render={(unixToMomentTime)}/>
                 <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>

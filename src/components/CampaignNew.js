@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions
+    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions, Tag
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -107,6 +107,7 @@ const SchedulePickerWithType = ({type}) => {
         </Row>
     </>);
     if (type === 'start-end,active-hours') return (<>
+        <Space style={{border: 1}}>
         <Row>
             <Descriptions title="Date">
                 <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
@@ -149,6 +150,7 @@ const SchedulePickerWithType = ({type}) => {
                 </Descriptions.Item>
             </Descriptions>
         </Row>
+        </Space>
     </>);
 };
 
@@ -252,7 +254,7 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                 children={<Input.TextArea />}
             />
             <Form.Item name="schedule.policy" id="selected" label="Schedule Policy" initialValue={type}>
-                <Select onChange={setType} >
+                <Select onChange={setType}>
                     <Option value="default">Default (Schedule On)</Option>
                     <Option value="start-end">Start-End Date</Option>
                     <Option value="start-end,active-hours">Start-End Date, Active-hours</Option>
@@ -328,6 +330,12 @@ const WriteForm = ({record, onRecordSaved,close }) => {
 
 const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
 
+    const getCampaignStatus = (campaign) => {
+        if (campaign.pendingTaskCount === 0){
+            return <Tag color={"success"}>Finished</Tag>
+        }
+    }
+
     return (<>
         <Table
             style={{marginLeft:'6px'}}
@@ -353,6 +361,7 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
             />
 
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} />
+            <Table.Column title="Campaign Status" render={getCampaignStatus} />
             <Table.Column title="Sender" dataIndex={"senderId"} />
             <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
             <Table.Column title="Sent" dataIndex={"sentTaskCount"} render={v => v || 0} />

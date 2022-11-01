@@ -12,7 +12,7 @@ import {
     Select,
     Upload,
     message,
-    Spin, Radio
+    Spin, Radio, Col
 } from "antd";
 import * as sheetjs from "xlsx";
 import { FileTextTwoTone } from "@ant-design/icons";
