@@ -107,7 +107,6 @@ const SchedulePickerWithType = ({type}) => {
         </Row>
     </>);
     if (type === 'start-end,active-hours') return (<>
-        <Space style={{border: 1}}>
         <Row>
             <Descriptions title="Date">
                 <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
@@ -150,7 +149,6 @@ const SchedulePickerWithType = ({type}) => {
                 </Descriptions.Item>
             </Descriptions>
         </Row>
-        </Space>
     </>);
 };
 

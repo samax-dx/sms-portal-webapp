@@ -165,7 +165,7 @@ export const CampaignTaskReport = () => {
         if (status.pendingTaskCount === 0){
             return <Tag color={"success"}>Finished</Tag>
         }
-        if (![null, "scheduled"].includes(status.scheduleStatus)){
+        if (![null, "enabled"].includes(status.scheduleStatus)){
             return <Tag color={"success"}>Finished</Tag>
         }
     }
