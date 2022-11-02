@@ -335,7 +335,7 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
             return <Tag color={"success"}>Finished</Tag>
         }
         if (![null, "enabled"].includes(status.scheduleStatus)){
-            return <Tag color={"success"}>Finished</Tag>
+            return <Tag color={"success"}>Running</Tag>
         }
     }
 
