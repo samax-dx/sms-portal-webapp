@@ -240,8 +240,8 @@ const WriteForm = ({record, onRecordSaved,close }) => {
             <Form.Item name="schedule.policy" id="selected" label="Schedule Policy" initialValue={type}>
                 <Select onChange={setType}>
                     <Option value="default">Default (Schedule On)</Option>
-                    <Option value="start-end">Start-End Date</Option>
-                    <Option value="start-end,active-hours">Start-End Date, Active-hours</Option>
+                    <Option value="DateRange">Start-End Date</Option>
+                    <Option value="DateRangeAndActiveHours">Start-End Date, Active-hours</Option>
                 </Select>
             </Form.Item>
             <Form.Item colon={false} label=" " style={{ marginTop:'0px' }}>
