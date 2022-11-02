@@ -146,11 +146,10 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 width='100px'
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Campaign Name" dataIndex={"campaignName"} />
-            <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
-            <Table.Column title="Originating Called Number" dataIndex={"phoneNumber"} />
+            <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} />
+            <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"}/>
             <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} />
-            <Table.Column title="External Status Update Time" dataIndex={"updatedOn"} render={(unixToMomentTime)}/>
+            <Table.Column title="Sent On" dataIndex={"sentOn"} />
             <Table.Column title="Status" dataIndex={"status"} width={"7vw"} render={v => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>sent</Tag>,
