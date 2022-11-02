@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions, Tag
+    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -86,7 +86,7 @@ const SchedulePickerWithType = ({type}) => {
     if (type === 'default') return (<>
         <Row>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
+                <Form.Item name="schedule.props.scheduleStart" initialValue={dayjs(new Date())}>
                     <DatePicker placeholder="Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
@@ -95,12 +95,12 @@ const SchedulePickerWithType = ({type}) => {
     if (type === 'DateRange') return (<>
         <Row>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleStart">
+                <Form.Item name="schedule.props.scheduleStart" initialValue={dayjs(new Date())}>
                     <DatePicker placeholder="Start Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleEnd">
+                <Form.Item name="schedule.props.scheduleEnd" initialValue={dayjs(new Date())}>
                     <DatePicker placeholder="End Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
@@ -110,13 +110,13 @@ const SchedulePickerWithType = ({type}) => {
         <Row>
             <Descriptions title="Date">
                 <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.scheduleStart">
-                        <DatePicker placeholder="Start Date"/>
+                    <Form.Item name="schedule.props.scheduleStart" initialValue={dayjs(new Date())}>
+                        <DatePicker placeholder="Start Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                     </Form.Item>
                 </Descriptions.Item>
                 <Descriptions.Item label="End-Date" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.scheduleEnd">
-                        <DatePicker placeholder="End Date"/>
+                    <Form.Item name="schedule.props.scheduleEnd" initialValue={dayjs(new Date())}>
+                        <DatePicker placeholder="End Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                     </Form.Item>
                 </Descriptions.Item>
             </Descriptions>
@@ -244,10 +244,10 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                     <Option value="DateRangeAndActiveHours">Start-End Date, Active-hours</Option>
                 </Select>
             </Form.Item>
-            <Form.Item colon={false} label=" " style={{ marginTop:'0px' }}>
-                <Col style={{borderStyle:"solid", padding:5,borderColor:'lightgray'}}>
+            <Form.Item colon={false} label=" " style={{ marginTop:'0px'}} >
+                <Card>
                 <SchedulePickerWithType type={type}/>
-                </Col>
+                </Card>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Space>
@@ -433,7 +433,7 @@ export const CampaignNew = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                 </Card>
             </Col>
-            <Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"55rem"}}>
+            <Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"57rem"}}>
                 <WriteForm close={handleCancel} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>
