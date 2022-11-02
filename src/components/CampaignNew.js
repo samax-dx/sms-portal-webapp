@@ -92,7 +92,7 @@ const SchedulePickerWithType = ({type}) => {
             </Col>
         </Row>
     </>);
-    if (type === 'start-end') return (<>
+    if (type === 'DateRange') return (<>
         <Row>
             <Col md={12}>
                 <Form.Item name="schedule.props.scheduleStart">
@@ -106,7 +106,7 @@ const SchedulePickerWithType = ({type}) => {
             </Col>
         </Row>
     </>);
-    if (type === 'start-end,active-hours') return (<>
+    if (type === 'DateRangeAndActiveHours') return (<>
         <Row>
             <Descriptions title="Date">
                 <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
@@ -124,26 +124,12 @@ const SchedulePickerWithType = ({type}) => {
         <Row>
             <Descriptions title="Active Hours" Layout="vertical" >
                 <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.activeHourStart">
-                        <TimePicker placeholder="Start Time" />
-                    </Form.Item>
-                </Descriptions.Item>
-                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.activeHourEnd">
-                        <TimePicker placeholder="End Time"/>
-                    </Form.Item>
-                </Descriptions.Item>
-            </Descriptions>
-        </Row>
-        <Row>
-            <Descriptions title="Exclude Hours" Layout="vertical" >
-                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.inactiveHourStart">
+                    <Form.Item name="schedule.props.activeHourStart" initialValue={moment(new Date())}>
                         <TimePicker placeholder="Start Time"/>
                     </Form.Item>
                 </Descriptions.Item>
                 <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.inactiveHourEnd">
+                    <Form.Item name="schedule.props.activeHourEnd" initialValue={moment(new Date()).add(1, 'hours')}>
                         <TimePicker placeholder="End Time"/>
                     </Form.Item>
                 </Descriptions.Item>
@@ -294,9 +280,18 @@ const WriteForm = ({record, onRecordSaved,close }) => {
 
                                 const formDataUf = unflatten(formData);
                                 const schedule = formDataUf.schedule;
+
+                                if (schedule.props.activeHourStart) {
+                                    schedule.props.activeHourStart = schedule.props.activeHourStart.split(" ")[1];
+                                    if (!schedule.props.activeHourStart) delete schedule.props.activeHourStart;
+                                }
+                                if (schedule.props.activeHourEnd) {
+                                    schedule.props.activeHourEnd = schedule.props.activeHourEnd.split(" ")[1];
+                                    if (!schedule.props.activeHourStart) delete schedule.props.activeHourStart;
+                                }
+
                                 delete formDataUf.schedule;
                                 formDataUf.schedules = [window.btoa(JSON.stringify(schedule))].join(",");
-
                                 return CampaignService.saveCampaign(formDataUf);
                             })
                             .then(campaign => {
@@ -308,7 +303,6 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                                     duration: 5
                                 });
                             })
-                            // .catch(error => {alert(error.message)}))
                             .catch(error => {
                                 notification.error({
                                     key: `corder_${Date.now()}`,
