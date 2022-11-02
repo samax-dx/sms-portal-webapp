@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions
+    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions, Tag
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -82,7 +82,6 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const {Option} = Select;
 const SchedulePickerWithType = ({type}) => {
     if (type === 'default') return (<>
         <Row>
@@ -93,7 +92,7 @@ const SchedulePickerWithType = ({type}) => {
             </Col>
         </Row>
     </>);
-    if (type === 'DateRange') return (<>
+    if (type === 'start-end') return (<>
         <Row>
             <Col md={12}>
                 <Form.Item name="schedule.props.scheduleStart">
@@ -107,7 +106,7 @@ const SchedulePickerWithType = ({type}) => {
             </Col>
         </Row>
     </>);
-    if (type === 'DateRangeAndActiveHours') return (<>
+    if (type === 'start-end,active-hours') return (<>
         <Row>
             <Descriptions title="Date">
                 <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
@@ -125,12 +124,12 @@ const SchedulePickerWithType = ({type}) => {
         <Row>
             <Descriptions title="Active Hours" Layout="vertical" >
                 <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.activeHourStart" initialValue={moment(null)}>
-                        <TimePicker placeholder="Start Time"/>
+                    <Form.Item name="schedule.props.activeHourStart">
+                        <TimePicker placeholder="Start Time" />
                     </Form.Item>
                 </Descriptions.Item>
                 <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.activeHourEnd" initialValue={moment(null)}>
+                    <Form.Item name="schedule.props.activeHourEnd">
                         <TimePicker placeholder="End Time"/>
                     </Form.Item>
                 </Descriptions.Item>
@@ -139,12 +138,12 @@ const SchedulePickerWithType = ({type}) => {
         <Row>
             <Descriptions title="Exclude Hours" Layout="vertical" >
                 <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.inactiveHourStart" initialValue={moment(null)}>
+                    <Form.Item name="schedule.props.inactiveHourStart">
                         <TimePicker placeholder="Start Time"/>
                     </Form.Item>
                 </Descriptions.Item>
                 <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.inactiveHourEnd" initialValue={moment(null)}>
+                    <Form.Item name="schedule.props.inactiveHourEnd">
                         <TimePicker placeholder="End Time"/>
                     </Form.Item>
                 </Descriptions.Item>
@@ -255,12 +254,14 @@ const WriteForm = ({record, onRecordSaved,close }) => {
             <Form.Item name="schedule.policy" id="selected" label="Schedule Policy" initialValue={type}>
                 <Select onChange={setType}>
                     <Option value="default">Default (Schedule On)</Option>
-                    <Option value="DateRange">Start-End Date</Option>
-                    <Option value="DateRangeAndActiveHours">Start-End Date, Active-hours</Option>
+                    <Option value="start-end">Start-End Date</Option>
+                    <Option value="start-end,active-hours">Start-End Date, Active-hours</Option>
                 </Select>
             </Form.Item>
             <Form.Item colon={false} label=" " style={{ marginTop:'0px' }}>
+                <Col style={{borderStyle:"solid", padding:5,borderColor:'lightgray'}}>
                 <SchedulePickerWithType type={type}/>
+                </Col>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Space>
@@ -293,18 +294,9 @@ const WriteForm = ({record, onRecordSaved,close }) => {
 
                                 const formDataUf = unflatten(formData);
                                 const schedule = formDataUf.schedule;
-
-                                if (schedule.props.activeHourStart) {
-                                    schedule.props.activeHourStart = schedule.props.activeHourStart.replace("Invalid date", "").split(" ")[1];
-                                    if (!schedule.props.activeHourStart) delete schedule.props.activeHourStart;
-                                }
-                                if (schedule.props.activeHourEnd) {
-                                    schedule.props.activeHourEnd = schedule.props.activeHourEnd.replace("Invalid date", "").split(" ")[1];
-                                    if (!schedule.props.activeHourStart) delete schedule.props.activeHourStart;
-                                }
-
                                 delete formDataUf.schedule;
                                 formDataUf.schedules = [window.btoa(JSON.stringify(schedule))].join(",");
+
                                 return CampaignService.saveCampaign(formDataUf);
                             })
                             .then(campaign => {
@@ -316,6 +308,7 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                                     duration: 5
                                 });
                             })
+                            // .catch(error => {alert(error.message)}))
                             .catch(error => {
                                 notification.error({
                                     key: `corder_${Date.now()}`,
@@ -336,6 +329,15 @@ const WriteForm = ({record, onRecordSaved,close }) => {
 };
 
 const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
+
+    const getCampaignStatus = (campaign) => {
+        if (campaign.pendingTaskCount === 0){
+            return <Tag color={"success"}>Finished</Tag>
+        }
+        if (![null, "enabled"].includes(status.scheduleStatus)){
+            return <Tag color={"success"}>Finished</Tag>
+        }
+    }
 
     return (<>
         <Table
@@ -362,6 +364,7 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
             />
 
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} />
+            <Table.Column title="Campaign Status" render={getCampaignStatus} />
             <Table.Column title="Sender" dataIndex={"senderId"} />
             <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
             <Table.Column title="Sent" dataIndex={"sentTaskCount"} render={v => v || 0} />
