@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions
+    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions, Tag
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -135,6 +135,20 @@ const SchedulePickerWithType = ({type}) => {
                 </Descriptions.Item>
             </Descriptions>
         </Row>
+       {/* <Row>
+            <Descriptions title="Extended Hours" Layout="vertical" >
+                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="schedule.props.activeHourStart" initialValue={moment(new Date())}>
+                        <TimePicker placeholder="Start Time"/>
+                    </Form.Item>
+                </Descriptions.Item>
+                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="schedule.props.activeHourEnd" initialValue={moment(new Date()).add(1, 'hours')}>
+                        <TimePicker placeholder="End Time"/>
+                    </Form.Item>
+                </Descriptions.Item>
+            </Descriptions>
+        </Row>*/}
     </>);
 };
 
