@@ -98,6 +98,11 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
+
+    const [modalDataMsg, setModalDataMsg] = useState(null);
+    const showModalMsg = data => setModalDataMsg(data);
+    const handleOkMsg = () => setModalDataMsg(null);
+    const handleCancelMsg = () => setModalDataMsg(null);
     function hasSubTask(task) {
         if(task.instances !=null && task.instances.indexOf(",") >= 0){
             return true;
@@ -165,7 +170,19 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 <span></span>,
             ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed", !v].indexOf(!0)]} />
 
-            <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
+            <Table.Column title="Message" dataIndex={"message"} width={"25vw"}
+                          render={(v, i) =><>
+                              <span
+                                  style={{textOverflow:"ellipsis",
+                                      whiteSpace:"nowrap",
+                                      maxWidth: "220px",
+                                      display: "inline-block",
+                                      overflow:"hidden",
+                                      verticalAlign:"middle"
+                                  }}
+                              >{v.replace(/\s*,\s*/g, " ")}</span>
+                              <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
+                          </>}/>
             <Table.Column title="Error" dataIndex={"errorCode"} width={"7vw"} />
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"10vw"} ellipsis/>
             <Table.Column title="Package" dataIndex={"packageId"} />
@@ -182,6 +199,9 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 }
             />
         </Table>
+        <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
+            {modalDataMsg}
+        </Modal>
 
         <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
                footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} maskClosable={false} closable={false}
