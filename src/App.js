@@ -28,6 +28,7 @@ import {Groups} from "./components/Group";
 import {Contact} from "./components/Contact";
 import {AllContact} from "./components/AllContact";
 import {HomeNew} from "./components/HomeNew";
+import {ProfileView} from "./components/ProfileView";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -57,6 +58,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/contactBook/groups" element={createRouteComponent(<Groups />)} />
                 <ReactRoute path="/contactBook/allContact" element={createRouteComponent(<AllContact />)} />
                 <ReactRoute path="/contactBook/groups/:groupId" element={createRouteComponent(<Contact/>)} />
+                <ReactRoute path="/userProfile" element={createRouteComponent(<ProfileView/>)} />
             </Routes>
         </BrowserRouter>
     );

@@ -1,14 +1,9 @@
-import { ExportOutlined } from "@ant-design/icons";
-import { useActor } from "@xstate/react";
 import { Button, Card, Menu, Popover, Space, Tag, Typography } from "antd";
-import {useEffect, useState} from "react";
-import { Profile } from "./Profile";
-import {AccountingNew} from "../services/AccountingService";
+import React, {useEffect, useState} from "react";
 import {InventoryService} from "../services/InventoryService";
-import {CampaignService} from "../services/CampaignService";
-import {CampaignReportService} from "../services/CampaignReportService";
 import {ProfileService} from "../services/ProfileService";
 import {XAuth} from "../services/XAuth";
+import {Link} from "react-router-dom";
 
 
 const { Text } = Typography;
@@ -85,8 +80,8 @@ export const TopMenuNew = () => {
             className="menu"
         >
             <Popover content={profileView}>
-                <Menu.Item key="profile" onClick={() => console.log("should navigate to profile page")}>
-                    {profile.name}
+                <Menu.Item key="profile">
+                    <Link to="/userProfile" style={{color:"white"}}>{profile.name}</Link>
                 </Menu.Item>
             </Popover>
             <Menu.Item key="balance" className="balanceView"><strong>Balance (main): {accountBalance} BDT</strong></Menu.Item>
