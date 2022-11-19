@@ -54,5 +54,84 @@ export const XAuth = {
             return Promise.reject({ code, message: data.error || text });
         }),
     logout: () => storage({ token: null }),
-    token: () => storage().token
+    token: () => storage().token,
+    updatePassword: (payload) => console.log(payload) || axios
+        .post(
+            `${OFBIZ_EP}/Party/updatePassword`,
+            { ...payload },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        )
+        .then(response => {
+            const { data } = response;
+            console.log(data)
+
+            if (data.token) {
+                return Promise.resolve(storage(data));
+            } else {
+                return Promise.reject({ message: data });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
+        }),
+    getPasswordResetToken: (payload) => console.log(payload) || axios
+        .post(
+            `${OFBIZ_EP}/Party/getPasswordResetToken`,
+            { ...payload },
+            { headers: { 'Content-Type': 'application/json' } }
+        )
+        .then(response => {
+            const { data } = response;
+            console.log(data)
+
+            if (data.token) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ message: data });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
+        }),
+    resetPassword: (payload) => console.log(payload) || axios
+        .post(
+            `${OFBIZ_EP}/Party/resetPassword`,
+            { ...payload },
+            {
+                headers: { 'Content-Type': 'application/json' }
+            }
+        )
+        .then(response => {
+            const { data } = response;
+            console.log(data)
+
+            if (data.token) {
+                return Promise.resolve(storage(data));
+            } else {
+                return Promise.reject({ message: data });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
+        }),
 };
