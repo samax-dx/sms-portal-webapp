@@ -1,11 +1,13 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useActor} from "@xstate/react";
-import {Button, Form, Input, Alert, Row, Card, Divider, Descriptions} from "antd";
+import {Button, Form, Input, Alert, Row, Card, Divider, Descriptions, notification, Spin} from "antd";
 import getAllConfig from '../config/main'
+import {XAuth} from "../services/XAuth";
 
 export const Login = ({actor}) => {
     const [actorState, sendActor] = useActor(actor);
     const [parentState, sendParent] = useActor(actor.parent);
+    const [spinning, setSpinning] = useState(false);
 
     const [loginForm] = Form.useForm();
 
@@ -16,6 +18,7 @@ export const Login = ({actor}) => {
     }, []);
 
     const [authState, setAuthState] = useState("login");
+    const [resetToken, setResetToken] = useState('');
 
     return (
         <Row type="flex" justify="center" align="middle" style={{minHeight: '100vh'}}>
@@ -47,40 +50,88 @@ export const Login = ({actor}) => {
                         />
                     </Form.Item>
                 </Form> : null}
-                {authState == "forgot" ? <Form form={loginForm} size="large">
-                    <Form.Item name="loginId">
-                        <Input placeholder="User ID"/>
-                    </Form.Item>
-                    <Form.Item style={{margin: 0}}>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            onClick={() => setAuthState("reset")}
-                            children={"Submit"}
-                        />
-                    </Form.Item>
-                </Form> : null}
-                {authState == "reset" ? <Form form={loginForm} size="large">
-                    <Form.Item name="otp">
-                        <Input placeholder="OTP"/>
-                    </Form.Item>
-                    <Form.Item name="updatePassword">
-                        <Input placeholder="New Password" type={"password"}/>
-                    </Form.Item>
-                    <Form.Item name="confirmPassword">
-                        <Input placeholder="Confirm Password" type={"password"}/>
-                    </Form.Item>
-                    <Form.Item style={{margin: 0}}>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            // onClick={() => sendActor({ type: "SUBMIT", data: loginForm.getFieldsValue() })}
-                            children={"Submit"}
-                        />
-                    </Form.Item>
-                </Form> : null}
-                {actorState.matches("error") && <Alert type="error" message={actorState.context.error}/>}
-            </Card>
-        </Row>
-    );
-};
+                {authState == "forgot" ? <Spin spinning={spinning} size={"large"}>
+                    <Form form={loginForm} size="large">
+                        <Form.Item name="loginId">
+                            <Input placeholder="User ID"/>
+                        </Form.Item>
+                        <Form.Item style={{margin: 0}}>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                onClick={() => loginForm.validateFields()
+                                    .then(_ => setSpinning(true) || XAuth.getPasswordResetToken(loginForm.getFieldsValue()))
+                                    .then(data => {
+                                        setSpinning(false);
+                                        setResetToken(data.token);
+                                        setAuthState("reset");
+                                        console.log(data);
+                                    })
+                                    .catch(error => {
+                                        console.log(error);
+                                        notification.error({
+                                            key: `forgot_${Date.now()}`,
+                                            message: "Task Failed",
+                                            description: <>{error.message}</>,
+                                            duration: 5
+                                        });
+                                        setSpinning(false);
+                                    })
+                                }
+                                children={"Submit"}
+                            />
+                        </Form.Item>
+                    </Form> </Spin>: null}
+                    {authState == "reset" ? <Form form={loginForm} size="large" initialValues={{newPassword: "", otp: "", confirmPassword: ""}}>
+                        <Form.Item name="otp" required>
+                            <Input placeholder="OTP"/>
+                        </Form.Item>
+                        <Form.Item name="token" initialValue={resetToken} hidden>
+                            <Input placeholder="token"/>
+                        </Form.Item>
+                        <Form.Item name="password" required>
+                            <Input placeholder="New Password" type={"password"}/>
+                        </Form.Item>
+                        <Form.Item name="confirmPassword" dependencies={['password']} hasFeedback
+                            rules={[
+                                ({getFieldValue}) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue('password') === value) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject(new Error("Passwords does not match!"));
+                                    },
+                                })
+                            ]}
+                        >
+                            <Input.Password placeholder="Confirm Password"/>
+                        </Form.Item>
+                        <Form.Item style={{margin: 0}}>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                onClick={() => loginForm.validateFields()
+                                    .then(_ => XAuth.resetPassword(loginForm.getFieldsValue()))
+                                    .then(data => {
+                                        console.log(data);
+                                        window.location.reload();
+                                    })
+                                    .catch(error => {
+                                        console.log(error);
+                                        notification.error({
+                                            key: `reset_${Date.now()}`,
+                                            message: "Task Failed",
+                                            description: <>{error.message}</>,
+                                            duration: 5
+                                        });
+                                    })
+                                }
+                                children={"Submit"}
+                            />
+                        </Form.Item>
+                    </Form> : null}
+                    {actorState.matches("error") && <Alert type="error" message={actorState.context.error}/>}
+                </Card>
+                    </Row>
+                    );
+                };

@@ -1,12 +1,12 @@
 import {Button, Card, Descriptions, Form, Input, Table, Tag} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {ProfileService} from "../services/ProfileService";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Text from "antd/es/typography/Text";
 
 export const ProfileView = () => {
     const [profile, setProfile] = useState('');
-
+    const navigate =  useNavigate();
     useEffect(() => {
         ProfileService.fetchProfile({})
             .then(data => {
@@ -31,7 +31,7 @@ export const ProfileView = () => {
                     <Form.Item name="userName" label="User Name" children={<Text strong>{profile.name}</Text>}/>
                     <Form.Item name="loginId" label="Login Id" children={<Text strong>{profile.loginId}</Text>}/>
                     <Form.Item name="partyId" label="Party Id" children={<Text strong>{profile.partyId}</Text>}/>
-                    <Button type="primary">Change Password</Button>
+                    <Button type="primary" onClick={()=> navigate("/changePassword")}>Change Password</Button>
                 </Form>
             </Card>
         </>
