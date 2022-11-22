@@ -122,7 +122,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                         .validateFields()
                             .then(_ => GroupService.saveRecord(writeForm.getFieldsValue()))
                             .then(groups => {
-                                // alert(groups);
+                                console.log(groups);
                                 setLastWrite(groups);
                                 onRecordSaved(groups);
                                 notification.success({
