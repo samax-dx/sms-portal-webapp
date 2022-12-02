@@ -86,7 +86,7 @@ const SchedulePickerWithType = ({type}) => {
     if (type === 'default') return (<>
         <Row>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleStart" initialValue={dayjs(new Date())}>
+                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
                     <DatePicker placeholder="Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
@@ -95,12 +95,12 @@ const SchedulePickerWithType = ({type}) => {
     if (type === 'DateRange') return (<>
         <Row>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleStart" initialValue={dayjs(new Date())}>
+                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
                     <DatePicker placeholder="Start Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleEnd" initialValue={dayjs(new Date())}>
+                <Form.Item name="schedule.props.scheduleEnd" initialValue={moment(new Date())}>
                     <DatePicker placeholder="End Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
@@ -110,12 +110,12 @@ const SchedulePickerWithType = ({type}) => {
         <Row>
             <Descriptions title="Date">
                 <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.scheduleStart" initialValue={dayjs(new Date())}>
+                    <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
                         <DatePicker placeholder="Start Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                     </Form.Item>
                 </Descriptions.Item>
                 <Descriptions.Item label="End-Date" span={1} labelStyle={{ alignItems:'start'}}>
-                    <Form.Item name="schedule.props.scheduleEnd" initialValue={dayjs(new Date())}>
+                    <Form.Item name="schedule.props.scheduleEnd" initialValue={moment(new Date())}>
                         <DatePicker placeholder="End Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                     </Form.Item>
                 </Descriptions.Item>

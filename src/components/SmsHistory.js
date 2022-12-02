@@ -60,7 +60,7 @@ const SearchForm = ({ onSearch }) => {
             labelCol={{ span: 15}}
             wrapperCol={{span:23}}
             labelAlign="left"
-            initialValues={{ updatedOn_fld0_value: moment(new Date()),updatedOn_fld1_value:moment(new Date()) }}
+            initialValues={{ updatedOn_fld0_value: moment().subtract(3, 'days'),updatedOn_fld1_value:moment(new Date()) }}
         >
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="phoneNumber" label="Phone Number" children={<Input />} />
             <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
