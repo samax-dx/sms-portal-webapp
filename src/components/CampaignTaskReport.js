@@ -140,13 +140,13 @@ export const CampaignTaskReport = () => {
     useEffect(() => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
-    const onCampaignStart = campaign =>setSaving(true) || SmsTaskService
-        .sendSms(campaign)
+    const onCampaignStart = campaign => setSaving(true) || CampaignService
+        .startCampaign(campaign)
         .then(result => {
             notification.success({
                 key: `send_${Date.now()}`,
                 message: "Task Finished",
-                description: <>Campaign started: {result.campaignId}</>,
+                description: <>Campaign started. Next schedule: {result.schedule}</>,
                 duration: 5
             });
         })
@@ -178,13 +178,13 @@ export const CampaignTaskReport = () => {
                         <span>Campaign Overview</span>
                         &nbsp;
                         <Tag>{campaignId}</Tag>
+                        <span style={{padding:5}}>{getCampaignStatus(campaign)}</span>
                         <Button
                             type="primary"
                             onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}
                             children={"Start Campaign"}
-                            disabled={campaign.createdOn !== campaign.updatedOn}
+                            disabled={campaign.pendingTaskCount === 0}
                         />
-                        <span style={{padding:5}}>{getCampaignStatus(campaign)}</span>
                     </Typography.Text>
                 }
                 bordered
@@ -317,7 +317,7 @@ export const CampaignTaskReport = () => {
                                 })
                             }
                             type="primary"
-                            disabled={record.status !== "pending"}
+                            disabled={!["pending", "suspended", "failed", null].includes(record.status)}
                         >Delete</Button>
                     }
                 />
