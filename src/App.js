@@ -30,6 +30,7 @@ import {AllContact} from "./components/AllContact";
 import {HomeNew} from "./components/HomeNew";
 import {ProfileView} from "./components/ProfileView";
 import UpdatePassword from "./components/UpdatePassword";
+import {EditProfile} from "./components/EditProfile";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -61,6 +62,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/contactBook/groups/:groupId" element={createRouteComponent(<Contact/>)} />
                 <ReactRoute path="/userProfile" element={createRouteComponent(<ProfileView/>)} />
                 <ReactRoute path="/changePassword" element={createRouteComponent(<UpdatePassword/>)} />
+                <ReactRoute path="/editProfile" element={createRouteComponent(<EditProfile/>)} />
             </Routes>
         </BrowserRouter>
     );
