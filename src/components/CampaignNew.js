@@ -17,7 +17,13 @@ import {Br} from "./Br";
 import dayjs from "dayjs";
 import {ProductService} from "../services/ProductService";
 import {CampaignService} from "../services/CampaignService";
-import {FileDoneOutlined, FileTextOutlined, FileTextTwoTone, PlusCircleFilled} from "@ant-design/icons";
+import {
+    ExclamationCircleOutlined,
+    FileDoneOutlined,
+    FileTextOutlined,
+    FileTextTwoTone,
+    PlusCircleFilled
+} from "@ant-design/icons";
 import * as sheetjs from "xlsx";
 import {Link} from "react-router-dom";
 import {SenderIdService} from "../services/SenderIdService";
@@ -352,6 +358,15 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
 
 const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) => {
 
+    const confirmDelete = campaign => Modal.confirm({
+        title: 'Confirm delete campaign?',
+        icon: <ExclamationCircleOutlined />,
+        content: <>Deleting campaign: <strong>{campaign.campaignId}</strong></>,
+        onOk() {
+            onDelete(campaign);
+        }
+    });
+
     const getCampaignStatus = (campaign) => {
         if (campaign.pendingTaskCount === 0){
             return <Tag color={"success"}>Finished</Tag>
@@ -400,7 +415,7 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) =
                 render={(value, record, index) => {
                     return (<>
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
-                        {/*<Button onClick={() => confirmDelete(record)} type="link">Delete</Button>*/}
+                        <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
                     </>);
                 }}
             />
@@ -435,6 +450,27 @@ export const CampaignNew = () => {
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
+
+    const removeCampaign = campaign => {console.log(campaign);
+        CampaignService.deleteCampaign(campaign.campaignId)
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `rCampaign_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Campaign deleted: ${campaign.campaignId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `rCampaign_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Deleting campaign: ${campaign.campaignId}`,
+                    duration: 15
+                });
+            });
+    };
 
 
     useEffect(() => {
@@ -475,7 +511,7 @@ export const CampaignNew = () => {
                 <WriteForm close={handleCancel} recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>
-        <DataView campaigns={campaigns} viewPage={lastQuery.page} viewLimit={lastQuery.limit} onEdit={showModal}/>
+        <DataView campaigns={campaigns} viewPage={lastQuery.page} viewLimit={lastQuery.limit} onEdit={showModal} onDelete={removeCampaign}/>
         <Br />
         <DataPager totalPagingItems={CampaignsFetchCount} currentPage={lastQuery.page}
                               onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />

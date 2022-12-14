@@ -66,4 +66,5 @@ export const PartyService = {
 
             return Promise.reject(errorEx);
         })
+
 };
