@@ -189,7 +189,7 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
             style={{
                 padding:'35px'
             }}
-            onFinish={() => writeForm.resetFields()}
+            // onFinish={() => writeForm.resetFields()}
         >
             <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input disabled={!isCreateForm}/>} />
 
