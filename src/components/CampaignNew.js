@@ -152,9 +152,12 @@ const SchedulePickerWithType = ({type}) => {
     </>);
 };
 
-const WriteForm = ({record, onRecordSaved,close }) => {
+const WriteForm = ({recordArg, onRecordSaved,close }) => {
     const { Option } = Select;
     const [writeForm] = Form.useForm();
+
+    const [isCreateForm, setIsCreateForm] = useState(true);
+    const [lastWrite, setLastWrite] = useState(recordArg);
 
     const [senderIds, setSenderIds] = useState([]);
     useEffect(()=> {
@@ -164,7 +167,17 @@ const WriteForm = ({record, onRecordSaved,close }) => {
             })
     },[])
 
-    useEffect(() => writeForm.resetFields(), [record, writeForm]);
+    // useEffect(() => writeForm.resetFields(), [recordArg, writeForm]);
+    useEffect(() => {
+        setIsCreateForm(Object.keys(recordArg).length === 0);
+        writeForm.resetFields();
+        writeForm.setFieldsValue(recordArg);
+    }, [recordArg]);
+
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        isCreateForm && writeForm.resetFields();
+    },[lastWrite]);
     const [type, setType] = useState('default');
 
     return (<>
@@ -178,9 +191,9 @@ const WriteForm = ({record, onRecordSaved,close }) => {
             }}
             onFinish={() => writeForm.resetFields()}
         >
-            <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input disabled={!isCreateForm}/>} />
 
-            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]}>
+            <Form.Item name="senderId" label="Sender ID" rules={[{ required: false }]}>
                 <Select style={{ minWidth: 150 }}>
                     {senderIds.map((v, i) => <Select.Option key={v.senderId} value={v.senderId}>{v.senderId}</Select.Option>)}
                 </Select>
@@ -310,6 +323,7 @@ const WriteForm = ({record, onRecordSaved,close }) => {
                             })
                             .then(campaign => {
                                 onRecordSaved(campaign);
+                                setLastWrite(campaign);
                                 notification.success({
                                     key: `corder_${Date.now()}`,
                                     message: "Task Complete",
@@ -336,7 +350,7 @@ const WriteForm = ({record, onRecordSaved,close }) => {
     </>);
 };
 
-const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
+const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) => {
 
     const getCampaignStatus = (campaign) => {
         if (campaign.pendingTaskCount === 0){
@@ -374,12 +388,22 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView}) => {
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} />
             <Table.Column title="Campaign Status" render={getCampaignStatus} />
             <Table.Column title="Sender" dataIndex={"senderId"} />
-            <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
+            <Table.Column title="Message" dataIndex={"message"} width={"20vw"}/>
             <Table.Column title="Sent" dataIndex={"sentTaskCount"} render={v => v || 0} />
             <Table.Column title="Failed" dataIndex={"failedTaskCount"} render={v => v || 0} />
             <Table.Column title="Pending" dataIndex={"pendingTaskCount"} render={v => v || 0} />
             <Table.Column title="Total Tasks" dataIndex={"totalTaskCount"} />
             <Table.Column title="Date" dataIndex={"createdOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
+            <Table.Column
+                title="Actions"
+                dataIndex={undefined}
+                render={(value, record, index) => {
+                    return (<>
+                        <Button onClick={() => onEdit(record)} type="link">Edit</Button>
+                        {/*<Button onClick={() => confirmDelete(record)} type="link">Delete</Button>*/}
+                    </>);
+                }}
+            />
         </Table>
     </>);
 };
@@ -448,10 +472,10 @@ export const CampaignNew = () => {
                 </Card>
             </Col>
             <Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"57rem"}}>
-                <WriteForm close={handleCancel} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
+                <WriteForm close={handleCancel} recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>
-        <DataView campaigns={campaigns} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
+        <DataView campaigns={campaigns} viewPage={lastQuery.page} viewLimit={lastQuery.limit} onEdit={showModal}/>
         <Br />
         <DataPager totalPagingItems={CampaignsFetchCount} currentPage={lastQuery.page}
                               onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />

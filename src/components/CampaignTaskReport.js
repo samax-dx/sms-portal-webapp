@@ -10,7 +10,20 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, List, Tag, Divider, Statistic, Spin
+    Modal,
+    Typography,
+    DatePicker,
+    notification,
+    List,
+    Tag,
+    Divider,
+    Statistic,
+    Spin,
+    Tooltip,
+    Upload,
+    message,
+    Checkbox,
+    Descriptions, TimePicker
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -21,6 +34,10 @@ import {CampaignService} from "../services/CampaignService";
 import {useParams} from "react-router-dom";
 import moment from "moment/moment";
 import {SmsTaskService} from "../services/SmsTaskService";
+import {SenderIdService} from "../services/SenderIdService";
+import * as sheetjs from "xlsx";
+import {FileDoneOutlined, FileTextOutlined, FileTextTwoTone} from "@ant-design/icons";
+import {unflatten} from "../Util";
 
 
 const SearchForm = ({onSearch}) => {
@@ -89,6 +106,275 @@ const DataPager = ({totalPagingItems, currentPage, onPagingChange}) => {
         </Space>
     </>);
 };
+const SchedulePickerWithType = ({type}) => {
+    if (type === 'default') return (<>
+        <Row>
+            <Col md={12}>
+                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
+                    <DatePicker placeholder="Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
+                </Form.Item>
+            </Col>
+        </Row>
+    </>);
+    if (type === 'DateRange') return (<>
+        <Row>
+            <Col md={12}>
+                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
+                    <DatePicker placeholder="Start Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
+                </Form.Item>
+            </Col>
+            <Col md={12}>
+                <Form.Item name="schedule.props.scheduleEnd" initialValue={moment(new Date())}>
+                    <DatePicker placeholder="End Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
+                </Form.Item>
+            </Col>
+        </Row>
+    </>);
+    if (type === 'DateRangeAndActiveHours') return (<>
+        <Row>
+            <Descriptions title="Date">
+                <Descriptions.Item label="Start-Date" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
+                        <DatePicker placeholder="Start Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
+                    </Form.Item>
+                </Descriptions.Item>
+                <Descriptions.Item label="End-Date" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="schedule.props.scheduleEnd" initialValue={moment(new Date())}>
+                        <DatePicker placeholder="End Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
+                    </Form.Item>
+                </Descriptions.Item>
+            </Descriptions>
+        </Row>
+        <Row>
+            <Descriptions title="Active Hours" Layout="vertical" >
+                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="schedule.props.activeHourStart" initialValue={moment(new Date())}>
+                        <TimePicker placeholder="Start Time"/>
+                    </Form.Item>
+                </Descriptions.Item>
+                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="schedule.props.activeHourEnd" initialValue={moment(new Date()).add(1, 'hours')}>
+                        <TimePicker placeholder="End Time"/>
+                    </Form.Item>
+                </Descriptions.Item>
+            </Descriptions>
+        </Row>
+        {/* <Row>
+            <Descriptions title="Extended Hours" Layout="vertical" >
+                <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="schedule.props.activeHourStart" initialValue={moment(new Date())}>
+                        <TimePicker placeholder="Start Time"/>
+                    </Form.Item>
+                </Descriptions.Item>
+                <Descriptions.Item label="End at" span={1} labelStyle={{ alignItems:'start'}}>
+                    <Form.Item name="schedule.props.activeHourEnd" initialValue={moment(new Date()).add(1, 'hours')}>
+                        <TimePicker placeholder="End Time"/>
+                    </Form.Item>
+                </Descriptions.Item>
+            </Descriptions>
+        </Row>*/}
+    </>);
+};
+
+const EditForm = ({recordArg, onRecordSaved,close }) => {
+    const { Option } = Select;
+    const [writeForm] = Form.useForm();
+
+    const [isCreateForm, setIsCreateForm] = useState(true);
+    const [lastWrite, setLastWrite] = useState(recordArg);
+
+    const [senderIds, setSenderIds] = useState([]);
+    useEffect(()=> {
+        SenderIdService.fetchRecords({})
+            .then(data=>{
+                setSenderIds(data.senderIds);
+            })
+    },[])
+
+    // useEffect(() => writeForm.resetFields(), [recordArg, writeForm]);
+    useEffect(() => {
+        setIsCreateForm(Object.keys(recordArg).length === 0);
+        writeForm.resetFields();
+        writeForm.setFieldsValue(recordArg);
+    }, [recordArg]);
+
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        isCreateForm && writeForm.resetFields();
+    },[lastWrite]);
+    const [type, setType] = useState('default');
+
+    return (<>
+        <Form
+            form={writeForm}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 20 }}
+            labelAlign={"left"}
+            style={{
+                padding:'35px'
+            }}
+            // onFinish={() => writeForm.resetFields()}
+        >
+            <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input disabled={!isCreateForm}/>} />
+            <Form.Item name="campaignId" label="Campaign ID" rules={[{ required: false }]} hidden children={<Input />} />
+
+            <Form.Item name="senderId" label="Sender ID" rules={[{ required: false }]}>
+                <Select style={{ minWidth: 150 }}>
+                    {senderIds.map((v, i) => <Select.Option key={v.senderId} value={v.senderId}>{v.senderId}</Select.Option>)}
+                </Select>
+            </Form.Item>
+
+            <Form.Item
+                name="phoneNumbers"
+                label={<>
+                    <span>Contacts</span>
+                    <Tooltip title="Import (Excel, CSV, Text)">
+                        &nbsp;&nbsp;
+                        <Upload
+                            maxCount={1}
+                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
+                            customRequest={r => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    const contactBook = sheetjs.read(reader.result, { sheets: 0 });
+                                    const contactSheet = Object.values(contactBook.Sheets)[0];
+
+                                    const contacts = sheetjs.utils
+                                        .sheet_to_json(contactSheet, { skipHidden: true })
+                                        .reduce((acc, v) => {
+                                            if (v.msisdn !== undefined) {
+                                                acc.push(v.msisdn);
+                                            }
+                                            return acc;
+                                        }, []);
+
+                                    contacts.length ? r.onSuccess(JSON.stringify(contacts)) : r.onError("zero_msisdn_found");
+                                };
+
+                                reader.onerror = () => {
+                                    r.onError(reader.error.message);
+                                }
+
+                                reader.readAsArrayBuffer(r.file);
+                            }}
+                            onChange={info => {
+                                if (info.file.status === 'done') {
+                                    writeForm.setFieldsValue({ ...writeForm.getFieldsValue, phoneNumbers: info.file.response.join(", ") })
+                                    return message.success(`Found ${info.file.response.length} MSISDN(s)`);
+                                }
+                                if (info.file.status === 'error') {
+                                    return message.error(`Error: ${info.file.error.toUpperCase()}`);
+                                }
+                            }}
+                            showUploadList={false}
+                            children={<Button shape="round" icon={<FileTextTwoTone />} />}
+                        />
+                    </Tooltip>
+                </>}
+                rules={[{ required: false }]}
+                hidden
+                children={<Input.TextArea />}
+            />
+
+            <Form.Item
+                name="message"
+                label={<>
+                    <span>Message Text</span>
+                    <Space style={{ display: "none" }}>
+                        &nbsp;&nbsp;
+                        <Tooltip title="Import Draft"><Button shape="circle" icon={<FileTextOutlined />} /></Tooltip>
+                        <Tooltip title="Import Template"><Button shape="circle" icon={<FileDoneOutlined />} /></Tooltip>
+                    </Space>
+                </>}
+                rules={[{ required: true }]}
+                children={<Input.TextArea />}
+            />
+            <Form.Item name="schedule.policy" id="selected" label="Schedule Policy" initialValue={type}>
+                <Select onChange={setType}>
+                    <Option value="default">Default (Schedule On)</Option>
+                    <Option value="DateRange">Start-End Date</Option>
+                    <Option value="DateRangeAndActiveHours">Start-End Date, Active-hours</Option>
+                </Select>
+            </Form.Item>
+            <Form.Item colon={false} label=" " style={{ marginTop:'0px'}} >
+                <Card>
+                    <SchedulePickerWithType type={type}/>
+                </Card>
+            </Form.Item>
+            <Form.Item wrapperCol={{ offset: 8 }}>
+                <Space>
+                    <Form.Item name="isUnicode" valuePropName="checked" initialValue={true} style={{ margin: 0 }}>
+                        <Checkbox children={<Tooltip title="using unicode charecters">Unicode</Tooltip>} />
+                    </Form.Item>
+
+                    <Form.Item name="isFlash" valuePropName="checked" style={{ margin: 0 }}>
+                        <Checkbox children={<Tooltip title="is a flash sms">Flash</Tooltip>} />
+                    </Form.Item>
+                </Space>
+            </Form.Item>
+
+            <Form.Item wrapperCol={{ offset: 20 }}>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => writeForm
+                        .validateFields()
+                        .then(_ => writeForm
+                            .validateFields()
+                            .then(_ => {
+                                const formData = writeForm.getFieldsValue();
+
+                                for (const [key, value] of Object.entries(formData)) {
+                                    if (key.includes("schedule.props.")) {
+                                        formData[key] = value.format("YYYY-MM-DD HH:mm:ss");
+                                    }
+                                }
+
+                                const formDataUf = unflatten(formData);
+                                const schedule = formDataUf.schedule;
+
+                                if (schedule.props.activeHourStart) {
+                                    schedule.props.activeHourStart = schedule.props.activeHourStart.split(" ")[1];
+                                    if (!schedule.props.activeHourStart) delete schedule.props.activeHourStart;
+                                }
+                                if (schedule.props.activeHourEnd) {
+                                    schedule.props.activeHourEnd = schedule.props.activeHourEnd.split(" ")[1];
+                                    if (!schedule.props.activeHourStart) delete schedule.props.activeHourStart;
+                                }
+
+                                delete formDataUf.schedule;
+                                formDataUf.schedules = [window.btoa(JSON.stringify(schedule))].join(",");
+                                return CampaignService.saveCampaign(formDataUf);
+                            })
+                            .then(campaign => {
+                                onRecordSaved(campaign);
+                                setLastWrite(campaign);
+                                notification.success({
+                                    key: `corder_${Date.now()}`,
+                                    message: "Task Complete",
+                                    description: <>Campaign created: {campaign.campaignId}</>,
+                                    duration: 5
+                                });
+                            })
+                            .catch(error => {
+                                notification.error({
+                                    key: `corder_${Date.now()}`,
+                                    message: "Task Failed",
+                                    description: <>Error creating order.<br />{error.message}</>,
+                                    duration: 5
+                                });
+                            }))
+                        .catch(_ => { })
+                    }
+                    children={"Submit"}
+                />
+                <Button onClick={close} style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:5}}>Close</Button>
+            </Form.Item>
+
+        </Form>
+    </>);
+};
 
 export const CampaignTaskReport = () => {
     const {campaignId} = useParams();
@@ -105,6 +391,10 @@ export const CampaignTaskReport = () => {
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
     const [saving,setSaving] = useState(false);
+     const [campaignModalData, setCampaignModalData] =useState(null);
+     const showCampaignModal = data => setCampaignModalData(data);
+     const handleCancleCampaign = () => setCampaignModalData(null);
+
 
     const hasSubTask = task => {
         if(task.instances && task.instances.split(",").length > 1){
@@ -184,6 +474,37 @@ export const CampaignTaskReport = () => {
                             onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}
                             children={"Start Campaign"}
                             disabled={campaign.pendingTaskCount === 0}
+                        />
+                        <Button
+                            type="danger"
+                            onClick={() => CampaignService.stopCampaign(campaign)
+                                .then(result => {
+                                    notification.success({
+                                        key: `send_${Date.now()}`,
+                                        message: "Task Finished",
+                                        description: <>Campaign stopped.</>,
+                                        duration: 5
+                                    });
+                                })
+                                .catch(error => {
+                                    notification.error({
+                                        key: `send_${Date.now()}`,
+                                        message: "Task Failed",
+                                        description: <>Task Failed: {JSON.stringify(error.code)}</>,
+                                        duration: 5
+                                    });
+                                })
+                        }
+                            children={"Stop Campaign"}
+                            // disabled={campaign.pendingTaskCount === 0}
+                            style={{marginLeft: 10}}
+                        />
+                        <Button
+                            type="primary"
+                            onClick={() => showCampaignModal(campaign)}
+                            children={"Edit Campaign"}
+                            // disabled={campaign.pendingTaskCount === 0}
+                            style={{marginLeft: 10}}
                         />
                     </Typography.Text>
                 }
@@ -335,6 +656,9 @@ export const CampaignTaskReport = () => {
             <DataPager totalPagingItems={campaignTasksFetchCount} currentPage={lastQuery.page}
                        onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         </Card>
+        <Modal width={1000} header="Create Campaign" key="createCampaign" visible={campaignModalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"57rem"}}>
+            <EditForm close={handleCancleCampaign} recordArg={campaignModalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
+        </Modal>
         <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
                footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]} maskClosable={false} closable={false}
         >

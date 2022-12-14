@@ -64,13 +64,19 @@ export const Login = ({actor}) => {
                                     .then(data => {
                                         setSpinning(false);
                                         setResetToken(data.token);
+                                        notification.success({
+                                            key: `otp_${Date.now()}`,
+                                            message: "OTP send to number",
+                                            description: <>{data.otpInbox}</>,
+                                            duration: 5
+                                        });
                                         setAuthState("reset");
                                         console.log(data);
                                     })
                                     .catch(error => {
                                         console.log(error);
                                         notification.error({
-                                            key: `forgot_${Date.now()}`,
+                                            key: `otp_${Date.now()}`,
                                             message: "Task Failed",
                                             description: <>{error.message}</>,
                                             duration: 5
