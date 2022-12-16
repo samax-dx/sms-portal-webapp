@@ -88,10 +88,10 @@ export const EditProfile = ({ recordArg, onRecordSaved,close }) => {
                     htmlType="submit"
                     onClick={() => writeForm
                         .validateFields()
-                        .then(_ => PartyService.saveRecord(writeForm.getFieldsValue()))
+                        .then(_ => PartyService.updateProfile(writeForm.getFieldsValue()))
                         .then(data => {
                             setLastWrite(data.party);
-                            onRecordSaved(data.party);
+                            //onRecordSaved(data.party);
                             notification.success({
                                 key: `cparty_${Date.now()}`,
                                 message: "Task Complete",

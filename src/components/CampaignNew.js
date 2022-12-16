@@ -451,8 +451,8 @@ export const CampaignNew = () => {
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
 
-    const removeCampaign = campaign => {console.log(campaign);
-        CampaignService.deleteCampaign(campaign.campaignId)
+    const removeCampaign = campaign => {
+        CampaignService.deleteCampaign(campaign)
             .then(data => {
                 setLastQuery({ ...lastQuery, page: 1 });
                 notification.success({

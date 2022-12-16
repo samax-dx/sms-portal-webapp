@@ -31,5 +31,35 @@ export const ProfileService = {
             console.log(errorEx);
 
             return Promise.reject(errorEx);
+        }),
+    updateProfile: (payload) => console.log(payload) || axios
+        .post(
+            `${OFBIZ_EP}/Party/updateProfile`,
+            { ...payload },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        )
+        .then(response => {
+            const { data } = response;
+            console.log(data)
+
+            if (data.partyId) {
+                console.log(data)
+                return Promise.resolve({ ...response, partyId: data.partyId });
+            } else {
+                return Promise.reject({ message: data.errorMessage });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         })
 };
