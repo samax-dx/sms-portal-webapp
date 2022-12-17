@@ -261,7 +261,7 @@ export const HomeNew = () => {
                     </Card>
                 </Col>
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
                         <Statistic
                             key={2}
                             title={"Success Rate"}
@@ -272,7 +272,7 @@ export const HomeNew = () => {
                             suffix="%"
                         />
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
                         <Statistic
                             key={2}
                             title={"Success Rate"}
@@ -285,7 +285,7 @@ export const HomeNew = () => {
                     </Card>
                 </Col>
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
                         <Statistic
                             key={3}
                             title={"Failure Rate"}
@@ -296,7 +296,7 @@ export const HomeNew = () => {
                             suffix="%"
                         />
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
                         <Statistic
                             key={3}
                             title={"Failure Rate"}
@@ -365,7 +365,7 @@ export const HomeNew = () => {
             {/*    <DataPager totalPagingItems={paymentsFetchCount} currentPage={lastPaymentQuery.page}*/}
             {/*               onPagingChange={(page, limit) => setLastProfileQuery({ ...lastPaymentQuery, page, limit })} />*/}
             {/*</Card>*/}
-            <Card title={<><Typography.Text>Active Packages</Typography.Text>&nbsp;&nbsp;<Tag color={"blue"}>{partyProductsFetchCount}</Tag></>} size="small">
+            <Card title={<><Typography.Text style={{fontWeight: "bold", fontSize: 16}}>Active Packages</Typography.Text>&nbsp;&nbsp;<Tag color={"blue"}>{partyProductsFetchCount}</Tag></>} size="small">
                 <PackageView products={partyProducts} viewPage={lastProductQuery.page} viewLimit={lastProductQuery.limit} />
                 <Space children={<><p /><p /></>} />
                 <DataPager totalPagingItems={partyProductsFetchCount} currentPage={lastProductQuery.page}
