@@ -49,7 +49,7 @@ const PackageView = ({ products, viewPage, viewLimit, onView}) => {
 
     return (<>
         <Table
-            size="small"
+            size="large"
             dataSource={products}
             rowKey={"productId"}
             locale={{ emptyText: products ===null? "E": "NO DATA" }}
@@ -62,14 +62,19 @@ const PackageView = ({ products, viewPage, viewLimit, onView}) => {
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
 
+            <Table.Column title="Product Id" dataIndex={"productId"} />
             <Table.Column title="Package" dataIndex={"productName"} />
             <Table.Column title="Balance" dataIndex={"stock"} render={v => <Tag color={getBalanceColor(v)}>{v}</Tag>} />
             <Table.Column title="Prefixes" dataIndex={"dialPrefixes"} />
+            <Table.Column title="Description" dataIndex={"description"} />
         </Table>
     </>);
 };
 
 const PaymentView = ({ payments, viewPage, viewLimit, onView, onEdit, onDelete }) => {
+    const getBalanceColor = v => ["#87d068", "#108ee9", "#f50", "inherit"][
+        [1000, 300, 0, -1].findIndex(r => v > r)
+        ];
 
     return (<>
         <Table
@@ -80,14 +85,8 @@ const PaymentView = ({ payments, viewPage, viewLimit, onView, onEdit, onDelete }
             pagination={false}
             style={{ minWidth: "30vw" }}
         >
-            <Table.Column
-                dataIndex={undefined}
-                title={"#"}
-                render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-            />
-
             <Table.Column title="Payment ID" dataIndex={"paymentId"} />
-            <Table.Column title="Amount" dataIndex={"amount"} render={v => v.toFixed(2)} />
+            <Table.Column title="Amount" dataIndex={"amount"} render={v => v.toFixed(2)&&<Tag color={getBalanceColor(v)}>{v}</Tag>} />
             <Table.Column title="Date" dataIndex={"date"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
         </Table>
     </>);
@@ -222,33 +221,6 @@ export const HomeNew = () => {
         setLastPaymentQuery({ page: 1, limit: 10 })
     }, []);
 
-    const tableData = [
-        {
-            key:'1',
-            name: 'Jhone Dew',
-            paymentId: 17001,
-            amount: 1540,
-            city: 'Dhaka',
-            status: 'Pending'
-        },
-        {
-            key:'2',
-            name: 'Jhone Dew',
-            paymentId: 17002,
-            amount: 1540,
-            city: 'Khulna',
-            status: 'Failed'
-        },
-        {
-            key:'3',
-            name: 'Jhone Dew',
-            paymentId: 17003,
-            amount: 1540,
-            city: 'Rajshahi',
-            status: 'Sent'
-        }
-    ]
-
 
     return (<>
         <Card>
@@ -340,7 +312,7 @@ export const HomeNew = () => {
         </Card>
         {/*<Space children={<><p /><p /></>} />*/}
         <Card>
-            <Row gutter={16}>
+            <Row gutter={12}>
                 <Col md={8}>
                     <Title level={5}> SMS History </Title>
                     <Space direction="vertical">
@@ -357,7 +329,7 @@ export const HomeNew = () => {
                     </Space>
 
                 </Col>
-                <Col md={8}>
+                <Col md={7}>
                     <Title level={5}> Route Uses </Title>
                     <Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.robi} />
                     <Progress size="medium" strokeColor={'#19AAF8'} percent={routeStatistics.grameenphone} />
@@ -377,31 +349,22 @@ export const HomeNew = () => {
                     </Space>
                 </Col>
                 <Col md={8}>
-                    <Table
-                        size="small"
-                        dataSource={tableData}
-                        rowKey={"paymentId"}
-                    >
-                        <Table.Column title="Payment ID" dataIndex={"paymentId"}/>
-                        <Table.Column title="Customers" dataIndex={"name"}/>
-                        <Table.Column title="From" dataIndex={"city"}/>
-                        <Table.Column title="Amount" dataIndex={"amount"}/>
-                        <Table.Column title="Status" dataIndex={"status"} render={v => [
-                            <Tag color={"#108ee9"}>Pending</Tag>,
-                            <Tag color={"#87d068"}>Sent</Tag>,
-                            <Tag color={"#f50"}>Failed</Tag>][[v === "Pending", v === "Sent", v === "Failed"].indexOf(!0)]} />
-                    </Table>
+                    <Title level={5}> Recent TopUp / Recharges </Title>
+                    <PaymentView payments={payments} viewPage={lastPaymentQuery.page} viewLimit={lastPaymentQuery.limit} />
+                    <Space children={<><p /><p /></>} />
+                    <DataPager totalPagingItems={paymentsFetchCount} currentPage={lastPaymentQuery.page}
+                               onPagingChange={(page, limit) => setLastProfileQuery({ ...lastPaymentQuery, page, limit })} />
                 </Col>
             </Row>
         </Card>
         <Space children={<><p /><p /></>} />
         <Space size={"large"} align="baseline">
-            <Card title="Recent TopUp / Recharges" size="small">
-                <PaymentView payments={payments} viewPage={lastPaymentQuery.page} viewLimit={lastPaymentQuery.limit} />
-                <Space children={<><p /><p /></>} />
-                <DataPager totalPagingItems={paymentsFetchCount} currentPage={lastPaymentQuery.page}
-                           onPagingChange={(page, limit) => setLastProfileQuery({ ...lastPaymentQuery, page, limit })} />
-            </Card>
+            {/*<Card title="Recent TopUp / Recharges" size="small">*/}
+            {/*    <PaymentView payments={payments} viewPage={lastPaymentQuery.page} viewLimit={lastPaymentQuery.limit} />*/}
+            {/*    <Space children={<><p /><p /></>} />*/}
+            {/*    <DataPager totalPagingItems={paymentsFetchCount} currentPage={lastPaymentQuery.page}*/}
+            {/*               onPagingChange={(page, limit) => setLastProfileQuery({ ...lastPaymentQuery, page, limit })} />*/}
+            {/*</Card>*/}
             <Card title={<><Typography.Text>Active Packages</Typography.Text>&nbsp;&nbsp;<Tag color={"blue"}>{partyProductsFetchCount}</Tag></>} size="small">
                 <PackageView products={partyProducts} viewPage={lastProductQuery.page} viewLimit={lastProductQuery.limit} />
                 <Space children={<><p /><p /></>} />
