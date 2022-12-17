@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import Title from 'antd/lib/skeleton/Title';
 import {CampaignService} from "../services/CampaignService";
 import {CampaignReportService} from "../services/CampaignReportService";
+import {XAuth} from "../services/XAuth";
 
 
 const CompleteTaskView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {

@@ -16,6 +16,12 @@ import {AccountingNew} from "../services/AccountingService";
 import {InventoryService} from "../services/InventoryService";
 import {SmsReportService} from "../services/SmsReportService";
 import {RouteReportService} from "../services/RouteReportService";
+import {XAuth} from "../services/XAuth";
+import {CampaignCountService} from "../services/DashBoardService/CampaignCountService";
+import {CampaignSuccessCountService} from "../services/DashBoardService/CampaignSuccessCountService";
+import {CampaignTaskCountService} from "../services/DashBoardService/CampaignTaskCountService";
+import {render} from "react-dom";
+import moment from "moment";
 
 
 const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
@@ -83,7 +89,7 @@ const PaymentView = ({ payments, viewPage, viewLimit, onView, onEdit, onDelete }
             rowKey={"paymentId"}
             locale={{ emptyText: payments ===null? "E": "NO DATA" }}
             pagination={false}
-            style={{ minWidth: "30vw" }}
+            style={{ minWidth: "26vw" }}
         >
             <Table.Column title="Payment ID" dataIndex={"paymentId"} />
             <Table.Column title="Amount" dataIndex={"amount"} render={v => v.toFixed(2)&&<Tag color={getBalanceColor(v)}>{v}</Tag>} />
@@ -106,9 +112,14 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
         </Space>
     </>);
 };
+const PartyIdCatcher = () =>{
+    const partyId = JSON.parse(window.atob(XAuth.token().split(".")[1]));
+    return partyId.partyId;
+}
 
 export const HomeNew = () => {
     // Component States
+
     const [lastProfileQuery, setLastProfileQuery] = useState({});
     const [profile, setProfile] = useState({});
     const [accountBalance, setAccountBalance] = useState(0);
@@ -129,10 +140,14 @@ export const HomeNew = () => {
     const [paymentsFetchCount, setPaymentsFetchCount] = useState(0);
     const [paymentsFetchError, setPaymentsFetchError] = useState(null);
 
-    const [campaignStatistics, setCampaignStatistics] = useState('');
+    const [todayCampaignCount, setTodayCampaignCount] = useState('');
+    const [weekCampaignCount, setWeekCampaignCount] = useState('');
+    const [todayCampaignSuccessCount, setTodayCampaignSuccessCount] = useState('');
+    const [weekCampaignSuccessCount, setWeekCampaignSuccessCount] = useState('');
+    const [todayCampaignTaskCount, setTodayCampaignTaskCount] = useState('');
+    const [weekCampaignTaskCount, setWeekCampaignTaskCount] = useState('');
     const [smsStatistics, setSmsStatistics] = useState('');
-    const [routeStatistics, setRouteStatistics] = useState('');
-
+    const [routeStatistics, setRouteStatistics] = useState([0]);
 
     useEffect(() => {
         AccountingNew.fetchBalanceRequests(lastPaymentQuery)
@@ -179,10 +194,57 @@ export const HomeNew = () => {
             });
     }, [lastTaskReportQuery]);
 
-    useEffect((()=>{
-        CampaignReportService.getCampaignStatistics()
+    useEffect(()=>{
+        const partyId = PartyIdCatcher();
+        CampaignCountService.getTodayCampaignCount({partyId})
             .then(data=>{
-                setCampaignStatistics(data);
+                console.log(data);
+                setTodayCampaignCount(data);
+            })
+    },[])
+
+    useEffect((()=>{
+        const partyId = PartyIdCatcher();
+        CampaignCountService.getWeekCampaignCount({partyId})
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignCount(data);
+            })
+    }),[])
+
+    useEffect(()=>{
+        const partyId = PartyIdCatcher();
+        CampaignSuccessCountService.getTodayCampaignSuccessCount({partyId})
+            .then(data=>{
+                console.log(data);
+                setTodayCampaignSuccessCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        const partyId = PartyIdCatcher();
+        CampaignSuccessCountService.getWeekCampaignSuccessCount({partyId})
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignSuccessCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        const partyId = PartyIdCatcher();
+        CampaignTaskCountService.getWeekCampaignTaskCount({partyId})
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignTaskCount(data);
+            })
+    },[])
+
+    useEffect((()=>{
+        const partyId = PartyIdCatcher();
+        CampaignTaskCountService.getTodayCampaignTaskCount({partyId})
+            .then(data=>{
+                console.log(data);
+                setTodayCampaignTaskCount(data);
             })
     }),[])
 
@@ -194,8 +256,10 @@ export const HomeNew = () => {
     }),[])
 
     useEffect((()=>{
-        RouteReportService.getRouteStatistics()
+        const partyId = PartyIdCatcher();
+        RouteReportService.getRouteStatistics({partyId})
             .then(data=>{
+                console.log(data);
                 setRouteStatistics(data);
             })
     }),[])
@@ -247,7 +311,7 @@ export const HomeNew = () => {
                         <Statistic
                             key={1}
                             title={'Campaigns Total'}
-                            value={campaignStatistics.campaignCount}
+                            value={todayCampaignCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
                     </Card>
@@ -255,7 +319,7 @@ export const HomeNew = () => {
                         <Statistic
                             key={1}
                             title={'Campaigns Total'}
-                            value={campaignStatistics.campaignCount}
+                            value={weekCampaignCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
                     </Card>
@@ -264,23 +328,17 @@ export const HomeNew = () => {
                     <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
                         <Statistic
                             key={2}
-                            title={"Success Rate"}
-                            value={campaignStatistics.avgSuccessRate}
+                            title={"Total Task"}
+                            value={todayCampaignTaskCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowUpOutlined />}
-                            suffix="%"
                         />
                     </Card>
                     <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
                         <Statistic
                             key={2}
-                            title={"Success Rate"}
-                            value={campaignStatistics.avgSuccessRate}
+                            title={"Total Task"}
+                            value={weekCampaignTaskCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowUpOutlined />}
-                            suffix="%"
                         />
                     </Card>
                 </Col>
@@ -288,23 +346,17 @@ export const HomeNew = () => {
                     <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
                         <Statistic
                             key={3}
-                            title={"Failure Rate"}
-                            value={campaignStatistics.avgFailureRate}
+                            title={"Total Success"}
+                            value={todayCampaignSuccessCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowDownOutlined />}
-                            suffix="%"
                         />
                     </Card>
                     <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
                         <Statistic
                             key={3}
-                            title={"Failure Rate"}
-                            value={campaignStatistics.avgFailureRate}
+                            title={"Total Success"}
+                            value={weekCampaignSuccessCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowDownOutlined />}
-                            suffix="%"
                         />
                     </Card>
                 </Col>
@@ -329,13 +381,19 @@ export const HomeNew = () => {
                     </Space>
 
                 </Col>
-                <Col md={7}>
+                {/*routeStatistics.map(v=>v.robi?v.robi:0)*/}
+                {/*routeStatistics.map(v=>v.grameenphone?v.grameenphone:0)*/}
+                {/*routeStatistics.map(v=>v.banglalink?v.banglalink:0)*/}
+                {/*routeStatistics.map(v=>v.teletalk?v.teletalk:0)*/}
+                {/*routeStatistics.map(v=>v.null?v.null:0)*/}
+                <Col md={8}>
                     <Title level={5}> Route Uses </Title>
-                    <Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.robi} />
-                    <Progress size="medium" strokeColor={'#19AAF8'} percent={routeStatistics.grameenphone} />
-                    <Progress size="medium" strokeColor={'#F26522'} percent={routeStatistics.banglalink} />
-                    <Progress size="medium" strokeColor={'#6AC537'} percent={routeStatistics.teletalk} />
-                    <Progress size="medium" strokeColor={'#ED3D7F'} percent={routeStatistics.others} />
+                    {/*<Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.map(v=>v.robi?parseInt(v.robi):0)}/>*/}
+                    <Progress size="medium" strokeColor={'#EE0000'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="robi")?.robi)}/>
+                    <Progress size="medium" strokeColor={'#19AAF8'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="grameenphone")?.grameenphone)} />
+                    <Progress size="medium" strokeColor={'#F26522'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="banglalink")?.banglalink)} />
+                    <Progress size="medium" strokeColor={'#6AC537'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="teletalk")?.teletalk)} />
+                    <Progress size="medium" strokeColor={'#ED3D7F'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="null")?.null)}/>
                     <Space direction="vertical">
                         <Badge color="#EE0000" status="success" text="Robi" />
                         <Badge color="#19AAF8" status="success" text="Grameenphone" />

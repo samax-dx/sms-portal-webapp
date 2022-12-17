@@ -195,9 +195,9 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
             style={{
                 padding:'35px'
             }}
-            // onFinish={() => writeForm.resetFields()}
+            onFinish={() => writeForm.resetFields()}
         >
-            <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input disabled={!isCreateForm}/>} />
+            <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input/>} />
 
             <Form.Item name="senderId" label="Sender ID" rules={[{ required: false }]}>
                 <Select style={{ minWidth: 150 }}>
@@ -414,7 +414,7 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) =
                 dataIndex={undefined}
                 render={(value, record, index) => {
                     return (<>
-                        <Button onClick={() => onEdit(record)} type="link">Edit</Button>
+                        {/*<Button onClick={() => onEdit(record)} type="link">Edit</Button>*/}
                         <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
                     </>);
                 }}
