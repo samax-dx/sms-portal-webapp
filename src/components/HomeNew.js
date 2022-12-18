@@ -431,7 +431,7 @@ export const HomeNew = () => {
             </Card>
         </Space>
         <Space children={<><p /><p /></>} />
-        <Card title="Sent Messages" size="small">
+        <Card title={<Typography.Text style={{fontWeight: "bold", fontSize: 16}}>Sent Messages</Typography.Text>} size="small">
             <CompleteTaskView taskReports={taskReports} viewPage={lastTaskReportQuery.page} viewLimit={lastTaskReportQuery.limit} />
             <Space children={<><p /><p /></>} />
             <DataPager totalPagingItems={taskReportsFetchCount} currentPage={lastTaskReportQuery.page}
