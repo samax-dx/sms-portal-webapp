@@ -76,7 +76,7 @@ console.log(length);
                 wrapperCol={{ span: 8 }}
                 style={{width:'92rem'}}
             >
-                <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]}>
+                <Form.Item name="senderId" label="Sender ID" rules={[{ required: false }]}>
                     <Select style={{ minWidth: 150 }}>
                         {senderIds.map((v, i) => <Select.Option key={v.senderId} value={v.senderId}>{v.senderId}</Select.Option>)}
                     </Select>
