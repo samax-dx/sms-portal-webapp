@@ -294,7 +294,8 @@ export const HomeNew = () => {
                         <Space direction="vertical" size={"small"}>
                             <Statistic title="Account Code No." value={profile.partyId} groupSeparator="" />
                             <Statistic title="Account Balance (BDT)" value={accountBalance} precision={2} />
-                            <Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +'['+data.productId)+']'} precision={2} />
+                            {/*<Statistic title="Package Name" value={partyProducts.map(data=>data.productId)} />*/}
+                            <Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock)} precision={2} />
                         </Space>
                     </Space>
                 </Col>
@@ -417,12 +418,6 @@ export const HomeNew = () => {
         </Card>
         <Space children={<><p /><p /></>} />
         <Space size={"large"} align="baseline">
-            {/*<Card title="Recent TopUp / Recharges" size="small">*/}
-            {/*    <PaymentView payments={payments} viewPage={lastPaymentQuery.page} viewLimit={lastPaymentQuery.limit} />*/}
-            {/*    <Space children={<><p /><p /></>} />*/}
-            {/*    <DataPager totalPagingItems={paymentsFetchCount} currentPage={lastPaymentQuery.page}*/}
-            {/*               onPagingChange={(page, limit) => setLastProfileQuery({ ...lastPaymentQuery, page, limit })} />*/}
-            {/*</Card>*/}
             <Card title={<><Typography.Text style={{fontWeight: "bold", fontSize: 16}}>Active Packages</Typography.Text>&nbsp;&nbsp;<Tag color={"blue"}>{partyProductsFetchCount}</Tag></>} size="small">
                 <PackageView products={partyProducts} viewPage={lastProductQuery.page} viewLimit={lastProductQuery.limit} />
                 <Space children={<><p /><p /></>} />
