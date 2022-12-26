@@ -15,7 +15,7 @@ import {CampaignReportService} from "../services/CampaignReportService";
 import {AccountingNew} from "../services/AccountingService";
 import {InventoryService} from "../services/InventoryService";
 import {SmsReportService} from "../services/SmsReportService";
-import {RouteReportService} from "../services/RouteReportService";
+import {RouteReportService} from "../services/DashBoardService/RouteReportService";
 import {XAuth} from "../services/XAuth";
 import {CampaignCountService} from "../services/DashBoardService/CampaignCountService";
 import {CampaignSuccessCountService} from "../services/DashBoardService/CampaignSuccessCountService";
@@ -142,10 +142,13 @@ export const HomeNew = () => {
 
     const [todayCampaignCount, setTodayCampaignCount] = useState('');
     const [weekCampaignCount, setWeekCampaignCount] = useState('');
+    const [rtCampaignCount, setRtCampaignCount] = useState('');
     const [todayCampaignSuccessCount, setTodayCampaignSuccessCount] = useState('');
     const [weekCampaignSuccessCount, setWeekCampaignSuccessCount] = useState('');
+    const [rtCampaignSuccessCount, setRtCampaignSuccessCount] = useState('');
     const [todayCampaignTaskCount, setTodayCampaignTaskCount] = useState('');
     const [weekCampaignTaskCount, setWeekCampaignTaskCount] = useState('');
+    const [rtCampaignTaskCount, setRtCampaignTaskCount] = useState('');
     const [smsStatistics, setSmsStatistics] = useState('');
     const [routeStatistics, setRouteStatistics] = useState([0]);
 
@@ -203,14 +206,23 @@ export const HomeNew = () => {
             })
     },[])
 
-    useEffect((()=>{
+    useEffect(()=>{
         const partyId = PartyIdCatcher();
         CampaignCountService.getWeekCampaignCount({partyId})
             .then(data=>{
                 console.log(data);
                 setWeekCampaignCount(data);
             })
-    }),[])
+    },[])
+
+    useEffect(()=>{
+        const partyId = PartyIdCatcher();
+        CampaignCountService.getRtCampaignCount({partyId})
+            .then(data=>{
+                console.log(data);
+                setRtCampaignCount(data);
+            })
+    },[])
 
     useEffect(()=>{
         const partyId = PartyIdCatcher();
@@ -232,6 +244,15 @@ export const HomeNew = () => {
 
     useEffect(()=>{
         const partyId = PartyIdCatcher();
+        CampaignSuccessCountService.getRtCampaignSuccessCount({partyId})
+            .then(data=>{
+                console.log(data);
+                setRtCampaignSuccessCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        const partyId = PartyIdCatcher();
         CampaignTaskCountService.getWeekCampaignTaskCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -239,30 +260,39 @@ export const HomeNew = () => {
             })
     },[])
 
-    useEffect((()=>{
+    useEffect(()=>{
         const partyId = PartyIdCatcher();
         CampaignTaskCountService.getTodayCampaignTaskCount({partyId})
             .then(data=>{
                 console.log(data);
                 setTodayCampaignTaskCount(data);
             })
-    }),[])
+    },[])
 
-    useEffect((()=>{
+    useEffect(()=>{
+        const partyId = PartyIdCatcher();
+        CampaignTaskCountService.getRtCampaignTaskCount({partyId})
+            .then(data=>{
+                console.log(data);
+                setRtCampaignTaskCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
         SmsReportService.getSmsStatistics()
             .then(data=>{
                 setSmsStatistics(data);
             })
-    }),[])
+    },[])
 
-    useEffect((()=>{
+    useEffect(()=>{
         const partyId = PartyIdCatcher();
         RouteReportService.getRouteStatistics({partyId})
             .then(data=>{
                 console.log(data);
                 setRouteStatistics(data);
             })
-    }),[])
+    },[])
 
     useEffect(()=>{
         ProfileService.fetchProfile()
@@ -282,7 +312,7 @@ export const HomeNew = () => {
         setLastTaskReportQuery({ page: 1, limit: 10 })
     }, []);
     useEffect(() => {
-        setLastPaymentQuery({ page: 1, limit: 10 })
+        setLastPaymentQuery({ page: 1, limit: 5 })
     }, []);
 
 
@@ -329,7 +359,7 @@ export const HomeNew = () => {
                     <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
                         <Statistic
                             key={2}
-                            title={"Total Task"}
+                            title={"SMS Attempt"}
                             value={todayCampaignTaskCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
@@ -337,7 +367,7 @@ export const HomeNew = () => {
                     <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
                         <Statistic
                             key={2}
-                            title={"Total Task"}
+                            title={"SMS Attempt"}
                             value={weekCampaignTaskCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
@@ -347,7 +377,7 @@ export const HomeNew = () => {
                     <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
                         <Statistic
                             key={3}
-                            title={"Total Success"}
+                            title={"Successful SMS"}
                             value={todayCampaignSuccessCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
@@ -355,7 +385,7 @@ export const HomeNew = () => {
                     <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
                         <Statistic
                             key={3}
-                            title={"Total Success"}
+                            title={"Successful SMS"}
                             value={weekCampaignSuccessCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
@@ -367,18 +397,18 @@ export const HomeNew = () => {
         <Card>
             <Row gutter={12}>
                 <Col md={8}>
-                    <Title level={5}> SMS History </Title>
+                    <Title level={5}> Real Time Performance (20 minutes) </Title>
                     <Space direction="vertical">
-                        <Progress type="circle" width={100}  percent={smsStatistics.smsCount} strokeColor={"#689dc4"}/>
-                        <Badge color="#689dc4" status="processing" text="Pending" style={{paddingLeft: 10}}/>
+                        <Progress type="circle" width={100}  percent={rtCampaignCount} format={(percent) => `${percent}`}  strokeColor={"#689dc4"}/>
+                        <Badge color="#689dc4" status="processing" text="Total" style={{paddingLeft: 10}}/>
                     </Space>
                     <Space direction="vertical" style={{padding: 5}}>
-                        <Progress type="circle" width={100}  percent={smsStatistics.avgSuccessRate} strokeColor={"Green"} />
-                        <Badge color="Green" status="success" text="Sent" style={{paddingLeft: 10}} />
+                        <Progress type="circle" width={100}  percent={rtCampaignTaskCount} format={(percent) => `${percent}`}  strokeColor={"Red"} />
+                        <Badge color="Red" status="success" text="Attempt" style={{paddingLeft: 10}} />
                     </Space>
                     <Space direction="vertical">
-                        <Progress type="circle" width={100}  percent={smsStatistics.avgFailureRate} strokeColor={"Red"}/>
-                        <Badge color="Red" status="error" text="Failed" style={{paddingLeft: 10}} />
+                        <Progress type="circle" width={100}  percent={rtCampaignSuccessCount} format={(percent) => `${percent}`}  strokeColor={"Green"}/>
+                        <Badge color="Green" status="error" text="Successful" style={{paddingLeft: 10}} />
                     </Space>
 
                 </Col>
@@ -390,11 +420,11 @@ export const HomeNew = () => {
                 <Col md={8}>
                     <Title level={5}> Route Uses </Title>
                     {/*<Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.map(v=>v.robi?parseInt(v.robi):0)}/>*/}
-                    <Progress size="medium" strokeColor={'#EE0000'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="robi")?.robi)}/>
-                    <Progress size="medium" strokeColor={'#19AAF8'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="grameenphone")?.grameenphone)} />
-                    <Progress size="medium" strokeColor={'#F26522'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="banglalink")?.banglalink)} />
-                    <Progress size="medium" strokeColor={'#6AC537'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="teletalk")?.teletalk)} />
-                    <Progress size="medium" strokeColor={'#ED3D7F'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="null")?.null)}/>
+                    <Progress size="medium" strokeColor={'#EE0000'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="robi")?.robi)} format={(percent) => `${percent}`} />
+                    <Progress size="medium" strokeColor={'#19AAF8'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="grameenphone")?.grameenphone)} format={(percent) => `${percent}`} />
+                    <Progress size="medium" strokeColor={'#F26522'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="banglalink")?.banglalink)} format={(percent) => `${percent}`} />
+                    <Progress size="medium" strokeColor={'#6AC537'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="teletalk")?.teletalk)} format={(percent) => `${percent}`} />
+                    <Progress size="medium" strokeColor={'#ED3D7F'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="null")?.null)} format={(percent) => `${percent}`} />
                     <Space direction="vertical">
                         <Badge color="#EE0000" status="success" text="Robi" />
                         <Badge color="#19AAF8" status="success" text="Grameenphone" />

@@ -1,5 +1,5 @@
-import {CONTACT_BOOK_EP} from "../config";
-import {XAuth} from "./XAuth";
+import {CONTACT_BOOK_EP} from "../../config";
+import {XAuth} from "../XAuth";
 import axios from "axios";
 
 

@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tag
+    Modal, Typography, DatePicker, notification, Tag, Tooltip
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -152,7 +152,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} />
-            <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"}/>
+            <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"10vw"} />
             <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} />
             <Table.Column title="Sent On" dataIndex={"sentOn"} />
             <Table.Column title="Status" dataIndex={"status"} width={"7vw"} render={v => [
@@ -183,9 +183,9 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                               <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
                           </>}/>
-            <Table.Column title="Error" dataIndex={"errorCode"} width={"7vw"} />
-            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"10vw"} ellipsis/>
-            <Table.Column title="Package" dataIndex={"packageId"} />
+            <Table.Column title="Error" dataIndex={"errorCode"} width={"10vw"} />
+            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"10vw"} ellipsis={true}/>
+            <Table.Column title="Package" dataIndex={"packageId"} width={"10vw"} ellipsis={true}/>
             <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
             <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
             <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render= {(unixToMomentTime)}/>
