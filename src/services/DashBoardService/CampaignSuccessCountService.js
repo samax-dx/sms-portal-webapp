@@ -9,7 +9,7 @@ import axios from "axios";
 export const CampaignSuccessCountService = {
     getWeekCampaignSuccessCount: payload =>  console.log(payload) || axios
         .post(
-            `${CONTACT_BOOK_EP}/DashBoard/weekCampaignSuccess`,
+            `${CONTACT_BOOK_EP}/client/DashBoard/weekCampaignSuccess`,
             { ...payload },
             {
                 headers: {
@@ -40,7 +40,7 @@ export const CampaignSuccessCountService = {
 
     getTodayCampaignSuccessCount: (payload) =>  console.log(payload) || axios
         .post(
-            `${CONTACT_BOOK_EP}/DashBoard/todayCampaignSuccess`,
+            `${CONTACT_BOOK_EP}/client/DashBoard/todayCampaignSuccess`,
             { ...payload },
             {
                 headers: {
@@ -71,7 +71,7 @@ export const CampaignSuccessCountService = {
 
     getRtCampaignSuccessCount: (payload) =>  console.log(payload) || axios
         .post(
-            `${CONTACT_BOOK_EP}/DashBoard/rtCampaignSuccess`,
+            `${CONTACT_BOOK_EP}/client/DashBoard/rtCampaignSuccess`,
             { ...payload },
             {
                 headers: {

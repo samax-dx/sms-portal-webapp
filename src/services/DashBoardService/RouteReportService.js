@@ -10,7 +10,7 @@ import axios from "axios";
 export const RouteReportService = {
     getRouteStatistics: (payload) =>  console.log(payload) || axios
         .post(
-            `${CONTACT_BOOK_EP}/DashBoard/routeDetails`,
+            `${CONTACT_BOOK_EP}/client/DashBoard/routeDetails`,
             { ...payload },
             {
                 headers: {
