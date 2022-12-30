@@ -369,7 +369,7 @@ export const HomeNew = () => {
                 <Col md={3}>
                     <Title level={3} style={{color: "#492D3A", marginLeft: 20}}>Today</Title>
                     <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#689dc4", marginLeft: 35}} /></Space>
-                    <Title level={3} style={{color: "#492D3A", marginTop: 48}}>This Week</Title>
+                    <Title level={3} style={{color: "#492D3A", marginTop: 25}}>This Week</Title>
                     <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#4F995B", marginLeft: 35}} /></Space>
                 </Col>
 
