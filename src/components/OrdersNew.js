@@ -58,6 +58,7 @@ const SearchForm = ({ onSearch }) => {
             labelCol={{ span: 15}}
             wrapperCol={{ span: 23 }}
             labelAlign="left"
+            initialValues={{ orderDate_fld0_value: moment().subtract(1, 'days'), orderDate_fld1_value:moment(new Date()) }}
         >
             <Form.Item style={{display:'inline-block', margin:'0px'}} name="orderId" label="Order ID" hidden children={<Input />} />
             <Form.Item name="orderId_op" initialValue={"contains"} hidden children={<Input />} />

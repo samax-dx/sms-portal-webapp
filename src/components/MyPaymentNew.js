@@ -16,6 +16,7 @@ import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
 import {AccountingNew} from "../services/AccountingService";
 import dayjs from "dayjs";
+import moment from "moment";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -56,6 +57,7 @@ const SearchForm = ({ onSearch }) => {
             labelCol={{ span: 15}}
             wrapperCol={{ span: 23}}
             labelAlign="left"
+            initialValues={{ date_fld0_value: moment().subtract(1, 'days'), date_fld1_value:moment(new Date()) }}
         >
             <Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />

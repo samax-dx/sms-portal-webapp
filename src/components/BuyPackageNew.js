@@ -17,6 +17,7 @@ import {Br} from "./Br";
 import dayjs from "dayjs";
 import {ProductService} from "../services/ProductService";
 import {OrderService} from "../services/OrderService";
+import moment from "moment";
 
 
 const SearchForm = ({onSearch}) => {
@@ -57,6 +58,7 @@ const SearchForm = ({onSearch}) => {
             labelCol={{span: 15}}
             wrapperCol={{span: 23}}
             labelAlign="left"
+            initialValues={{ date_fld0_value: moment().subtract(1, 'days'), date_fld1_value:moment(new Date()) }}
         >
             <Form.Item style={{display: 'inline-block', margin: '0px'}} name="productName" label="Name"
                        children={<Input/>}/>

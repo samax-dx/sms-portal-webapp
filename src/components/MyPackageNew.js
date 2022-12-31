@@ -16,6 +16,7 @@ import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
 import dayjs from "dayjs";
 import {Inventory as InventoryService} from "../services/Inventory";
+import moment from "moment";
 
 
 
@@ -57,6 +58,7 @@ const SearchForm = ({ onSearch }) => {
             labelCol={{ span: 15}}
             wrapperCol={{ span: 23 }}
             labelAlign="left"
+            initialValues={{ date_fld0_value: moment().subtract(1, 'days'), date_fld1_value:moment(new Date()) }}
         >
             <Form.Item style={{display:'inline-block', margin:'0px'}} name="productName" label="Package Name" children={<Input />} />
             <Form.Item name="productName_op" initialValue={"contains"} hidden children={<Input />} />

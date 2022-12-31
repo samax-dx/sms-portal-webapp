@@ -37,7 +37,7 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        ["cratedOn_fld0_value", "cratedOn_fld1_value"].forEach((n, i) => {
+        ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
 
@@ -46,7 +46,7 @@ const SearchForm = ({ onSearch }) => {
             }
         });
 
-        const queryData = ["campaignName", "cratedOn_fld0_value", "cratedOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["campaignName", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -69,13 +69,14 @@ const SearchForm = ({ onSearch }) => {
             labelCol={{ span: 22 }}
             wrapperCol={{ span: 23 }}
             labelAlign="left"
+            initialValues={{ createdOn_fld0_value: moment().subtract(1, 'days'), createdOn_fld1_value:moment(new Date()) }}
         >
             <Form.Item style={{display:'inline-block', margin:'0px'}} name="campaignName" label="Campaign Name" children={<Input />} />
             <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="cratedOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
-            <Form.Item name="cratedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="cratedOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
-            <Form.Item name="cratedOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="createdOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
+            <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="createdOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
+            <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
             <Form.Item wrapperCol={{ offset: 5 }} style={{display:'inline-block', margin:'0px'}} colon={false} label=' '>
                 <Button
                     type="primary"
