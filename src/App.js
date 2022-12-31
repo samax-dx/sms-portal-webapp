@@ -31,8 +31,19 @@ import {HomeNew} from "./components/HomeNew";
 import {ProfileView} from "./components/ProfileView";
 import UpdatePassword from "./components/UpdatePassword";
 import {EditProfile} from "./components/EditProfile";
+import getAllConfig from "../src/config/main";
+
+function setFavicon (){
+    return document.getElementById("favicon");
+}
 
 export const App = ({ actor }) => {
+
+    (function(){
+        const favicon = setFavicon();
+        favicon.href = getAllConfig.ficon;
+    })();
+
     const [current, send] = useActor(actor);
     const component = capitalize(current.value);
 
