@@ -1,7 +1,7 @@
 import royalGreen from './royalGreen';
 import bdCom from './bdCom';
 
-const configFileName = "royalgreen"
+const configFileName = "bdcom"
 function getAllConfig(configFileName){
     switch (configFileName.toLowerCase()){
         case 'royalgreen':

@@ -19,10 +19,10 @@ export const AppLayout = ({ render: PageContent, actor,routeComponent }) => {
             <PageContent actor={appState.context.actor} />
         </Layout>,
         <Layout>
-            <Header className="header" style={{paddingLeft:'5px',paddingRight:'5px'}}>
+            <Header className="header" style={{paddingLeft:'7px',paddingRight:'5px'}}>
                 <Row>
                     <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
-                        <Link to='/'><img src={getAllConfig.logo} style={{ marginBottom: "4px" }} /></Link>
+                        <Link to='/'><img src={getAllConfig.logo} style={{ marginBottom: "0px" }} /></Link>
                         &nbsp;
                         <Link to="/" style={{color:'white'}}><span>SMS-Portal Client</span></Link>
                     </Col>
