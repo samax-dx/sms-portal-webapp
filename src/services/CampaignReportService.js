@@ -2,10 +2,6 @@ import {CONTACT_BOOK_EP, OFBIZ_EP} from "../config";
 import axios from "axios";
 import {XAuth} from "./XAuth";
 
-/*const campaignStatistics = {
-    campaignCount: 34, avgSuccessRate: 80, avgFailureRate:20
-}*/
-
 export const CampaignReportService = {
     getCampaignStatistics: (payload) =>  console.log(payload) || axios
         .post(

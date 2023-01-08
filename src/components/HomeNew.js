@@ -22,6 +22,7 @@ import {CampaignSuccessCountService} from "../services/DashBoardService/Campaign
 import {CampaignTaskCountService} from "../services/DashBoardService/CampaignTaskCountService";
 import {render} from "react-dom";
 import moment from "moment";
+import getAllConfig from "../config/main";
 
 
 const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
@@ -152,6 +153,13 @@ export const HomeNew = () => {
     const [smsStatistics, setSmsStatistics] = useState('');
     const [routeStatistics, setRouteStatistics] = useState([0]);
 
+    useEffect(()=>{
+        repetitiveApiCaller();
+        setInterval(()=>{
+            repetitiveApiCaller();
+        },30000)
+    },[])
+
     useEffect(() => {
         AccountingNew.fetchBalanceRequests(lastPaymentQuery)
             .then((data) => {
@@ -197,20 +205,17 @@ export const HomeNew = () => {
             });
     }, [lastTaskReportQuery]);
 
-    useEffect(()=>{
+    const repetitiveApiCaller=()=> {
         const partyId = PartyIdCatcher();
+
         CampaignCountService.getTodayCampaignCount({partyId})
-            .then(data=>{
+            .then(data => {
                 console.log(data);
                 setTodayCampaignCount(data);
             })
-            .catch(error=>{
+            .catch(error => {
                 console.log(error);
             })
-    },[])
-
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         CampaignCountService.getWeekCampaignCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -219,10 +224,6 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
-
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         CampaignCountService.getRtCampaignCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -231,10 +232,6 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
-
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         CampaignSuccessCountService.getTodayCampaignSuccessCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -243,10 +240,6 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
-
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         CampaignSuccessCountService.getWeekCampaignSuccessCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -255,10 +248,7 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
 
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         CampaignSuccessCountService.getRtCampaignSuccessCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -267,10 +257,7 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
 
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         CampaignTaskCountService.getWeekCampaignTaskCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -279,10 +266,7 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
 
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         CampaignTaskCountService.getTodayCampaignTaskCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -291,10 +275,7 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
 
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         CampaignTaskCountService.getRtCampaignTaskCount({partyId})
             .then(data=>{
                 console.log(data);
@@ -303,9 +284,7 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
 
-    useEffect(()=>{
         SmsReportService.getSmsStatistics()
             .then(data=>{
                 setSmsStatistics(data);
@@ -313,10 +292,7 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
 
-    useEffect(()=>{
-        const partyId = PartyIdCatcher();
         RouteReportService.getRouteStatistics({partyId})
             .then(data=>{
                 console.log(data);
@@ -325,9 +301,7 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
 
-    useEffect(()=>{
         ProfileService.fetchProfile()
             .then(data=>{
                 setProfile(data.profile);
@@ -336,7 +310,9 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
-    },[])
+    }
+
+
 
     useEffect(() => {
         setLastProfileQuery({ page: 1, limit: 10 })
