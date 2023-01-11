@@ -32,6 +32,7 @@ import {ProfileView} from "./components/ProfileView";
 import UpdatePassword from "./components/UpdatePassword";
 import {EditProfile} from "./components/EditProfile";
 import getAllConfig from "../src/config/main";
+import {MyRatePlan} from "./components/MyRatePlan";
 
 function setFavicon (){
     return document.getElementById("favicon");
@@ -63,6 +64,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/balance/paymentHistory" element={createRouteComponent(<MyPaymentNew />)} />
                 <ReactRoute path="/order/orderHistory" element={createRouteComponent(<OrdersNew />)} />
                 <ReactRoute path="/order/myPackage" element={createRouteComponent(<MyPackageNew />)} />
+                <ReactRoute path="/order/myRatePlan" element={createRouteComponent(<MyRatePlan />)} />
                 <ReactRoute path="/order/buyPackage" element={createRouteComponent(<BuyPackageNew />)} />
                 <ReactRoute path="/messaging/smsHistory" element={createRouteComponent(<SmsHistory />)} />
                 <ReactRoute path="/messaging/campaign" element={createRouteComponent(<CampaignNew />)} />

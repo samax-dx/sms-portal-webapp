@@ -183,10 +183,10 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                               <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
                           </>}/>
-            <Table.Column title="Error" dataIndex={"errorCode"} width={"10vw"} />
+            <Table.Column title="Error" dataIndex={"errorCode"} width={"10vw"} ellipsis={true}/>
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"10vw"} ellipsis={true}/>
             <Table.Column title="Package" dataIndex={"packageId"} width={"10vw"} ellipsis={true}/>
-            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} />
+            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} ellipsis={true}/>
             <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
             <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render= {(unixToMomentTime)}/>
 

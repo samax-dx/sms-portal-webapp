@@ -37,6 +37,7 @@ export const MainMenu = ({ actor }) => {
                 <Menu.Item key="orderHistory" icon={<ReconciliationTwoTone />} > <Link to="/order/orderHistory">Order History</Link></Menu.Item>
                 {/*<Menu.Item key="myPackage" icon={<HddTwoTone />} onClick={() => sendApp({ type: 'NAV_MY_PACKAGE' })}>My Packages</Menu.Item>*/}
                 <Menu.Item key="myPackage" icon={<HddTwoTone />} ><Link to="/order/myPackage">My Packages</Link></Menu.Item>
+                <Menu.Item key="myRatePlan" icon={<HddTwoTone />} ><Link to="/order/myRatePlan">My Rate-Plan</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="balance" icon={<CreditCardOutlined />} title="Balance & Topup">
                 <Menu.Item key="paymentHistory" icon={<ReconciliationTwoTone />}><Link to="/balance/paymentHistory">Payment History</Link></Menu.Item>

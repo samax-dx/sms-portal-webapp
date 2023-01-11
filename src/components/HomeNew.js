@@ -113,7 +113,7 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
         </Space>
     </>);
 };
-const PartyIdCatcher = () =>{
+export const PartyIdCatcher = () =>{
     const partyId = JSON.parse(window.atob(XAuth.token().split(".")[1]));
     return partyId.partyId;
 }
