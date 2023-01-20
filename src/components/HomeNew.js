@@ -1,5 +1,23 @@
 import React, {useEffect, useRef, useState} from "react";
-import { Button, Card, Col, Collapse, Divider, Image, List, Pagination, Row, Space, Statistic, Table, Tag, Typography, Progress, Badge  } from 'antd';
+import {
+    Button,
+    Card,
+    Col,
+    Collapse,
+    Divider,
+    Image,
+    List,
+    Pagination,
+    Row,
+    Space,
+    Statistic,
+    Table,
+    Tag,
+    Typography,
+    Progress,
+    Badge,
+    Modal
+} from 'antd';
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
 import dayjs from "dayjs";
@@ -27,6 +45,11 @@ import getAllConfig from "../config/main";
 
 const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
 
+    const [modalDataMsg, setModalDataMsg] = useState(null);
+    const showModalMsg = data => setModalDataMsg(data);
+    const handleOkMsg = () => setModalDataMsg(null);
+    const handleCancelMsg = () => setModalDataMsg(null);
+
     return (<>
         <Table
             size="small"
@@ -42,11 +65,27 @@ const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
             />
 
             <Table.Column title="PhoneNumber" dataIndex={"phoneNumber"} />
-            <Table.Column title="Message" dataIndex={"message"} />
+            <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
+                          render={(v, i) =>v.length>6?<>
+                              <span
+                                  style={{textOverflow:"ellipsis",
+                                      whiteSpace:"nowrap",
+                                      maxWidth: "50pt",
+                                      display: "inline-block",
+                                      overflow:"hidden",
+                                      verticalAlign:"middle"
+                                  }}
+                              >{v.replace(/\s*,\s*/g, " ")}</span>
+                              <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
+                          </>:v}/>
             <Table.Column title="Date" dataIndex={"updatedOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
             <Table.Column title="Campaign" dataIndex={"campaignName"} />
             <Table.Column title="Package" dataIndex={"packageId"} />
         </Table>
+
+        <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
+            {modalDataMsg}
+        </Modal>
     </>);
 };
 const PackageView = ({ products, viewPage, viewLimit, onView}) => {

@@ -141,7 +141,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
             pagination={false}
             scroll={{
-                x: 2000,
+                x: 2400,
             }}
             indentSize= '15'
         >
@@ -151,18 +151,18 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 width='100px'
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} />
-            <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"10vw"} />
-            <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} />
-            <Table.Column title="Sent On" dataIndex={"sentOn"} />
-            <Table.Column title="Status" dataIndex={"status"} width={"7vw"} render={v => [
+            <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} width={"100pt"}/>
+            <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"90pt"} />
+            <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} width={"90pt"}/>
+            <Table.Column title="Sent On" dataIndex={"sentOn"} width={"90pt"}/>
+            <Table.Column title="Status" dataIndex={"status"} width={"90pt"} render={v => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>sent</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>failed</Tag>,
                 <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
 
-            <Table.Column title="Status External" dataIndex={"statusExternal"} width={"7vw"} render={(v,row) => [
+            <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>delivered</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
@@ -170,25 +170,25 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 <span></span>,
             ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed", !v].indexOf(!0)]} />
 
-            <Table.Column title="Message" dataIndex={"message"} width={"25vw"}
-                          render={(v, i) =><>
+            <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
+                          render={(v, i) =>v.length>6?<>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
-                                      maxWidth: "220px",
+                                      maxWidth: "50pt",
                                       display: "inline-block",
                                       overflow:"hidden",
                                       verticalAlign:"middle"
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                               <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
-                          </>}/>
-            <Table.Column title="Error" dataIndex={"errorCode"} width={"10vw"} ellipsis={true}/>
-            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"10vw"} ellipsis={true}/>
-            <Table.Column title="Package" dataIndex={"packageId"} width={"10vw"} ellipsis={true}/>
-            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} ellipsis={true}/>
-            <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)} />
-            <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render= {(unixToMomentTime)}/>
+                          </>:v}/>
+            <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
+            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
+            <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
+            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} width={"350pt"}/>
+            <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={(unixToMomentTime)} />
+            <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render= {(unixToMomentTime)}/>
 
             <Table.Column
                 dataIndex={""}
