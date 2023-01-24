@@ -12,21 +12,43 @@ import {
     Select,
     Upload,
     message,
-    Spin, Radio, Col
+    Spin, Radio, Col, Dropdown, Modal
 } from "antd";
 import * as sheetjs from "xlsx";
-import { FileTextTwoTone } from "@ant-design/icons";
+import {DownOutlined, FileTextTwoTone} from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import {SmsTaskService} from "../services/SmsTaskService";
 import {SenderIdService} from "../services/SenderIdService";
 import React, {useEffect, useState} from "react";
+import {GroupService} from "../services/ContactBook/GroupService";
+import {ContactBookService} from "../services/ContactBook/ContactBookService";
+import {useParams} from "react-router-dom";
 
 
 export const SendSmsNew = () => {
+    // const {groupId} = useParams();
     const [campaignForm] = Form.useForm();
     const [spinning, setSpinning] = useState(false);
     const [encoding,setencoding] = useState('gsm7');
     const [length,setLength] = useState(0);
+
+    const [groups, setGroups] = useState([]);
+    const [groupsFetchCount, setGroupsFetchCount] = useState(0);
+    const [groupsFetchError, setGroupsFetchError] = useState(null);
+    const [lastQuery, setLastQuery] = useState({});
+
+    const [group, setGroup] = useState({});
+    const [groupFetchError, setGroupFetchError] = useState(null);
+
+    const [contacts, setContacts] = useState([]);
+    const [contactFetchCount, setContactFetchCount] = useState(0);
+
+
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
+
 
     const [senderIds, setSenderIds] = useState([]);
     useEffect(()=> {
@@ -35,6 +57,29 @@ export const SendSmsNew = () => {
                 setSenderIds(data.senderIds);
             })
     },[])
+
+    useEffect(() => {
+        GroupService.fetchRecords(lastQuery)
+            .then(data => {
+                console.log(data);
+                setGroups(data.groups);
+                setGroupsFetchCount(data.count);
+                setGroupsFetchError(null);
+            })
+            .catch(error => {
+                setGroups([]);
+                setGroupsFetchCount(0);
+                setGroupsFetchError(error);
+            });
+    }, [lastQuery]);
+
+    useEffect(() => {
+        setLastQuery({ page: 1, limit: 10 })
+    }, []);
+
+    useEffect(() => {
+        setLastQuery({ page: 1, limit: 10 })
+    }, []);
 console.log(length);
     const resetMsgField = () =>{
         campaignForm.setFieldsValue({message:''})
@@ -65,6 +110,8 @@ console.log(length);
 
 
     const { Title, Text } = Typography;
+
+
     return (
         <Spin spinning={spinning} size={"large"}>
         <Card style={{marginLeft:5}} title={<Title level={5}>Send SMS</Title>}
@@ -86,6 +133,8 @@ console.log(length);
                     name="phoneNumbers"
                     label={<>
                         <span>Contacts</span>
+                        &nbsp;
+                        <Button onClick={showModal} shape={"round"}>Import From Contact Group</Button>
                         &nbsp;
                         <Upload
                             maxCount={1}
@@ -127,9 +176,7 @@ console.log(length);
                             showUploadList={false}
                             children={<Button shape="round" icon={<FileTextTwoTone />} />}
                         />
-                        {/* <Button type="link" onClick={() => console.log("Import Draft")}>
-                            [ Import (Excel, CSV, Text) ]
-                        </Button> */}
+
                     </>}
                     rules={[{ required: true }]}
                 >
@@ -208,6 +255,43 @@ console.log(length);
                             />
                     </Space>
                 </Form.Item>
+                <Modal key="contactGroup" visible={modalData} footer={null} onCancel={handleCancel} maskClosable={false} closable={true} style={{ top: 20 }} bodyStyle={{height:"8rem"}}>
+                    <Select
+                        placeholder={"Import From Contact Group"}
+                        style={{ width: 400, marginTop: 20, marginLeft: 20 }}
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
+                        onSelect={(groupId) => {
+                            ContactBookService.fetchGroupRecords({groupId})
+                                .then((data) => {
+                                    console.log(data);
+                                    setGroup(data.group);
+                                    setContacts(data.contacts);
+                                    setContactFetchCount(data.count);
+                                    setGroupFetchError(null);
+
+                                    const contacts = data.contacts;
+
+                                    const phoneNumbers = contacts.map(v => v["contactNumber"]);
+
+                                    campaignForm.setFieldsValue({
+                                        ...campaignForm.getFieldsValue,
+                                        phoneNumbers: phoneNumbers.join(", ")
+                                    })
+                                    contacts.length>0?setModalData(null):showModal(modalData);
+                                })
+                                .catch(error => {
+                                    setContacts([]);
+                                    setContactFetchCount(0);
+                                    setGroupFetchError(error);
+                                });
+                            }
+                        }
+                    >
+                        {groups.map((data) => <Select.Option key={data.groupId} value={data.groupId}>{data.groupName}</Select.Option>)}
+                    </Select>
+                </Modal>
             </Form>
         </Card>
         </Spin>
