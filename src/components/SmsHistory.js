@@ -141,7 +141,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
             pagination={false}
             scroll={{
-                x: 2400,
+                x: 2450,
             }}
             indentSize= '15'
         >
@@ -153,16 +153,15 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             />
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} width={"100pt"}/>
             <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"90pt"} />
-            <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} width={"90pt"}/>
-            <Table.Column title="Sent On" dataIndex={"sentOn"} width={"90pt"}/>
-            <Table.Column title="Status" dataIndex={"status"} width={"90pt"} render={v => [
+            <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} width={"110pt"}/>
+            <Table.Column title="Status" dataIndex={"status"} width={"110pt"} render={v => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>sent</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>failed</Tag>,
                 <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
 
-            <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
+            <Table.Column title="Status External" dataIndex={"statusExternal"} width={"110pt"} render={(v,row) => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>delivered</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
@@ -183,6 +182,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                               <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
                           </>:v}/>
+            <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
             <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
             <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
