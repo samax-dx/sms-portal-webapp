@@ -180,15 +180,15 @@ export const HomeNew = () => {
     const [paymentsFetchCount, setPaymentsFetchCount] = useState(0);
     const [paymentsFetchError, setPaymentsFetchError] = useState(null);
 
-    const [todayCampaignCount, setTodayCampaignCount] = useState('');
-    const [weekCampaignCount, setWeekCampaignCount] = useState('');
+    const [todayCampaignCount, setTodayCampaignCount] = useState(0);
+    const [weekCampaignCount, setWeekCampaignCount] = useState(0);
     const [rtCampaignCount, setRtCampaignCount] = useState('');
-    const [todayCampaignSuccessCount, setTodayCampaignSuccessCount] = useState('');
-    const [weekCampaignSuccessCount, setWeekCampaignSuccessCount] = useState('');
-    const [rtCampaignSuccessCount, setRtCampaignSuccessCount] = useState('');
-    const [todayCampaignTaskCount, setTodayCampaignTaskCount] = useState('');
-    const [weekCampaignTaskCount, setWeekCampaignTaskCount] = useState('');
-    const [rtCampaignTaskCount, setRtCampaignTaskCount] = useState('');
+    const [todayCampaignSuccessCount, setTodayCampaignSuccessCount] = useState(0);
+    const [weekCampaignSuccessCount, setWeekCampaignSuccessCount] = useState(0);
+    const [rtCampaignSuccessCount, setRtCampaignSuccessCount] = useState(0);
+    const [todayCampaignTaskCount, setTodayCampaignTaskCount] = useState(0);
+    const [weekCampaignTaskCount, setWeekCampaignTaskCount] = useState(0);
+    const [rtCampaignTaskCount, setRtCampaignTaskCount] = useState(0);
     const [smsStatistics, setSmsStatistics] = useState('');
     const [routeStatistics, setRouteStatistics] = useState([0]);
 
@@ -388,58 +388,88 @@ export const HomeNew = () => {
                     <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#4F995B", marginLeft: 35}} /></Space>
                 </Col>
 
+                {/*background: rgb(0,147,233);*/}
+                {/*background: radial-gradient(circle, rgba(0,147,233,1) 0%, rgba(128,208,199,1) 100%);*/}
+                {/*background-image: radial-gradient( circle 465px at -15.1% -25%,  rgba(17,130,193,1) 0%, rgba(67,166,238,1) 49%, rgba(126,203,244,1) 90.2% );*/}
+
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #2193b0 ,  #6dd5ed)'}}>
-                        <Statistic
-                            key={1}
-                            title={'Campaigns Total'}
-                            value={todayCampaignCount}
-                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                        />
+                    <Card style={{backgroundImage:'radial-gradient( circle 465px at -15.1% -25%,  rgba(17,130,193,1) 0%, rgba(67,166,238,1) 49%, rgba(126,203,244,1) 90.2% )'}}>
+                        {/*<Statistic*/}
+                        {/*    key={1}*/}
+                        {/*    title={'Campaigns Total'}*/}
+                        {/*    value={todayCampaignCount}*/}
+                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
+                        {/*/>*/}
+                        <Typography style={{fontSize: 22, color: '#FFFFFF'}}>Campaigns Total</Typography>
+                        <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{todayCampaignCount}</Typography>
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #2193b0, #6dd5ed)', marginTop: 10}}>
-                        <Statistic
-                            key={1}
-                            title={'Campaigns Total'}
-                            value={weekCampaignCount}
-                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                        />
+
+                    {/*background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(97,186,255,1) 0%, rgba(166,239,253,1) 90.1% );*/}
+                    <Card style={{backgroundImage:'radial-gradient( circle 465px at -15.1% -25%,  rgba(17,130,193,1) 0%, rgba(67,166,238,1) 49%, rgba(126,203,244,1) 90.2% )', marginTop: 10}}>
+                        {/*<Statistic*/}
+                        {/*    key={1}*/}
+                        {/*    title={'Campaigns Total'}*/}
+                        {/*    value={weekCampaignCount}*/}
+                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
+                        {/*/>*/}
+                        <Typography style={{fontSize: 22, color: '#FFFFFF'}}>Campaigns Total</Typography>
+                        <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{weekCampaignCount}</Typography>
                     </Card>
                 </Col>
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
-                        <Statistic
-                            key={2}
-                            title={"SMS Attempt"}
-                            value={todayCampaignTaskCount}
-                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                        />
+
+                    {/*background: rgb(255,154,139);*/}
+                    {/*background: radial-gradient(circle, rgba(255,154,139,1) 0%, rgba(255,106,136,1) 55%, rgba(255,153,172,1) 100%);*/}
+
+                    <Card style={{backgroundImage:'radial-gradient( circle farthest-corner at 10% 20%,  rgba(226,37,37,1) 0%, rgba(211,49,49,1) 82.8% )'}}>
+                        {/*<Statistic*/}
+                        {/*    key={2}*/}
+                        {/*    title={"SMS Attempt"}*/}
+                        {/*    value={todayCampaignTaskCount}*/}
+                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
+                        {/*/>*/}
+                        <Typography style={{fontSize: 22, color: '#FFFFFF'}}>SMS Attempt</Typography>
+                        <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{todayCampaignTaskCount}</Typography>
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
-                        <Statistic
-                            key={2}
-                            title={"SMS Attempt"}
-                            value={weekCampaignTaskCount}
-                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                        />
+
+                    {/*background-image: radial-gradient( circle farthest-corner at 50.4% 50.5%,  rgba(251,32,86,1) 0%, rgba(135,2,35,1) 90% );*/}
+                    {/*background-image: radial-gradient( circle 905.6px at 4.9% 7.9%,  rgba(218,0,0,1) 14.1%, rgba(168,2,144,1) 65%, rgba(102,2,110,1) 90% );*/}
+                    {/*background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(226,37,37,1) 0%, rgba(211,49,49,1) 82.8% );*/}
+                    <Card style={{backgroundImage:'radial-gradient( circle farthest-corner at 10% 20%,  rgba(226,37,37,1) 0%, rgba(211,49,49,1) 82.8% )', marginTop: 10}}>
+                        {/*<Statistic*/}
+                        {/*    key={2}*/}
+                        {/*    title={"SMS Attempt"}*/}
+                        {/*    value={weekCampaignTaskCount}*/}
+                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
+                        {/*/>*/}
+                        <Typography style={{fontSize: 22, color: '#FFFFFF'}}>SMS Attempt</Typography>
+                        <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{weekCampaignTaskCount}</Typography>
                     </Card>
                 </Col>
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
-                        <Statistic
-                            key={3}
-                            title={"Successful SMS"}
-                            value={todayCampaignSuccessCount}
-                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                        />
+
+                    {/*background-image: radial-gradient( circle farthest-corner at -1% 57.5%,  rgba(19,170,82,1) 0%, rgba(0,102,43,1) 90% );*/}
+                    <Card style={{backgroundImage: 'radial-gradient( circle farthest-corner at -1% 57.5%,  rgba(0,102,43,1) 0%, rgba(19,170,82,1) 90% )'}}>
+                        {/*<Statistic*/}
+                        {/*    key={3}*/}
+                        {/*    title={"Successful SMS"}*/}
+                        {/*    value={todayCampaignSuccessCount}*/}
+                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
+                        {/*/>*/}
+                        <Typography style={{fontSize: 22, color: '#FFFFFF'}}>Successful SMS</Typography>
+                        <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{todayCampaignSuccessCount}</Typography>
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
-                        <Statistic
-                            key={3}
-                            title={"Successful SMS"}
-                            value={weekCampaignSuccessCount}
-                            valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                        />
+
+                    {/*background-image: radial-gradient( circle 919px at -3.2% 49.7%,  rgba(92,225,22,0.96) 0.1%, rgba(20,189,231,1) 99.4% );*/}
+                    <Card style={{backgroundImage:'radial-gradient( circle farthest-corner at -1% 57.5%,  rgba(0,102,43,1) 0%, rgba(19,170,82,1) 90% )', marginTop: 10}}>
+                        {/*<Statistic*/}
+                        {/*    key={3}*/}
+                        {/*    title={"Successful SMS"}*/}
+                        {/*    value={weekCampaignSuccessCount}*/}
+                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
+                        {/*/>*/}
+                        <Typography style={{fontSize: 22, color: '#FFFFFF'}}>Successful SMS</Typography>
+                        <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{weekCampaignSuccessCount}</Typography>
                     </Card>
                 </Col>
             </Row>
