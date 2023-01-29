@@ -388,93 +388,41 @@ export const HomeNew = () => {
                     <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#4F995B", marginLeft: 35}} /></Space>
                 </Col>
 
-                {/*background: rgb(0,147,233);*/}
-                {/*background: radial-gradient(circle, rgba(0,147,233,1) 0%, rgba(128,208,199,1) 100%);*/}
-                {/*background-image: radial-gradient( circle 465px at -15.1% -25%,  rgba(17,130,193,1) 0%, rgba(67,166,238,1) 49%, rgba(126,203,244,1) 90.2% );*/}
-
                 <Col md={5}>
                     <Card style={{backgroundImage:'radial-gradient( circle 465px at -15.1% -25%,  rgba(17,130,193,1) 0%, rgba(67,166,238,1) 49%, rgba(126,203,244,1) 90.2% )'}}>
-                        {/*<Statistic*/}
-                        {/*    key={1}*/}
-                        {/*    title={'Campaigns Total'}*/}
-                        {/*    value={todayCampaignCount}*/}
-                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
-                        {/*/>*/}
                         <Typography style={{fontSize: 22, color: '#FFFFFF'}}>Campaigns Total</Typography>
                         <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{todayCampaignCount}</Typography>
                     </Card>
 
-                    {/*background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(97,186,255,1) 0%, rgba(166,239,253,1) 90.1% );*/}
                     <Card style={{backgroundImage:'radial-gradient( circle 465px at -15.1% -25%,  rgba(17,130,193,1) 0%, rgba(67,166,238,1) 49%, rgba(126,203,244,1) 90.2% )', marginTop: 10}}>
-                        {/*<Statistic*/}
-                        {/*    key={1}*/}
-                        {/*    title={'Campaigns Total'}*/}
-                        {/*    value={weekCampaignCount}*/}
-                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
-                        {/*/>*/}
                         <Typography style={{fontSize: 22, color: '#FFFFFF'}}>Campaigns Total</Typography>
                         <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{weekCampaignCount}</Typography>
                     </Card>
                 </Col>
                 <Col md={5}>
-
-                    {/*background: rgb(255,154,139);*/}
-                    {/*background: radial-gradient(circle, rgba(255,154,139,1) 0%, rgba(255,106,136,1) 55%, rgba(255,153,172,1) 100%);*/}
-
                     <Card style={{backgroundImage:'radial-gradient( circle farthest-corner at 10% 20%,  rgba(226,37,37,1) 0%, rgba(211,49,49,1) 82.8% )'}}>
-                        {/*<Statistic*/}
-                        {/*    key={2}*/}
-                        {/*    title={"SMS Attempt"}*/}
-                        {/*    value={todayCampaignTaskCount}*/}
-                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
-                        {/*/>*/}
                         <Typography style={{fontSize: 22, color: '#FFFFFF'}}>SMS Attempt</Typography>
                         <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{todayCampaignTaskCount}</Typography>
                     </Card>
 
-                    {/*background-image: radial-gradient( circle farthest-corner at 50.4% 50.5%,  rgba(251,32,86,1) 0%, rgba(135,2,35,1) 90% );*/}
-                    {/*background-image: radial-gradient( circle 905.6px at 4.9% 7.9%,  rgba(218,0,0,1) 14.1%, rgba(168,2,144,1) 65%, rgba(102,2,110,1) 90% );*/}
-                    {/*background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(226,37,37,1) 0%, rgba(211,49,49,1) 82.8% );*/}
                     <Card style={{backgroundImage:'radial-gradient( circle farthest-corner at 10% 20%,  rgba(226,37,37,1) 0%, rgba(211,49,49,1) 82.8% )', marginTop: 10}}>
-                        {/*<Statistic*/}
-                        {/*    key={2}*/}
-                        {/*    title={"SMS Attempt"}*/}
-                        {/*    value={weekCampaignTaskCount}*/}
-                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
-                        {/*/>*/}
                         <Typography style={{fontSize: 22, color: '#FFFFFF'}}>SMS Attempt</Typography>
                         <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{weekCampaignTaskCount}</Typography>
                     </Card>
                 </Col>
                 <Col md={5}>
-
-                    {/*background-image: radial-gradient( circle farthest-corner at -1% 57.5%,  rgba(19,170,82,1) 0%, rgba(0,102,43,1) 90% );*/}
                     <Card style={{backgroundImage: 'radial-gradient( circle farthest-corner at -1% 57.5%,  rgba(0,102,43,1) 0%, rgba(19,170,82,1) 90% )'}}>
-                        {/*<Statistic*/}
-                        {/*    key={3}*/}
-                        {/*    title={"Successful SMS"}*/}
-                        {/*    value={todayCampaignSuccessCount}*/}
-                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
-                        {/*/>*/}
                         <Typography style={{fontSize: 22, color: '#FFFFFF'}}>Successful SMS</Typography>
                         <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{todayCampaignSuccessCount}</Typography>
                     </Card>
 
-                    {/*background-image: radial-gradient( circle 919px at -3.2% 49.7%,  rgba(92,225,22,0.96) 0.1%, rgba(20,189,231,1) 99.4% );*/}
                     <Card style={{backgroundImage:'radial-gradient( circle farthest-corner at -1% 57.5%,  rgba(0,102,43,1) 0%, rgba(19,170,82,1) 90% )', marginTop: 10}}>
-                        {/*<Statistic*/}
-                        {/*    key={3}*/}
-                        {/*    title={"Successful SMS"}*/}
-                        {/*    value={weekCampaignSuccessCount}*/}
-                        {/*    valueStyle={{ color: '#ffffff', fontWeight: 900 }}*/}
-                        {/*/>*/}
                         <Typography style={{fontSize: 22, color: '#FFFFFF'}}>Successful SMS</Typography>
                         <Typography style={{fontSize: 24, color: '#FFFFFF', fontWeight: "bolder"}}>{weekCampaignSuccessCount}</Typography>
                     </Card>
                 </Col>
             </Row>
         </Card>
-        {/*<Space children={<><p /><p /></>} />*/}
         <Card>
             <Row gutter={12}>
                 <Col md={8}>
@@ -493,11 +441,6 @@ export const HomeNew = () => {
                     </Space>
 
                 </Col>
-                {/*routeStatistics.map(v=>v.robi?v.robi:0)*/}
-                {/*routeStatistics.map(v=>v.grameenphone?v.grameenphone:0)*/}
-                {/*routeStatistics.map(v=>v.banglalink?v.banglalink:0)*/}
-                {/*routeStatistics.map(v=>v.teletalk?v.teletalk:0)*/}
-                {/*routeStatistics.map(v=>v.null?v.null:0)*/}
                 <Col md={8}>
                     <Title level={5}> Route Uses </Title>
                     {/*<Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.map(v=>v.robi?parseInt(v.robi):0)}/>*/}
