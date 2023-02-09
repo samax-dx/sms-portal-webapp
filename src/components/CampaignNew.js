@@ -359,6 +359,11 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
 
 const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) => {
 
+    const [modalDataMsg, setModalDataMsg] = useState(null);
+    const showModalMsg = data => setModalDataMsg(data);
+    const handleOkMsg = () => setModalDataMsg(null);
+    const handleCancelMsg = () => setModalDataMsg(null);
+
     const confirmDelete = campaign => Modal.confirm({
         title: 'Confirm delete campaign?',
         icon: <ExclamationCircleOutlined />,
@@ -404,7 +409,20 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) =
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} />
             <Table.Column title="Campaign Status" render={getCampaignStatus} />
             <Table.Column title="Sender" dataIndex={"senderId"} />
-            <Table.Column title="Message" dataIndex={"message"} width={"20vw"}/>
+            {/*<Table.Column title="Message" dataIndex={"message"} width={"20vw"}/>*/}
+            <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
+                          render={(v, i) =>v.length>6?<>
+                              <span
+                                  style={{textOverflow:"ellipsis",
+                                      whiteSpace:"nowrap",
+                                      maxWidth: "50pt",
+                                      display: "inline-block",
+                                      overflow:"hidden",
+                                      verticalAlign:"middle"
+                                  }}
+                              >{v.replace(/\s*,\s*/g, " ")}</span>
+                              <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
+                          </>:v}/>
             <Table.Column title="Sent" dataIndex={"sentTaskCount"} render={v => v || 0} />
             <Table.Column title="Failed" dataIndex={"failedTaskCount"} render={v => v || 0} />
             <Table.Column title="Pending" dataIndex={"pendingTaskCount"} render={v => v || 0} />
@@ -421,6 +439,10 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) =
                 }}
             />
         </Table>
+
+        <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
+            {modalDataMsg}
+        </Modal>
     </>);
 };
 
@@ -451,6 +473,7 @@ export const CampaignNew = () => {
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
+
 
     const removeCampaign = campaign => {
         CampaignService.deleteCampaign(campaign)

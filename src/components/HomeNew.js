@@ -53,8 +53,32 @@ const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
     return (<>
         <Table
             size="small"
-            dataSource={taskReports}
-            rowKey={(taskReport) => taskReport.phoneNumber +'_'+ taskReport.campaignId}
+            // dataSource={taskReports}
+            rowKey={parentTask=>parentTask.campaignTaskId}
+            dataSource={Object.values(taskReports || {}).map((taskGroup, i) => {
+                const parentTask = taskGroup[0];
+                parentTask.children = taskGroup.slice(1);
+                // if (!hasSubTask(taskGroup)) {
+                //     return { ...taskGroup, key: i };
+                // }
+                //
+                // const newTask = { ...taskGroup, key: i };
+
+                // newTask.children = taskGroup.instances.split(',').map((msgChunk, i) =>{
+                //     const decodedMsgChunk = atob(msgChunk);
+                //     return { ...taskGroup, key: i+"/"+i, message: decodedMsgChunk };
+                // });
+                // const instances = taskGroup.instances.split(',');
+                // const charCount = taskGroup.message.length;
+                // const msgCount = instances.length;
+                // const charCountPerMsg = charCount/msgCount;
+                // newTask.children = instances.map((msgChunk, i) =>{
+                //     return { ...taskGroup, key: i+"/"+i, message: taskGroup.message.substring(charCountPerMsg * i, charCountPerMsg * (i+1)) };
+                // });
+                //
+                // return newTask;
+                return parentTask;
+            })}
             locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
             pagination={false}
         >

@@ -395,6 +395,11 @@ export const CampaignTaskReport = () => {
      const showCampaignModal = data => setCampaignModalData(data);
      const handleCancleCampaign = () => setCampaignModalData(null);
 
+    const [modalDataMsg, setModalDataMsg] = useState(null);
+    const showModalMsg = data => setModalDataMsg(data);
+    const handleOkMsg = () => setModalDataMsg(null);
+    const handleCancelMsg = () => setModalDataMsg(null);
+
 
     const hasSubTask = task => {
         if(task.instances && task.instances.split(",").length > 1){
@@ -414,7 +419,7 @@ export const CampaignTaskReport = () => {
     useEffect(() => {
         CampaignService.fetchCampaignTasks({ ...lastQuery, campaignId })
             .then((data) => {
-                console.log(data);
+                console.log(data.taskReports);
                 setCampaign(data.campaign);
                 setTasks(data.tasks);
                 setCampaignTasksFetchCount(data.count);
@@ -566,25 +571,31 @@ export const CampaignTaskReport = () => {
                     x: 2000,
                 }}
                 indentSize= '15'
-                dataSource={tasks.map(task => {
-                    //alert(JSON.stringify(task));
+                dataSource={Object.values(tasks || {}).map((taskGroup, i) => {
+                    const parentTask = taskGroup[0];
+                    parentTask.children = taskGroup.slice(1);
+                    // if (!hasSubTask(taskGroup)) {
+                    //     return { ...taskGroup, key: i };
+                    // }
+                    //
+                    // const newTask = { ...taskGroup, key: i };
 
-                    if (!hasSubTask(task)) {
-                        return task;
-                    }
-
-                    const newTask = {...task};
-
-                    const children = task.instances.split(',').map(msgChunk => {
-                        const decodedMsgChunk = window.atob(msgChunk);
-                        const clonedTask = {...task};
-                        clonedTask.message = decodedMsgChunk;
-                        return clonedTask;
-                    })
-                    newTask.children = children;
-                    return newTask;
+                    // newTask.children = taskGroup.instances.split(',').map((msgChunk, i) =>{
+                    //     const decodedMsgChunk = atob(msgChunk);
+                    //     return { ...taskGroup, key: i+"/"+i, message: decodedMsgChunk };
+                    // });
+                    // const instances = taskGroup.instances.split(',');
+                    // const charCount = taskGroup.message.length;
+                    // const msgCount = instances.length;
+                    // const charCountPerMsg = charCount/msgCount;
+                    // newTask.children = instances.map((msgChunk, i) =>{
+                    //     return { ...taskGroup, key: i+"/"+i, message: taskGroup.message.substring(charCountPerMsg * i, charCountPerMsg * (i+1)) };
+                    // });
+                    //
+                    // return newTask;
+                    return parentTask;
                 })}
-                rowKey={"phoneNumber"}
+                rowKey={parentTask=> parentTask.campaignTaskId}
                 locale={{emptyText: campaign === null ? "E" : "NO DATA"}}
                 pagination={false}
 
@@ -607,7 +618,20 @@ export const CampaignTaskReport = () => {
                 <Table.Column title="Error Code" dataIndex={"errorCode"}/>
                 <Table.Column title="External Error Code" dataIndex={"errorCodeExternal"}/>
                 <Table.Column title="External Task Id" dataIndex={"taskIdExternal"}/>
-                <Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>
+                {/*<Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>*/}
+                <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
+                              render={(v, i) =>v.length>6?<>
+                              <span
+                                  style={{textOverflow:"ellipsis",
+                                      whiteSpace:"nowrap",
+                                      maxWidth: "50pt",
+                                      display: "inline-block",
+                                      overflow:"hidden",
+                                      verticalAlign:"middle"
+                                  }}
+                              >{v.replace(/\s*,\s*/g, " ")}</span>
+                                  <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
+                              </>:v}/>
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)}/>
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render={(unixToMomentTime)}/>
                 <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
@@ -656,6 +680,10 @@ export const CampaignTaskReport = () => {
             <DataPager totalPagingItems={campaignTasksFetchCount} currentPage={lastQuery.page}
                        onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         </Card>
+
+        <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
+            {modalDataMsg}
+        </Modal>
         <Modal width={1000} header="Create Campaign" key="createCampaign" visible={campaignModalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"57rem"}}>
             <EditForm close={handleCancleCampaign} recordArg={campaignModalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
         </Modal>
