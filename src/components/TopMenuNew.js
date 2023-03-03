@@ -32,6 +32,7 @@ export const TopMenuNew = () => {
     useEffect(() => {
         InventoryService.fetchProducts(lastProductQuery)
             .then((data) => {
+                console.log(data);
                 setPartyProducts(data.products);
                 setPartyProductsFetchCount(data.count);
                 setPartyProductsFetchError(null);
@@ -49,7 +50,7 @@ export const TopMenuNew = () => {
                 setProfile(data.profile);
                 setAccountBalance(data.balance);
             })
-    },[])
+    },[lastProductQuery])
 
     useEffect(() => {
         setLastProfileQuery({ page: 1, limit: 10 })
