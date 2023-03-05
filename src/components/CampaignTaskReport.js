@@ -622,10 +622,14 @@ export const CampaignTaskReport = () => {
                 <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
                               render={(v, r, i) =>{
                                   var msg = r.message;
-                                  console.log(r.children);
                                   // if (!r.children) { r.children = []; }
                                   if(r.children){
-                                      r.children.forEach(child => msg+= child.message);}
+                                      r.children.forEach(child => msg+= child.message);
+                                      r.children.forEach(child => child.fullMessage = msg);
+                                  }else{
+                                      console.log(r.fullMessage);
+                                  }
+
                                   v = msg;
                                  return v.length>6?<>
                               <span
@@ -637,7 +641,7 @@ export const CampaignTaskReport = () => {
                                       verticalAlign:"middle"
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
-                                  <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
+                                  <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
                               </>:v}}/>
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)}/>
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render={(unixToMomentTime)}/>
@@ -689,7 +693,9 @@ export const CampaignTaskReport = () => {
         </Card>
 
         <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
-            {modalDataMsg}
+            {/*{modalDataMsg}*/}
+            <p><span style={{color:"green"}}>Short Message:</span>  {(modalDataMsg||{}).short}</p>
+            <p><span style={{color:"red"}}>Full Message:</span>  {(modalDataMsg||{}).full}</p>
         </Modal>
         <Modal width={1000} header="Create Campaign" key="createCampaign" visible={campaignModalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"57rem"}}>
             <EditForm close={handleCancleCampaign} recordArg={campaignModalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />

@@ -92,10 +92,14 @@ const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
             <Table.Column title="Message" width={"150pt"}
                           render={(v,r, i) =>{
                               var msg = r.message;
-                              console.log(r.children);
                               // if (!r.children) { r.children = []; }
                               if(r.children){
-                                  r.children.forEach(child => msg+= child.message);}
+                                  r.children.forEach(child => msg+= child.message);
+                                  r.children.forEach(child => child.fullMessage = msg);
+                              }else{
+                                  console.log(r.fullMessage);
+                              }
+
                               v = msg;
                               return  v.length>6?<>
                               <span
@@ -107,7 +111,7 @@ const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
                                       verticalAlign:"middle"
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
-                              <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
+                              <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
                           </>:v}}/>
             <Table.Column title="Date" dataIndex={"updatedOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
             <Table.Column title="Campaign" dataIndex={"campaignName"} />
@@ -115,7 +119,9 @@ const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
         </Table>
 
         <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
-            {modalDataMsg}
+            {/*{modalDataMsg}*/}
+            <p><span style={{color:"green"}}>Short Message:</span>  {(modalDataMsg||{}).short}</p>
+            <p><span style={{color:"red"}}>Full Message:</span>  {(modalDataMsg||{}).full}</p>
         </Modal>
     </>);
 };

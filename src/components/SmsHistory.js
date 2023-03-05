@@ -175,10 +175,14 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             <Table.Column title="Message" width={"150pt"}
                           render={(v, r, i) =>{
                               var msg = r.message;
-                              console.log(r.children);
                               // if (!r.children) { r.children = []; }
                               if(r.children){
-                              r.children.forEach(child => msg+= child.message);}
+                              r.children.forEach(child => msg+= child.message);
+                              r.children.forEach(child => child.fullMessage = msg);
+                              }else{
+                                  console.log(r.fullMessage);
+                              }
+
                               v = msg;
                               return  v.length>6?<>
                               <span
@@ -190,7 +194,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                                       verticalAlign:"middle"
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
-                              <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
+                              <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
                           </>:v}}/>
             <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
             <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
@@ -212,7 +216,10 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             />
         </Table>
         <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
-            {modalDataMsg}
+            {/*{modalDataMsg}*/}
+            <p><span style={{color:"green"}}>Short Message:</span>  {(modalDataMsg||{}).short}</p>
+            <p><span style={{color:"red"}}>Full Message:</span>  {(modalDataMsg||{}).full}</p>
+
         </Modal>
 
         <Modal width={1000} visible={modalData !== null} onCancel={handleCancel}
