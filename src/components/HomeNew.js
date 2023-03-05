@@ -89,8 +89,15 @@ const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
             />
 
             <Table.Column title="PhoneNumber" dataIndex={"phoneNumber"} />
-            <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
-                          render={(v, i) =>v.length>6?<>
+            <Table.Column title="Message" width={"150pt"}
+                          render={(v,r, i) =>{
+                              var msg = r.message;
+                              console.log(r.children);
+                              // if (!r.children) { r.children = []; }
+                              if(r.children){
+                                  r.children.forEach(child => msg+= child.message);}
+                              v = msg;
+                              return  v.length>6?<>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
@@ -101,7 +108,7 @@ const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                               <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
-                          </>:v}/>
+                          </>:v}}/>
             <Table.Column title="Date" dataIndex={"updatedOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
             <Table.Column title="Campaign" dataIndex={"campaignName"} />
             <Table.Column title="Package" dataIndex={"packageId"} />

@@ -172,8 +172,15 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 <span></span>,
             ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed", !v].indexOf(!0)]} />
 
-            <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
-                          render={(v, i) =>v.length>6?<>
+            <Table.Column title="Message" width={"150pt"}
+                          render={(v, r, i) =>{
+                              var msg = r.message;
+                              console.log(r.children);
+                              // if (!r.children) { r.children = []; }
+                              if(r.children){
+                              r.children.forEach(child => msg+= child.message);}
+                              v = msg;
+                              return  v.length>6?<>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
@@ -184,7 +191,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                               <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
-                          </>:v}/>
+                          </>:v}}/>
             <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
             <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>

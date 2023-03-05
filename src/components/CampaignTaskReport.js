@@ -620,7 +620,14 @@ export const CampaignTaskReport = () => {
                 <Table.Column title="External Task Id" dataIndex={"taskIdExternal"}/>
                 {/*<Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>*/}
                 <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
-                              render={(v, i) =>v.length>6?<>
+                              render={(v, r, i) =>{
+                                  var msg = r.message;
+                                  console.log(r.children);
+                                  // if (!r.children) { r.children = []; }
+                                  if(r.children){
+                                      r.children.forEach(child => msg+= child.message);}
+                                  v = msg;
+                                 return v.length>6?<>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
@@ -631,7 +638,7 @@ export const CampaignTaskReport = () => {
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                                   <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
-                              </>:v}/>
+                              </>:v}}/>
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)}/>
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render={(unixToMomentTime)}/>
                 <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
