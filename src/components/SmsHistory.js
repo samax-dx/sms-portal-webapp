@@ -182,7 +182,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                               }else{
                                   console.log(r.fullMessage);
                               }
-
+                              console.log(r.children);
                               v = msg;
                               return  v.length>6?<>
                               <span
@@ -196,6 +196,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                               <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
                           </>:v}}/>
+            {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
             <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
             <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
@@ -218,6 +219,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
         <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
             {/*{modalDataMsg}*/}
             <p><span style={{color:"green"}}>Short Message:</span>  {(modalDataMsg||{}).short}</p>
+            {/*Part {(modalDataMsg || {}).index} out of {(modalDataMsg || {}).length}*/}
             <p><span style={{color:"red"}}>Full Message:</span>  {(modalDataMsg||{}).full}</p>
 
         </Modal>

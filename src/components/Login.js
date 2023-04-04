@@ -95,7 +95,20 @@ export const Login = ({actor}) => {
                         <Form.Item name="token" initialValue={resetToken} hidden>
                             <Input placeholder="token"/>
                         </Form.Item>
-                        <Form.Item name="password" required>
+                        <Form.Item name="password"
+                                   rules={[{required: true},
+                                       {
+                                           message: 'Password should contain at least a upper case,Lower case, symbol like (@$!%*#?&) & min length 8.',
+                                           validator: (_, value) => {
+                                               if (/^^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/.test(value)) {
+                                                   return Promise.resolve();
+                                               } else {
+                                                   return Promise.reject('Password should contain at least a upper case,Lower case, symbol like (@$!%*#?&) & min length 8.');
+                                               }
+                                           }
+                                       }
+                                   ]}
+                        >
                             <Input placeholder="New Password" type={"password"}/>
                         </Form.Item>
                         <Form.Item name="confirmPassword" dependencies={['password']} hasFeedback

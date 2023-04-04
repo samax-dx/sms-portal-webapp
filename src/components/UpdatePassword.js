@@ -22,11 +22,24 @@ const UpdatePassword = () => {
             >
                 <Input.Password placeholder="Current Password"/>
             </Form.Item>
-            <Form.Item label="New Password" name="passwordNew" required
+            <Form.Item label="New Password" name="passwordNew"
+                       rules={[{required: true},
+                           {
+                               message: 'Password should contain at least a upper case,Lower case, symbol like (@$!%*#?&) & min length 8.',
+                               validator: (_, value) => {
+                                   if (/^^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/.test(value)) {
+                                       return Promise.resolve();
+                                   } else {
+                                       return Promise.reject('Password should contain at least a upper case,Lower case, symbol like (@$!%*#?&) & min length 8.');
+                                   }
+                               }
+                           }
+                       ]}
             >
                 <Input.Password placeholder="New Password"/>
             </Form.Item>
             <Form.Item
+                required
                 name="confirmPassword"
                 label="Confirm Password"
                 dependencies={['passwordNew']}
