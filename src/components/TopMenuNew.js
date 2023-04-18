@@ -21,7 +21,7 @@ export const TopMenuNew = () => {
     // Component States
     const [lastProfileQuery, setLastProfileQuery] = useState({});
     const [profile, setProfile] = useState({});
-    const [accountBalance, setAccountBalance] = useState(0);
+    const [accountBalance, setAccountBalance] = useState(0.0);
     const [profileFetchError, setProfileFetchError] = useState(null);
 
     const [lastProductQuery, setLastProductQuery] = useState({});
@@ -48,7 +48,7 @@ export const TopMenuNew = () => {
         ProfileService.fetchProfile()
             .then(data=>{
                 setProfile(data.profile);
-                setAccountBalance(data.balance);
+                setAccountBalance(parseFloat(data.balance));
             })
     },[lastProductQuery])
 
@@ -85,7 +85,7 @@ export const TopMenuNew = () => {
                     <Link to="/userProfile" style={{color:"white"}}>{profile.name}</Link>
                 </Menu.Item>
             </Popover>
-            <Menu.Item key="balance" className="balanceView"><strong>Balance (main): {accountBalance} BDT</strong></Menu.Item>
+            <Menu.Item key="balance" className="balanceView"><strong>Balance (main): {accountBalance.toFixed(2)} BDT</strong></Menu.Item>
             {partyProducts.map(product => <Menu.Item key={product.productId} className="balanceView"><strong>Balance ({product.productId}): {product.stock}</strong></Menu.Item>)}
         </Menu>
     );
