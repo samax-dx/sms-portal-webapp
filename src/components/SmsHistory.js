@@ -167,10 +167,11 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             <Table.Column title="Status External" dataIndex={"statusExternal"} width={"110pt"} render={(v,row) => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>delivered</Tag>,
+                <Tag color={"success"}>delivered</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>failed</Tag>,
                 <span></span>,
-            ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed", !v].indexOf(!0)]} />
+            ][[v === "pending",v === "success", v ==="delivered", v === "undetermined", v === "failed", !v].indexOf(!0)]} />
 
             <Table.Column title="Message" width={"150pt"}
                           render={(v, r, i) =>{
