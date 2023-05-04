@@ -23,6 +23,7 @@ import React, {useEffect, useState} from "react";
 import {GroupService} from "../services/ContactBook/GroupService";
 import {ContactBookService} from "../services/ContactBook/ContactBookService";
 import {useParams} from "react-router-dom";
+import {PartyIdCatcher} from "./HomeNew";
 
 
 export const SendSmsNew = () => {
@@ -42,6 +43,7 @@ export const SendSmsNew = () => {
 
     const [contacts, setContacts] = useState([]);
     const [contactFetchCount, setContactFetchCount] = useState(0);
+    const partyId = PartyIdCatcher();
 
 
     const [modalData, setModalData] = useState(null);
@@ -52,7 +54,7 @@ export const SendSmsNew = () => {
 
     const [senderIds, setSenderIds] = useState([]);
     useEffect(()=> {
-        SenderIdService.fetchRecords({})
+        SenderIdService.fetchRecords({partyId})
             .then(data=>{
                 setSenderIds(data.senderIds);
             })
