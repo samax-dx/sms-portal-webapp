@@ -51,6 +51,8 @@ export const SendSmsNew = () => {
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
 
+    const partyId = PartyIdCatcher();
+
 
     const [senderIds, setSenderIds] = useState([]);
     useEffect(()=> {

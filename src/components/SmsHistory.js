@@ -84,8 +84,73 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
+
+function deepClone(obj) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    var clone = Array.isArray(obj) ? [] : {};
+
+    for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            clone[key] = deepClone(obj[key]);
+        }
+    }
+
+    return clone;
+}
+function addKeyValueToArrayObjects(arr, key, value) {
+    arr.forEach(obj => obj[key] = value);
+    return arr;
+}
+const processDataForTableView = ({taskReports}) => {
+
+    let index = 0;
+    return Object.values(taskReports || {}).map((taskGroup, i) => {
+
+
+        const parentTask = taskGroup[0];
+        parentTask.children = taskGroup.slice(1);
+
+
+
+        if (parentTask.children.length && (parentTask.statusExternal == "delivered" || parentTask.statusExternal == "processing" || parentTask.statusExternal == "pending"))
+        {
+            const firstNotDelivered = parentTask.children.find(child => child.statusExternal != "delivered");
+            if (firstNotDelivered)
+            {
+                parentTask.errorCodeExternal = parentTask.statusExternal != "delivered" ? parentTask.errorCodeExternal:firstNotDelivered.errorCodeExternal
+                parentTask.statusExternal = "pending";
+            }
+            else
+            {
+
+                parentTask.statusExternal = 'delivered';
+            }
+        }
+        else
+        {
+            parentTask.statusExternal = parentTask.statusExternal == "processing" ? "processing" : (parentTask.errorCodeExternal ? "pending" : "delivered");
+        }
+
+
+        if(parentTask.status == "failed")
+            parentTask.statusExternal = "failed";
+        // console.log(parentTask);
+
+
+
+        return parentTask;
+    })
+
+}
+
 const DataView = ({ taskReports, viewPage, viewLimit}) => {
 
+
+
+    const tableData = processDataForTableView({taskReports});
     const unixToMomentTime=(value)=>{
         if(value==null) return "";
         const parseValue = parseInt(value)
@@ -116,31 +181,12 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             style={{marginLeft:'5px'}}
             size="small"
             // dataSource={taskReports}
-            rowKey={parentTask=> parentTask.campaignTaskId}
-            dataSource={Object.values(taskReports || {}).map((taskGroup, i) => {
-                const parentTask = taskGroup[0];
-                parentTask.children = taskGroup.slice(1);
-                // if (!hasSubTask(taskGroup)) {
-                //     return { ...taskGroup, key: i };
-                // }
-                //
-                // const newTask = { ...taskGroup, key: i };
+             rowKey={parentTask=> parentTask.campaignTaskId}
+            dataSource={
+                tableData
+               }
 
-                // newTask.children = taskGroup.instances.split(',').map((msgChunk, i) =>{
-                //     const decodedMsgChunk = atob(msgChunk);
-                //     return { ...taskGroup, key: i+"/"+i, message: decodedMsgChunk };
-                // });
-                // const instances = taskGroup.instances.split(',');
-                // const charCount = taskGroup.message.length;
-                // const msgCount = instances.length;
-                // const charCountPerMsg = charCount/msgCount;
-                // newTask.children = instances.map((msgChunk, i) =>{
-                //     return { ...taskGroup, key: i+"/"+i, message: taskGroup.message.substring(charCountPerMsg * i, charCountPerMsg * (i+1)) };
-                // });
-                //
-                // return newTask;
-                return parentTask;
-            })}
+
             locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
             pagination={false}
             scroll={{
@@ -164,14 +210,14 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                 <Tag color={"error"}>failed</Tag>,
                 <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
 
-            <Table.Column title="Status External" dataIndex={"statusExternal"} width={"110pt"} render={(v,row) => [
+            <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
                 <Tag color={"processing"}>pending</Tag>,
-                <Tag color={"success"}>delivered</Tag>,
+                <Tag color={"gold"}>Waiting for status</Tag>,
                 <Tag color={"success"}>delivered</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>failed</Tag>,
                 <span></span>,
-            ][[v === "pending",v === "success", v ==="delivered", v === "undetermined", v === "failed", !v].indexOf(!0)]} />
+            ][[v === "pending",v ==="processing", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
 
             <Table.Column title="Message" width={"150pt"}
                           render={(v, r, i) =>{
@@ -183,7 +229,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                               }else{
                                   console.log(r.fullMessage);
                               }
-                              console.log(r.children);
+                              // console.log(r.children);
                               v = msg;
                               return  v.length>6?<>
                               <span
@@ -204,9 +250,9 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
             <Table.Column title="Route Id" dataIndex={"routeId"} width={"90pt"}/>
             <Table.Column title="SMS Count" dataIndex={"smsCount"} width={"90pt"}/>
-            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} width={"350pt"}/>
-            <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={(unixToMomentTime)} />
-            <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render= {(unixToMomentTime)}/>
+            <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"350pt"} />
+            <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={unixToMomentTime} />
+            <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render= {unixToMomentTime}/>
 
             <Table.Column
                 dataIndex={""}
