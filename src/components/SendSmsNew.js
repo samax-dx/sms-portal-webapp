@@ -43,7 +43,7 @@ export const SendSmsNew = () => {
 
     const [contacts, setContacts] = useState([]);
     const [contactFetchCount, setContactFetchCount] = useState(0);
-    const partyId = PartyIdCatcher();
+    // const partyId = PartyIdCatcher();
 
 
     const [modalData, setModalData] = useState(null);
@@ -204,7 +204,7 @@ console.log(length);
                     </>}
                     rules={[{ required: true }]}
                 >
-                    <Input.TextArea onChange={handleTextChange} autoSize={{ minRows: 3, maxRows: 6 }}/>
+                    <Input.TextArea onChange={handleTextChange} showCount maxLength={100} autoSize={{ minRows: 3, maxRows: 6 }}/>
                 </Form.Item>
 
                 <Form.Item>
