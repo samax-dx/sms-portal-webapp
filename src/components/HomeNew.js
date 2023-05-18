@@ -400,7 +400,7 @@ export const HomeNew = () => {
         setLastTaskReportQuery({ page: 1, limit: 10 })
     }, []);
     useEffect(() => {
-        setLastPaymentQuery({ page: 1, limit: 5 })
+        setLastPaymentQuery({ page: 1, limit: 5, orderBy: "date DESC" })
     }, []);
 
 
