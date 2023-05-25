@@ -33,6 +33,7 @@ import UpdatePassword from "./components/UpdatePassword";
 import {EditProfile} from "./components/EditProfile";
 import getAllConfig from "../src/config/main";
 import {MyRatePlan} from "./components/MyRatePlan";
+import {ApiDocument} from "./components/ApiDocument";
 
 function setFavicon (){
     return document.getElementById("favicon");
@@ -76,6 +77,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/userProfile" element={createRouteComponent(<ProfileView/>)} />
                 <ReactRoute path="/changePassword" element={createRouteComponent(<UpdatePassword/>)} />
                 <ReactRoute path="/editProfile" element={createRouteComponent(<EditProfile/>)} />
+                <ReactRoute path="/apiDoc/apiDocument" element={createRouteComponent(<ApiDocument/>)} />
             </Routes>
         </BrowserRouter>
     );

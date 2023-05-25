@@ -46,6 +46,13 @@ export const MainMenu = ({ actor }) => {
                 <Menu.Item key="transaction_view" onClick={() => sendApp({ type: 'NAV_TRANSACTION_VIEW' })} disabled>Transaction View</Menu.Item>
                 <Menu.Item key="current_balance" onClick={() => sendApp({ type: 'NAV_CURRENT_BALANCE' })} disabled>Current Balance</Menu.Item> */}
             </Menu.SubMenu>
+            <Menu.SubMenu key="apiDoc" icon={<CreditCardOutlined />} title="API Documentation">
+                <Menu.Item key="apiDocument" icon={<ReconciliationTwoTone />}><Link to="/apiDoc/apiDocument">Document</Link></Menu.Item>
+                {/*<Menu.Item key="myPayment" onClick={() => sendApp({ type: 'NAV_MY_PAYMENT' })}>Payment History</Menu.Item>*/}
+                {/* <Menu.Item key="makeDeposit" onClick={() => sendApp({ type: 'NAV_MAKE_DEPOSIT' })} disabled>TopUp / Payments</Menu.Item>
+                <Menu.Item key="transaction_view" onClick={() => sendApp({ type: 'NAV_TRANSACTION_VIEW' })} disabled>Transaction View</Menu.Item>
+                <Menu.Item key="current_balance" onClick={() => sendApp({ type: 'NAV_CURRENT_BALANCE' })} disabled>Current Balance</Menu.Item> */}
+            </Menu.SubMenu>
         </Menu>
     );
 };
