@@ -16,8 +16,6 @@ import {
 import React, {useEffect, useState} from 'react';
 import {ProfileService} from "../services/ProfileService";
 import {Link, useNavigate} from "react-router-dom";
-import Text from "antd/es/typography/Text";
-import {countries} from "countries-list";
 import Title from "antd/es/typography/Title";
 import getAllConfig from '../config/main';
 const { Paragraph } = Typography;
@@ -46,9 +44,6 @@ export const ApiDocument = () => {
                 title={<Title level={5}>API Documentations</Title>}
                 style={{paddingLeft:0,margin:0,textAlign:'left'}}
             >
-                {/*<Typography style={{fontSize: "18px", color:"red"}}>Test User Info :</Typography>*/}
-                {/*<span style={{color:"green"}}>UserId : <Paragraph copyable>link3</Paragraph></span>*/}
-                {/*<span style={{color:"green"}}>Password : <Paragraph copyable>12345</Paragraph></span>*/}
                 <Space split={<Divider type="vertical" style={{height: "16vh"}}/>} size={"large"}
                        style={{alignItems: 'start'}}>
 
@@ -61,10 +56,6 @@ export const ApiDocument = () => {
                     <span style={{color:"green"}}>UserId : <Paragraph copyable>link3</Paragraph></span>
                     <span style={{color:"green"}}>Password : <Paragraph copyable>12345</Paragraph></span>
                 </Card>
-
-                {/*<Typography style={{fontSize: "18px", color:"red"}}>User Info :</Typography>*/}
-                {/*<span style={{color:"green"}}>UserId : <Paragraph copyable>{profile.loginId}</Paragraph></span>*/}
-                {/*<span style={{color:"green"}}>Password : <Paragraph> Use your password </Paragraph></span>*/}
 
                 <Card title={<Title style={{lineHeight: '0.5'}} level={4}>User Info :</Title>}
                       size="small"
@@ -88,9 +79,9 @@ export const ApiDocument = () => {
                     <span style={{color:"green"}}>Admin Portal : <Paragraph copyable>{getAllConfig.adminPortal}</Paragraph></span>
                 </Card>
                 </Space>
-                <Typography style={{fontSize: "18px", color:"red"}}>For authorization</Typography>
+                <Typography style={{fontSize: "18px", color:"red", fontWeight:"bold"}}>For Authorization</Typography>
                 <Badge.Ribbon text="POST">
-                    <Card title="Method POST" size="small">
+                    <Card title={<Title level={5}>Method POST</Title>} size="small">
                         <span style={{color:"green"}}>Get token :<Paragraph copyable>{getAllConfig.getToken}</Paragraph></span>
                         <span style={{color:"green"}}>Payload JSON Format : <Paragraph> &#123;"loginId":"link3","password":"12345"&#125;</Paragraph></span>
                         <span style={{color:"green"}}>Keys :<Paragraph>loginId,password</Paragraph></span>
@@ -98,9 +89,9 @@ export const ApiDocument = () => {
                     </Card>
                 </Badge.Ribbon>
 
-                <Typography style={{fontSize: "18px", color:"red"}}>For Sending Message</Typography>
+                <Typography style={{fontSize: "18px", color:"red", fontWeight:"bold"}}>For Sending Message</Typography>
                 <Badge.Ribbon text="POST">
-                    <Card title="Method POST" size="small">
+                    <Card title={<Title level={5}>Method POST</Title>} size="small">
                         <span style={{color:"green"}}>URL :<Paragraph copyable>{getAllConfig.sendMsg}</Paragraph></span>
                         <span style={{color:"green"}}>Payload Sample : <Paragraph> &#123;"senderId":"8809678123200","phoneNumbers":"01743801850","message":"Test From Api","charEncoding":"gsm7"&#125;</Paragraph></span>
                         <Typography style={{color:"red", fontSize:"16px"}}>Add Head option:</Typography>
