@@ -43,7 +43,7 @@ export const ApiDocument = () => {
     return (
         <>
             <Card
-                title="API Documentations"
+                title={<Title level={5}>API Documentations</Title>}
                 style={{paddingLeft:0,margin:0,textAlign:'left'}}
             >
                 {/*<Typography style={{fontSize: "18px", color:"red"}}>Test User Info :</Typography>*/}
@@ -74,6 +74,7 @@ export const ApiDocument = () => {
                 >
                     <span style={{color:"green"}}>UserId : <Paragraph copyable>{profile.loginId}</Paragraph></span>
                     <span style={{color:"green"}}>Password : <Paragraph> Use your password </Paragraph></span>
+                    <span style={{color:"green"}}>Client portal : <Paragraph copyable>{getAllConfig.clientPortal}</Paragraph></span>
                 </Card>
 
                 <Card title={<Title style={{lineHeight: '0.5'}} level={4}>Admin User Info :</Title>}
@@ -84,7 +85,6 @@ export const ApiDocument = () => {
                 >
                     <span style={{color:"green"}}>UserId : <Paragraph copyable>admin</Paragraph></span>
                     <span style={{color:"green"}}>Password : <Paragraph copyable> ofbiz</Paragraph></span>
-                    <span style={{color:"green"}}>Client portal : <Paragraph copyable>{getAllConfig.clientPortal}</Paragraph></span>
                     <span style={{color:"green"}}>Admin Portal : <Paragraph copyable>{getAllConfig.adminPortal}</Paragraph></span>
                 </Card>
                 </Space>
