@@ -273,6 +273,9 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
                 rules={[{ required: true }]}
                 children={<Input.TextArea />}
             />
+            <Form.Item name="expireAt" label="Valid Until" rules={[{ required: true }]} initialValue={moment(new Date()).add(7,"days")}>
+                <DatePicker placeholder="Valid Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
+            </Form.Item>
             <Form.Item name="schedule.policy" id="selected" label="Schedule Policy" initialValue={type}>
                 <Select onChange={setType}>
                     <Option value="default">Default (Schedule On)</Option>
@@ -328,6 +331,7 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
 
                                 delete formDataUf.schedule;
                                 formDataUf.schedules = [window.btoa(JSON.stringify(schedule))].join(",");
+                                formDataUf.expireAt = Date.parse(formDataUf.expireAt.format("YYYY-MM-DD HH:mm:ss"));
                                 return CampaignService.saveCampaign(formDataUf);
                             })
                             .then(campaign => {
