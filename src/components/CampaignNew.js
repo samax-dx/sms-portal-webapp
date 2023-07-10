@@ -433,7 +433,7 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) =
             <Table.Column title="Failed" dataIndex={"failedTaskCount"} render={v => v || 0} />
             <Table.Column title="Pending" dataIndex={"pendingTaskCount"} render={v => v || 0} />
             <Table.Column title="Total Tasks" dataIndex={"totalTaskCount"} />
-            <Table.Column title="Date" dataIndex={"createdOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
+            <Table.Column title="Start Time" dataIndex={"schedules"} render={v => v?((JSON.parse(atob(v))).props.scheduleStart):null} />
             <Table.Column
                 title="Actions"
                 dataIndex={undefined}
