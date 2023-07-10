@@ -433,7 +433,7 @@ export const CampaignTaskReport = () => {
     }, [lastQuery]);
 
     useEffect(() => {
-        setLastQuery({ page: 1, limit: 10 })
+        setLastQuery({ page: 1, limit: 10}) /*,campaignId: campaignId */
     }, []);
     const onCampaignStart = campaign => setSaving(true) || CampaignService
         .startCampaign(campaign)
@@ -522,7 +522,7 @@ export const CampaignTaskReport = () => {
                             children={
                                 [
                                     ["campaignName", "Campaign Name"],
-                                    ["createdOn", "Date", d => dayjs(d).format("MMM D, YYYY - hh:mm A")],
+                                    ["schedules", "Start Time", v => v ? new Date(JSON.parse(atob(v)).props.scheduleStart).toLocaleString('en-US', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : null],
                                     ["message", "Message"]
                                 ].map(([k, l, toValue = v => v]) => (<Row gutter={[10]} key={k}>
                                     <Col><Typography.Paragraph strong>{l}</Typography.Paragraph></Col>
