@@ -201,6 +201,7 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
             onFinish={() => writeForm.resetFields()}
         >
             <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input/>} />
+            <Form.Item name="scheduleStatus" label="Schedule Status" rules={[{ required: true }]} hidden initialValue={"enabled"} children={<Input/>} />
 
             <Form.Item name="senderId" label="Sender ID" rules={[{ required: false }]}>
                 <Select style={{ minWidth: 150 }}>
