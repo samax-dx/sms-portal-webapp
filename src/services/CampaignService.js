@@ -134,7 +134,7 @@ export const CampaignService = {
             const { data } = response;
             console.log(data);
 
-            if (data) {
+            if (data.result) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });
