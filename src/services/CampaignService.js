@@ -35,7 +35,7 @@ export const CampaignService = {
     fetchCampaignTasks: (payload) => console.log(payload) || axios
         .post(
             `${OFBIZ_EP}/Campaign/getCampaignTasks`,
-            console.log(JSON.stringify({ ...payload })) || { ...payload },
+            {orderBy: "createdOn DESC", ...payload }, /*JSON.stringify({ ...payload }) || */
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -106,6 +106,35 @@ export const CampaignService = {
             console.log(data);
 
             if (data.schedule) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ message: data.errorMessage });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
+        }),
+    startStoppedCampaign: (payload) => console.log(payload) || axios
+        .post(
+            `${OFBIZ_EP}/Campaign/startStoppedCampaign`,
+            { ...payload },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        )
+        .then(response => {
+            const { data } = response;
+            console.log(data);
+
+            if (data) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });

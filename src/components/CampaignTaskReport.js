@@ -436,12 +436,12 @@ export const CampaignTaskReport = () => {
         setLastQuery({ page: 1, limit: 10}) /*,campaignId: campaignId */
     }, []);
     const onCampaignStart = campaign => setSaving(true) || CampaignService
-        .startCampaign(campaign)
-        .then(result => {
+        .startStoppedCampaign(campaign)
+        .then(data => {
             notification.success({
                 key: `send_${Date.now()}`,
                 message: "Task Finished",
-                description: <>Campaign started. Next schedule: {result.schedule}</>,
+                description: <>Campaign started</>,
                 duration: 5
             });
         })
@@ -478,7 +478,7 @@ export const CampaignTaskReport = () => {
                             type="primary"
                             onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}
                             children={"Start Campaign"}
-                            disabled={campaign.pendingTaskCount === 0}
+                            disabled={campaign.scheduleStatus === 'enabled'}
                         />
                         <Button
                             type="danger"
@@ -501,16 +501,16 @@ export const CampaignTaskReport = () => {
                                 })
                         }
                             children={"Stop Campaign"}
-                            // disabled={campaign.pendingTaskCount === 0}
+                            disabled={campaign.scheduleStatus === 'disabled'}
                             style={{marginLeft: 10}}
                         />
-                        <Button
-                            type="primary"
-                            onClick={() => showCampaignModal(campaign)}
-                            children={"Edit Campaign"}
-                            // disabled={campaign.pendingTaskCount === 0}
-                            style={{marginLeft: 10}}
-                        />
+                        {/*<Button*/}
+                        {/*    type="primary"*/}
+                        {/*    onClick={() => showCampaignModal(campaign)}*/}
+                        {/*    children={"Edit Campaign"}*/}
+                        {/*    // disabled={campaign.pendingTaskCount === 0}*/}
+                        {/*    style={{marginLeft: 10}}*/}
+                        {/*/>*/}
                     </Typography.Text>
                 }
                 bordered
