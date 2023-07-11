@@ -381,6 +381,7 @@ export const CampaignTaskReport = () => {
 
     const [lastQuery, setLastQuery] = useState({});
     const [campaign, setCampaign] = useState({});
+    const [campaignWiseReport, setcampaignWiseReport] = useState({});
     const [campaignFetchError, setCampaignFetchError] = useState(null);
 
     const [tasks, setTasks] = useState([]);
@@ -411,15 +412,16 @@ export const CampaignTaskReport = () => {
 
     const unixToMomentTime = value => {
         if(value==null) return "";
-        const parseValue = parseInt(value)
-        const finalTime=  moment(parseValue).format('MMMM Do YYYY, h:mm:ss a');
+        const parseValue = parseInt(value)*1000
+        console.log(parseValue);
+        const finalTime=  moment(parseValue).format('lll');
         return finalTime;
     }
 
     useEffect(() => {
-        CampaignService.fetchCampaignTasks({ ...lastQuery, campaignId })
+        CampaignService.fetchCampaignTasks(lastQuery)
             .then((data) => {
-                console.log(data.taskReports);
+                // console.log(data.taskReports);
                 setCampaign(data.campaign);
                 setTasks(data.tasks);
                 setCampaignTasksFetchCount(data.count);
@@ -433,10 +435,23 @@ export const CampaignTaskReport = () => {
     }, [lastQuery]);
 
     useEffect(() => {
-        setLastQuery({ page: 1, limit: 10}) /*,campaignId: campaignId */
+        CampaignService.fetchCampaignReport({campaignId})
+            .then((data) => {
+                // console.log(data.taskReports);
+               setcampaignWiseReport(data);
+            })
+            .catch(error => {
+                setCampaign([]);
+                setCampaignTasksFetchCount(0);
+                setCampaignFetchError(error);
+            });
+    }, [lastQuery]);
+
+    useEffect(() => {
+        setLastQuery({ page: 1, limit: 10, campaignId: campaignId })
     }, []);
     const onCampaignStart = campaign => setSaving(true) || CampaignService
-        .startStoppedCampaign(campaign)
+        .resumeCampaign(campaign)
         .then(data => {
             notification.success({
                 key: `send_${Date.now()}`,
@@ -456,11 +471,11 @@ export const CampaignTaskReport = () => {
         .finally(_ => setSaving(false));
 
     const getCampaignStatus =(status)=>{
-        console.log(status.pendingTaskCount);
+        console.log(status);
         if (status.pendingTaskCount === 0){
             return <Tag color={"success"}>Finished</Tag>
         }
-        if (![null, "enabled"].includes(status.scheduleStatus)){
+        if ([null, "enabled"].includes(status.scheduleStatus)){
             return <Tag color={"success"}>Running</Tag>
         }
     }
@@ -482,12 +497,12 @@ export const CampaignTaskReport = () => {
                         />
                         <Button
                             type="danger"
-                            onClick={() => CampaignService.stopCampaign(campaign)
+                            onClick={() => CampaignService.pauseCampaign(campaign)
                                 .then(result => {
                                     notification.success({
                                         key: `send_${Date.now()}`,
                                         message: "Task Finished",
-                                        description: <>Campaign stopped.</>,
+                                        description: <>Campaign paused.</>,
                                         duration: 5
                                     });
                                 })
@@ -504,6 +519,43 @@ export const CampaignTaskReport = () => {
                             disabled={campaign.scheduleStatus === 'disabled'}
                             style={{marginLeft: 10}}
                         />
+                        {/*<Button*/}
+                        {/*    type="primary"*/}
+                        {/*    onClick={() => showCampaignModal(campaign)}*/}
+                        {/*    children={"Edit Campaign"}*/}
+                        {/*    // disabled={campaign.pendingTaskCount === 0}*/}
+                        {/*    style={{marginLeft: 10}}*/}
+                        {/*/>*/}
+                        {/*<Button*/}
+                        {/*    type="primary"*/}
+                        {/*    onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}*/}
+                        {/*    children={"Start Campaign"}*/}
+                        {/*    disabled={campaign.pendingTaskCount === 0}*/}
+                        {/*/>*/}
+                        {/*<Button*/}
+                        {/*    type="danger"*/}
+                        {/*    onClick={() => CampaignService.stopCampaign(campaign)*/}
+                        {/*        .then(result => {*/}
+                        {/*            notification.success({*/}
+                        {/*                key: `send_${Date.now()}`,*/}
+                        {/*                message: "Task Finished",*/}
+                        {/*                description: <>Campaign stopped.</>,*/}
+                        {/*                duration: 5*/}
+                        {/*            });*/}
+                        {/*        })*/}
+                        {/*        .catch(error => {*/}
+                        {/*            notification.error({*/}
+                        {/*                key: `send_${Date.now()}`,*/}
+                        {/*                message: "Task Failed",*/}
+                        {/*                description: <>Task Failed: {JSON.stringify(error.code)}</>,*/}
+                        {/*                duration: 5*/}
+                        {/*            });*/}
+                        {/*        })*/}
+                        {/*}*/}
+                        {/*    children={"Stop Campaign"}*/}
+                        {/*    // disabled={campaign.pendingTaskCount === 0}*/}
+                        {/*    style={{marginLeft: 10}}*/}
+                        {/*/>*/}
                         {/*<Button*/}
                         {/*    type="primary"*/}
                         {/*    onClick={() => showCampaignModal(campaign)}*/}
@@ -535,16 +587,17 @@ export const CampaignTaskReport = () => {
                             grid={{gutter: 24}}
                             dataSource={[
                                 [
-                                    ["sentTaskCount", "Sent", "success", v => v || 0],
-                                    ["failedTaskCount", "Failed", "secondary", v => v || 0],
-                                    ["pendingTaskCount", "Pending", "warning", v => v || 0],
-                                    ["totalTaskCount", "Total Task", "danger", v => v],
+                                    ["sent", "Total sent", "success", v => v || 0],
+                                    ["delivered", "Delivered", "success", v => v || 0],
+                                    ["failed", "Failed", "secondary", v => v || 0],
+                                    ["inProcess", "In Process", "warning", v => v || 0],
+                                    ["total", "Total Task", "danger", v => v],
                                 ]
                             ]}
                             renderItem={item => item.map(([key, label, type, toValue]) => (<Col>
                                 <Statistic
                                     title={<Typography.Text type={type} strong>{label}</Typography.Text>}
-                                    value={toValue(campaign[key])}
+                                    value={toValue(campaignWiseReport[key])}
                                     key={key}
                                 />
                             </Col>))}

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { OFBIZ_EP } from "../config";
+import {CONTACT_BOOK_EP, OFBIZ_EP} from "../config";
 import { XAuth } from "./XAuth";
 
 export const CampaignService = {
@@ -16,7 +16,7 @@ export const CampaignService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (data.campaigns) {
                 return Promise.resolve(data);
@@ -28,11 +28,43 @@ export const CampaignService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
-    fetchCampaignTasks: (payload) => console.log(payload) || axios
+
+    fetchCampaignReport: (payload) => console.log(payload) || axios
+        .post(
+            `${CONTACT_BOOK_EP}/client/reports/campaignWise`,
+            { ...payload },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        )
+        .then(response => {
+            const { data } = response;
+            // console.log(data);
+
+            if (data) {
+                return Promise.resolve(data.report);
+            } else {
+                return Promise.reject({ message: data.errorMessage });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
+            // console.log(errorEx);
+
+            return Promise.reject(errorEx);
+        }),
+
+
+    fetchCampaignTasks: (payload) => axios
         .post(
             `${OFBIZ_EP}/Campaign/getCampaignTasks`,
             {orderBy: "createdOn DESC", ...payload }, /*JSON.stringify({ ...payload }) || */
@@ -45,7 +77,7 @@ export const CampaignService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (data.tasks) {
                 return Promise.resolve(data);
@@ -57,11 +89,11 @@ export const CampaignService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
-    removeCampaignTask: (payload) => console.log(payload) || axios
+    removeCampaignTask: (payload) => axios
         .post(
             `${OFBIZ_EP}/Campaign/deleteCampaignTask`,
             { ...payload },
@@ -74,7 +106,7 @@ export const CampaignService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (+data.deleteCount) {
                 return Promise.resolve(data);
@@ -86,42 +118,14 @@ export const CampaignService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
-    startCampaign: (payload) => console.log(payload) || axios
-        .post(
-            `${OFBIZ_EP}/Campaign/startCampaign`,
-            { ...payload },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${XAuth.token()}`,
-                }
-            }
-        )
-        .then(response => {
-            const { data } = response;
-            console.log(data);
 
-            if (data.schedule) {
-                return Promise.resolve(data);
-            } else {
-                return Promise.reject({ message: data.errorMessage });
-            }
-        })
-        .catch(error => {
-            const response = error.response || { data: { error: error.message } };
-            const { status: code, statusText: text, data } = response;
-            const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
-
-            return Promise.reject(errorEx);
-        }),
-    startStoppedCampaign: (payload) => console.log(payload) || axios
+    resumeCampaign: (payload) => console.log(payload) || axios
         .post(
-            `${OFBIZ_EP}/Campaign/startStoppedCampaign`,
+            `${OFBIZ_EP}/Campaign/resumeCampaign`,
             { ...payload },
             {
                 headers: {
@@ -145,6 +149,7 @@ export const CampaignService = {
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
             console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
@@ -161,7 +166,7 @@ export const CampaignService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (data.taskReports) {
                 return Promise.resolve(data);
@@ -173,7 +178,7 @@ export const CampaignService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
@@ -190,7 +195,7 @@ export const CampaignService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (data.campaignId) {
                 return Promise.resolve(data);
@@ -202,13 +207,13 @@ export const CampaignService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
-    stopCampaign: (payload) => console.log(payload) || axios
+    pauseCampaign: (payload) => console.log(payload) || axios
         .post(
-            `${OFBIZ_EP}/Campaign/stopCampaign`,
+            `${OFBIZ_EP}/Campaign/pauseCampaign`,
             { ...payload },
             {
                 headers: {
@@ -219,9 +224,9 @@ export const CampaignService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
-            if (data.campaignId) {
+            if (data.result) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });
@@ -231,7 +236,7 @@ export const CampaignService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
@@ -248,7 +253,7 @@ export const CampaignService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (+data.deleteCount) {
                 return Promise.resolve(data);
@@ -260,7 +265,7 @@ export const CampaignService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         })
