@@ -389,6 +389,9 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) =
         if (campaign.scheduleStatus ==='enabled' && currentTime > expireDate){
             return <Tag color={"error"}>Expired</Tag>
         }
+        if (campaign.scheduleStatus ==='disabled' && currentTime > expireDate){
+            return <Tag color={"error"}>Expired</Tag>
+        }
         if (campaign.scheduleStatus ==='enabled' && currentTime < expireDate){
             return <Tag color={"success"}>Running</Tag>
         }
