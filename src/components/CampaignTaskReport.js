@@ -217,6 +217,7 @@ const EditForm = ({recordArg, onRecordSaved,close }) => {
         >
             <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input disabled={!isCreateForm}/>} />
             <Form.Item name="campaignId" label="Campaign ID" rules={[{ required: false }]} hidden children={<Input />} />
+            <Form.Item name="scheduleStatus" label="Schedule Status" rules={[{ required: true }]} hidden children={<Input />} />
 
             <Form.Item name="senderId" label="Sender ID" rules={[{ required: false }]}>
                 <Select style={{ minWidth: 150 }}>
@@ -421,7 +422,7 @@ export const CampaignTaskReport = () => {
     useEffect(() => {
         CampaignService.fetchCampaignTasks(lastQuery)
             .then((data) => {
-                // console.log(data.taskReports);
+                // console.log(data);
                 setCampaign(data.campaign);
                 setTasks(data.tasks);
                 setCampaignTasksFetchCount(data.count);
@@ -464,22 +465,25 @@ export const CampaignTaskReport = () => {
             notification.error({
                 key: `send_${Date.now()}`,
                 message: "Task Failed",
-                description: <>Task Failed: {JSON.stringify(error.code)}</>,
+                description: <>Task Failed: {JSON.stringify(error.message)}</>,
                 duration: 5
             });
         })
         .finally(_ => setSaving(false));
 
-    const getCampaignStatus =(status)=>{
-        console.log(status);
-        if (status.pendingTaskCount === 0){
-            return <Tag color={"success"}>Finished</Tag>
+    const getCampaignStatus =(campaign)=> {
+        const currentTime = Math.floor(new Date() / 1000);
+        const expireDate = campaign.expireAt;
+        if (campaign.scheduleStatus ==='disabled' && currentTime < expireDate){
+            return <Tag color={"warning"}>Paused</Tag>
         }
-        if ([null, "enabled"].includes(status.scheduleStatus)){
+        if (campaign.scheduleStatus ==='enabled' && currentTime > expireDate){
+            return <Tag color={"error"}>Expired</Tag>
+        }
+        if (campaign.scheduleStatus ==='enabled' && currentTime < expireDate){
             return <Tag color={"success"}>Running</Tag>
         }
     }
-
     return (<>
         <Card bordered={false} bodyStyle={{padding: 0}} style={{padding: 0, margin: 0}}>
             <List

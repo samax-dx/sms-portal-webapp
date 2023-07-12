@@ -332,7 +332,7 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
 
                                 delete formDataUf.schedule;
                                 formDataUf.schedules = [window.btoa(JSON.stringify(schedule))].join(",");
-                                formDataUf.expireAt = Date.parse(formDataUf.expireAt.format("YYYY-MM-DD HH:mm:ss"));
+                                formDataUf.expireAt = Date.parse(formDataUf.expireAt.format("YYYY-MM-DD HH:mm:ss"))/1000;
                                 return CampaignService.saveCampaign(formDataUf);
                             })
                             .then(campaign => {
@@ -381,10 +381,15 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) =
     });
 
     const getCampaignStatus = (campaign) => {
-        if (campaign.pendingTaskCount === 0){
-            return <Tag color={"success"}>Finished</Tag>
+        const currentTime = Math.floor(new Date() / 1000);
+        const expireDate = campaign.expireAt;
+        if (campaign.scheduleStatus ==='disabled' && currentTime < expireDate){
+            return <Tag color={"warning"}>Paused</Tag>
         }
-        if (![null, "enabled"].includes(campaign.scheduleStatus)){
+        if (campaign.scheduleStatus ==='enabled' && currentTime > expireDate){
+            return <Tag color={"error"}>Expired</Tag>
+        }
+        if (campaign.scheduleStatus ==='enabled' && currentTime < expireDate){
             return <Tag color={"success"}>Running</Tag>
         }
     }

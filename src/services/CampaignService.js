@@ -48,7 +48,7 @@ export const CampaignService = {
             const { data } = response;
             // console.log(data);
 
-            if (data) {
+            if (data.report) {
                 return Promise.resolve(data.report);
             } else {
                 return Promise.reject({ message: data.errorMessage });
