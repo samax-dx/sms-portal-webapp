@@ -499,7 +499,7 @@ export const CampaignTaskReport = () => {
                         <Button
                             type="primary"
                             onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}
-                            children={"Start Campaign"}
+                            children={"Resume Campaign"}
                             disabled={campaign.scheduleStatus === 'enabled'}
                         />
                         <Button
@@ -522,7 +522,7 @@ export const CampaignTaskReport = () => {
                                     });
                                 })
                         }
-                            children={"Stop Campaign"}
+                            children={"Pause Campaign"}
                             disabled={campaign.scheduleStatus === 'disabled'}
                             style={{marginLeft: 10}}
                         />
