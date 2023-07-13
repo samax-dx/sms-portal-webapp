@@ -122,7 +122,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                         .validateFields()
                             .then(_ => GroupService.saveRecord(writeForm.getFieldsValue()))
                             .then(groups => {
-                                console.log(groups);
+                                // console.log(groups);
                                 setLastWrite(groups);
                                 onRecordSaved(groups);
                                 notification.success({
@@ -134,7 +134,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                             })
                             // .catch(error => {alert(error.message)}))
                             .catch(error => {
-                                console.log(error);
+                                // console.log(error);
                                 notification.error({
                                     key: `cgroup_${Date.now()}`,
                                     message: "Task Failed",
@@ -217,7 +217,7 @@ export const Groups = () => {
     useEffect(() => {
         GroupService.fetchRecords(lastQuery)
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 setGroups(data.groups);
                 setGroupsFetchCount(data.count);
                 setGroupsFetchError(null);

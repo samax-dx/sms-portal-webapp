@@ -113,7 +113,7 @@ const WriteForm = ({ record, onRecordSaved,groupId,close }) => {
                             .validateFields()
                             .then(_ => ContactService.saveRecord(writeForm.getFieldsValue()))
                             .then(contacts => {
-                                console.log(contacts);
+                                // console.log(contacts);
                                 onRecordSaved(contacts);
                                 notification.success({
                                     key: `ccontact_${contacts.contactId}`,
@@ -197,7 +197,7 @@ export const AllContact = () => {
     useEffect(() => {
         ContactService.fetchRecords(lastQuery)
             .then((data) => {
-                console.log(data)
+                // console.log(data)
                 setContacts(data.contacts);
                 setContactsFetchCount(data.count);
                 setContactsFetchError(null);

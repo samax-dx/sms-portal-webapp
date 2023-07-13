@@ -16,7 +16,7 @@ export const Accounting = ({
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (data.payments === null) {
                 data.payments = [];

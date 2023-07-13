@@ -559,7 +559,7 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
     const sendPagedQuery = queryData => (page, limit) => {
         page === undefined && (page = queryData.page)
         limit === undefined && (limit = queryData.limit)
-        console.log(queryData, page, limit);
+        // console.log(queryData, page, limit);
 
         const query = { data: { ...queryData, page, limit }, type: "LOAD" };
         return sendLookup(query);
@@ -568,14 +568,14 @@ export const Campaign = ({ actor: [lookupActor, saveActor, previewActor] }) => {
     const sendPagedQueryTask = queryData => (page, limit) => {
         page === undefined && (page = queryData.page)
         limit === undefined && (limit = queryData.limit)
-        console.log(queryData, page, limit);
+        // console.log(queryData, page, limit);
 
         const query = { data: { ...queryData, page, limit }, type: "LOAD" };
         return sendPreview(query);
     };
 
     const saveRecord = data => {
-        console.log(data);
+        // console.log(data);
         return sendSave({ data, type: "LOAD" });
     };
 

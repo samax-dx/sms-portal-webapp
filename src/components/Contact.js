@@ -121,7 +121,7 @@ const WriteForm = ({ form, record, onRecordSaved,groupId,close }) => {
                             .validateFields()
                             .then(_ => ContactService.saveRecord(writeForm.getFieldsValue()))
                             .then(contacts => {
-                                console.log(contacts);
+                                // console.log(contacts);
                                 onRecordSaved(contacts);
                                 notification.success({
                                     key: `ccontact_${contacts.contactId}`,
@@ -184,7 +184,7 @@ export const Contact = () => {
     useEffect(() => {
         ContactBookService.fetchGroupRecords({ ...lastQuery, groupId })
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 setGroup(data.group);
                 setContacts(data.contacts);
                 setContactFetchCount(data.count);

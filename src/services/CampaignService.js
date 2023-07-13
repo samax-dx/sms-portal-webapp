@@ -77,7 +77,7 @@ export const CampaignService = {
         )
         .then(response => {
             const { data } = response;
-            // console.log(data);
+            console.log(data);
 
             if (data.tasks) {
                 return Promise.resolve(data);
@@ -123,36 +123,6 @@ export const CampaignService = {
             return Promise.reject(errorEx);
         }),
 
-    resumeCampaign: (payload) => console.log(payload) || axios
-        .post(
-            `${OFBIZ_EP}/Campaign/resumeCampaign`,
-            { ...payload },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${XAuth.token()}`,
-                }
-            }
-        )
-        .then(response => {
-            const { data } = response;
-            console.log(data);
-
-            if (data.result) {
-                return Promise.resolve(data);
-            } else {
-                return Promise.reject({ message: data.errorMessage });
-            }
-        })
-        .catch(error => {
-            const response = error.response || { data: { error: error.message } };
-            const { status: code, statusText: text, data } = response;
-            const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
-            // console.log(errorEx);
-
-            return Promise.reject(errorEx);
-        }),
     fetchCampaignTaskReports: (payload) => console.log(payload) || axios
         .post(
             `${OFBIZ_EP}/Campaign/getPartyCampaignTaskReports`,
@@ -236,6 +206,36 @@ export const CampaignService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
+            // console.log(errorEx);
+
+            return Promise.reject(errorEx);
+        }),
+    resumeCampaign: (payload) => console.log(payload) || axios
+        .post(
+            `${OFBIZ_EP}/Campaign/resumeCampaign`,
+            { ...payload },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        )
+        .then(response => {
+            const { data } = response;
+            console.log(data);
+
+            if (data.result) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ message: data.errorMessage });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
+            console.log(errorEx);
             // console.log(errorEx);
 
             return Promise.reject(errorEx);

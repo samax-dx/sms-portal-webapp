@@ -203,7 +203,7 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
             <Form.Item name="campaignName" label="Campaign Name" rules={[{ required: true }]} children={<Input/>} />
             <Form.Item name="scheduleStatus" label="Schedule Status" rules={[{ required: true }]} hidden initialValue={"enabled"} children={<Input/>} />
 
-            <Form.Item name="senderId" label="Sender ID" rules={[{ required: false }]}>
+            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]}>
                 <Select style={{ minWidth: 150 }}>
                     {senderIds.map((v, i) => <Select.Option key={v.senderId} value={v.senderId}>{v.senderId}</Select.Option>)}
                 </Select>
@@ -498,6 +498,15 @@ export const CampaignNew = () => {
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
 
+    const reversedCampaigns = [...campaigns];
+    sortByKey(reversedCampaigns,"campaignId");
+
+    function sortByKey(array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    }
 
     const removeCampaign = campaign => {
         CampaignService.deleteCampaign(campaign)
@@ -563,7 +572,7 @@ export const CampaignNew = () => {
                 <WriteForm close={handleCancel} recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />
             </Modal>
         </Row>
-        <DataView campaigns={campaigns} viewPage={lastQuery.page} viewLimit={lastQuery.limit} onEdit={showModal} onDelete={removeCampaign}/>
+        <DataView campaigns={reversedCampaigns.reverse()} viewPage={lastQuery.page} viewLimit={lastQuery.limit} onEdit={showModal} onDelete={removeCampaign} />
         <Br />
         <DataPager totalPagingItems={CampaignsFetchCount} currentPage={lastQuery.page}
                               onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />

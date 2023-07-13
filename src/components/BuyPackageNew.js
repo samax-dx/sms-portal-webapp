@@ -167,7 +167,7 @@ export const BuyPackageNew = () => {
     useEffect(() => {
         ProductService.fetchProducts(lastQuery)
             .then((data) => {
-                console.log(data)
+                // console.log(data)
                 setProducts(data.products);
                 setProductsFetchCount(data.count);
                 setProductsFetchError(null);

@@ -17,7 +17,7 @@ export const CampaignReportService = {
         // Promise.resolve({data: campaignStatistics})//senderId.includes(payload.senderId)))
         .then(response => {
             const { data }  = response;
-            console.log(data)
+            // console.log(data)
 
             if (data) {
                 return Promise.resolve(data);  //
@@ -29,7 +29,7 @@ export const CampaignReportService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),

@@ -14,7 +14,7 @@ export const ProfileView = () => {
     useEffect(() => {
         ProfileService.fetchProfile({})
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 setProfile(data.profile);
             })
     }, [lastQuery])

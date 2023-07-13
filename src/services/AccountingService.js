@@ -16,7 +16,7 @@ export const AccountingNew = ({
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (data.payments === null) {
                 data.payments = [];
@@ -32,7 +32,7 @@ export const AccountingNew = ({
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
@@ -49,7 +49,7 @@ export const AccountingNew = ({
         )
         .then(response => {
             const { data } = response;
-            console.log(data);
+            // console.log(data);
 
             if (data.paymentId) {
                 return Promise.resolve(data);
@@ -61,7 +61,7 @@ export const AccountingNew = ({
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         })

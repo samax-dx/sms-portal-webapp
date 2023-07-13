@@ -71,7 +71,7 @@ export const Login = ({actor}) => {
                                             duration: 5
                                         });
                                         setAuthState("reset");
-                                        console.log(data);
+                                        // console.log(data);
                                     })
                                     .catch(error => {
                                         console.log(error);

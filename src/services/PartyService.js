@@ -16,7 +16,7 @@ export const PartyService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data)
+            // console.log(data)
 
             if (data.parties === null) {
                 data.parties = [];
@@ -32,7 +32,7 @@ export const PartyService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),
@@ -49,10 +49,10 @@ export const PartyService = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data)
+            // console.log(data)
 
             if (data.partyId) {
-                console.log(data)
+                // console.log(data)
                 return Promise.resolve({ ...response, partyId: data.partyId });
             } else {
                 return Promise.reject({ message: data.errorMessage });
@@ -62,7 +62,7 @@ export const PartyService = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: data.error || text };
-            console.log(errorEx);
+            // console.log(errorEx);
 
             return Promise.reject(errorEx);
         }),

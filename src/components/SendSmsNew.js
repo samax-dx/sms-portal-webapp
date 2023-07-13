@@ -65,7 +65,7 @@ export const SendSmsNew = () => {
     useEffect(() => {
         GroupService.fetchRecords(lastQuery)
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 setGroups(data.groups);
                 setGroupsFetchCount(data.count);
                 setGroupsFetchError(null);
@@ -84,7 +84,7 @@ export const SendSmsNew = () => {
     useEffect(() => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
-console.log(length);
+// console.log(length);
     const resetMsgField = () =>{
         campaignForm.setFieldsValue({message:''})
         setLength(0);
@@ -93,8 +93,8 @@ console.log(length);
         setencoding(e.target.value);
         resetMsgField();
     }
-    console.log(length);
-    console.log(encoding);
+    // console.log(length);
+    // console.log(encoding);
     const handleTextChange =e=>{
         calculateLength(e.target.value.length,encoding)
     }
@@ -269,7 +269,7 @@ console.log(length);
                         onSelect={(groupId) => {
                             ContactBookService.fetchGroupRecords({groupId})
                                 .then((data) => {
-                                    console.log(data);
+                                    // console.log(data);
                                     setGroup(data.group);
                                     setContacts(data.contacts);
                                     setContactFetchCount(data.count);

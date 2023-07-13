@@ -17,7 +17,7 @@ export const SmsTask = {
         )
         .then(response => {
             const { data } = response;
-            console.log(data)
+            // console.log(data)
 
             if (data.report) {
                 return Promise.resolve(data);

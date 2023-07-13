@@ -1,13 +1,14 @@
 import royalGreen from './royalGreen';
 import bdCom from './bdCom';
+import link3 from './link3';
 
 const configFileName = process.env["REACT_APP_CONFIGFILENAME_FORLOGO"];
 function getAllConfig(configFileName){
     switch (configFileName.toLowerCase()){
         case 'royalgreen':
             return royalGreen;
-        case 'bdcom':
-            return bdCom;
+        case 'link3':
+            return link3;
     }
 }
 export default getAllConfig(configFileName)

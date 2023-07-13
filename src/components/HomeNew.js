@@ -239,7 +239,7 @@ export const HomeNew = () => {
     useEffect(() => {
         AccountingNew.fetchBalanceRequests(lastPaymentQuery)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 setPayments(data.payments);
                 setPaymentsFetchCount(data.count);
                 setPaymentsFetchError(null);
@@ -254,7 +254,7 @@ export const HomeNew = () => {
     useEffect(() => {
         InventoryService.fetchProducts(lastProductQuery)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 setPartyProducts(data.products);
                 setPartyProductsFetchCount(data.count);
                 setPartyProductsFetchError(null);
@@ -269,7 +269,7 @@ export const HomeNew = () => {
     useEffect(() => {
         CampaignService.fetchCampaignTaskReports(lastTaskReportQuery)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 setTaskReports(data.taskReports);
                 setTaskReportsFetchCount(data.count);
                 setTaskReportsFetchError(null);
@@ -286,7 +286,7 @@ export const HomeNew = () => {
 
         CampaignCountService.getTodayCampaignCount({partyId})
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 setTodayCampaignCount(data);
             })
             .catch(error => {
@@ -294,7 +294,7 @@ export const HomeNew = () => {
             })
         CampaignCountService.getWeekCampaignCount({partyId})
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setWeekCampaignCount(data);
             })
             .catch(error=>{
@@ -302,7 +302,7 @@ export const HomeNew = () => {
             })
         CampaignCountService.getRtCampaignCount({partyId})
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setRtCampaignCount(data);
             })
             .catch(error=>{
@@ -310,7 +310,7 @@ export const HomeNew = () => {
             })
         CampaignSuccessCountService.getTodayCampaignSuccessCount({partyId})
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setTodayCampaignSuccessCount(data);
             })
             .catch(error=>{
@@ -318,7 +318,7 @@ export const HomeNew = () => {
             })
         CampaignSuccessCountService.getWeekCampaignSuccessCount({partyId})
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setWeekCampaignSuccessCount(data);
             })
             .catch(error=>{
@@ -327,7 +327,7 @@ export const HomeNew = () => {
 
         CampaignSuccessCountService.getRtCampaignSuccessCount({partyId})
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setRtCampaignSuccessCount(data);
             })
             .catch(error=>{
@@ -336,7 +336,7 @@ export const HomeNew = () => {
 
         CampaignTaskCountService.getWeekCampaignTaskCount({partyId})
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setWeekCampaignTaskCount(data);
             })
             .catch(error=>{
@@ -345,7 +345,7 @@ export const HomeNew = () => {
 
         CampaignTaskCountService.getTodayCampaignTaskCount({partyId})
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setTodayCampaignTaskCount(data);
             })
             .catch(error=>{
@@ -354,7 +354,7 @@ export const HomeNew = () => {
 
         CampaignTaskCountService.getRtCampaignTaskCount({partyId})
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setRtCampaignTaskCount(data);
             })
             .catch(error=>{

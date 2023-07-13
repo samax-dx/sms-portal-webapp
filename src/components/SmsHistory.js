@@ -115,13 +115,13 @@ const processDataForTableView = ({taskReports}) => {
 
 
 
-        if (parentTask.children.length && (parentTask.statusExternal == "delivered" || parentTask.statusExternal == "processing" || parentTask.statusExternal == "pending"))
+        if (parentTask.children.length && (parentTask.statusExternal == "delivered" || parentTask.statusExternal == "processing"|| parentTask.statusExternal == null || parentTask.statusExternal == "pending"))
         {
             const firstNotDelivered = parentTask.children.find(child => child.statusExternal != "delivered");
             if (firstNotDelivered)
             {
                 parentTask.errorCodeExternal = parentTask.statusExternal != "delivered" ? parentTask.errorCodeExternal:firstNotDelivered.errorCodeExternal
-                parentTask.statusExternal = "pending";
+                parentTask.statusExternal = "failed";
             }
             else
             {
@@ -131,15 +131,16 @@ const processDataForTableView = ({taskReports}) => {
         }
         else
         {
-            parentTask.statusExternal = parentTask.statusExternal == "processing" ? "processing" : (parentTask.errorCodeExternal ? "pending" : "delivered");
+            parentTask.statusExternal = parentTask.statusExternal == null ? null : (parentTask.errorCodeExternal ? parentTask.statusExternal : "delivered");
         }
 
 
-        if(parentTask.status == "failed")
-            parentTask.statusExternal = "failed";
+        if(parentTask.status == "failed"||parentTask.status == null||parentTask.status == "suspended")
+        {
+            parentTask.statusExternal = null;
+        }
+
         // console.log(parentTask);
-
-
 
         return parentTask;
     })
@@ -153,9 +154,9 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
     const tableData = processDataForTableView({taskReports});
     const unixToMomentTime=(value)=>{
         if(value==null) return "";
-        const parseValue = parseInt(value)
+        const parseValue = parseInt(value)*1000;
         // var dateString = moment.unix(+value).format("MM/DD/YYYY");
-        const finalTime=  moment(parseValue).subtract(6, 'hours').format('YYYY-MM-DD hh:mm:ss A');
+        const finalTime=  moment(parseValue).format('lll');
         //return dayjs(parseValue).format("MMM D, YYYY - hh:mm A")
         return finalTime;
     }
@@ -212,12 +213,12 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
 
             <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
                 <Tag color={"processing"}>pending</Tag>,
-                <Tag color={"gold"}>Waiting for status</Tag>,
                 <Tag color={"success"}>delivered</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>failed</Tag>,
+                <Tag color={"error"}></Tag>,
                 <span></span>,
-            ][[v === "pending",v ==="processing", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
+            ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
 
             <Table.Column title="Message" width={"150pt"}
                           render={(v, r, i) =>{
@@ -332,7 +333,7 @@ export const SmsHistory = () => {
     useEffect(() => {
         CampaignService.fetchCampaignTaskReports(lastQuery)
             .then((data) => {
-                console.log(data)
+                // console.log(data)
                 setTaskReports(data.taskReports);
                 setTaskReportsFetchCount(data.count);
                 setTaskReportsFetchError(null);

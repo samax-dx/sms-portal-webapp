@@ -114,7 +114,7 @@ const ViewPager = ({ totalPagingItems, currentPage, onPagingChange, pageSize }) 
 const QueryPager = (sender, data) => (page, limit) => {
     page === undefined && (page = data.page);
     limit === undefined && (limit = data.limit);
-    console.log(data, page, limit);
+    // console.log(data, page, limit);
 
     const query = { data: { ...data, page, limit }, type: "LOAD" };
     return sender(query);

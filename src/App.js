@@ -61,7 +61,7 @@ export const App = ({ actor }) => {
     return (
         <BrowserRouter>
             <Routes>
-                <ReactRoute path="/" element={createRouteComponent(<HomeNew />)} />
+                <ReactRoute path="/client" element={createRouteComponent(<HomeNew />)} />
                 <ReactRoute path="/balance/paymentHistory" element={createRouteComponent(<MyPaymentNew />)} />
                 <ReactRoute path="/order/orderHistory" element={createRouteComponent(<OrdersNew />)} />
                 <ReactRoute path="/order/myPackage" element={createRouteComponent(<MyPackageNew />)} />

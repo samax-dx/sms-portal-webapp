@@ -28,7 +28,7 @@ export const SenderIdService = {
        // Promise.resolve(findListMocked(senderIds, payload, "senderId", "senderIds"))//senderId.includes(payload.senderId)))
        .then(response => {
            const { data } = response;
-           console.log(data)
+           // console.log(data)
 
            if (data.senderIds) {
                return Promise.resolve(data);  //
@@ -40,7 +40,7 @@ export const SenderIdService = {
            const response = error.response || { data: { error: error.message } };
            const { status: code, statusText: text, data } = response;
            const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
-           console.log(errorEx);
+           // console.log(errorEx);
 
            return Promise.reject(errorEx);
        }),

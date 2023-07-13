@@ -22,9 +22,9 @@ export const AppLayout = ({ render: PageContent, actor,routeComponent }) => {
             <Header className="header" style={{paddingLeft:'7px',paddingRight:'5px'}}>
                 <Row>
                     <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
-                        <Link to='/'><img src={getAllConfig.logo} style={{ marginBottom: "0px" }} /></Link>
+                        <Link to='/client'><img src={getAllConfig.logo} style={{ marginBottom: "0px" }} /></Link>
                         &nbsp;
-                        <Link to="/" style={{color:'white'}}><span>SMS-Portal Client</span></Link>
+                        <Link to="/client" style={{color:'white'}}><span>SMS-Portal Client</span></Link>
                     </Col>
                     <Col xs={14} sm={20} className="menu"><TopMenuNew actor={actor} /></Col>
                 </Row>
