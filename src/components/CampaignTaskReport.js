@@ -384,6 +384,10 @@ export const CampaignTaskReport = () => {
     const [campaign, setCampaign] = useState({});
     const [campaignWiseReport, setcampaignWiseReport] = useState({});
     const [campaignFetchError, setCampaignFetchError] = useState(null);
+    const currentTime = Math.floor(new Date() / 1000);
+    const campaignExpireTime = campaign.expireAt;
+    const campaignSchedule = campaign.schedules;
+    const campaignStartTime = new Date(campaign.campaignStartTime).getTime()/1000;
 
     const [tasks, setTasks] = useState([]);
     const [campaignTasksFetchCount, setCampaignTasksFetchCount] = useState(0);
@@ -393,9 +397,9 @@ export const CampaignTaskReport = () => {
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
     const [saving,setSaving] = useState(false);
-     const [campaignModalData, setCampaignModalData] =useState(null);
-     const showCampaignModal = data => setCampaignModalData(data);
-     const handleCancleCampaign = () => setCampaignModalData(null);
+    const [campaignModalData, setCampaignModalData] =useState(null);
+    const showCampaignModal = data => setCampaignModalData(data);
+    const handleCancleCampaign = () => setCampaignModalData(null);
 
     const [modalDataMsg, setModalDataMsg] = useState(null);
     const showModalMsg = data => setModalDataMsg(data);
@@ -423,7 +427,7 @@ export const CampaignTaskReport = () => {
         CampaignService.fetchCampaignTasks(lastQuery)
             .then((data) => {
                 // console.log(data);
-                setCampaign(data.campaign);
+                setCampaign({...data.campaign,"campaignStartTime":JSON.parse(atob(data.campaign.schedules)).props.scheduleStart});
                 setTasks(data.tasks);
                 setCampaignTasksFetchCount(data.count);
                 setCampaignFetchError(null);
@@ -472,19 +476,20 @@ export const CampaignTaskReport = () => {
         .finally(_ => setSaving(false));
 
     const getCampaignStatus =(campaign)=> {
-        const currentTime = Math.floor(new Date() / 1000);
-        const expireDate = campaign.expireAt;
-        if (campaign.scheduleStatus ==='disabled' && currentTime < expireDate){
+        if (campaign.scheduleStatus ==='disabled' && currentTime < campaignExpireTime){
             return <Tag color={"warning"}>Paused</Tag>
         }
-        if (campaign.scheduleStatus ==='enabled' && currentTime > expireDate){
+        if (campaign.scheduleStatus ==='enabled' && currentTime > campaignExpireTime){
             return <Tag color={"error"}>Expired</Tag>
         }
-        if (campaign.scheduleStatus ==='disabled' && currentTime > expireDate){
+        if (campaign.scheduleStatus ==='disabled' && currentTime > campaignExpireTime){
             return <Tag color={"error"}>Expired</Tag>
         }
-        if (campaign.scheduleStatus ==='enabled' && currentTime < expireDate){
+        if (campaign.scheduleStatus ==='enabled' && currentTime < campaignExpireTime && campaignStartTime < currentTime){
             return <Tag color={"success"}>Running</Tag>
+        }
+        if (campaign.scheduleStatus ==='enabled' && campaignStartTime > currentTime){
+            return <Tag color={"processing"}>In Queue</Tag>
         }
     }
     return (<>
@@ -517,7 +522,7 @@ export const CampaignTaskReport = () => {
                                     notification.error({
                                         key: `send_${Date.now()}`,
                                         message: "Task Failed",
-                                        description: <>Task Failed: {JSON.stringify(error.code)}</>,
+                                        description: <>Task Failed: {JSON.stringify(error.message)}</>,
                                         duration: 5
                                     });
                                 })

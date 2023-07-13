@@ -382,18 +382,23 @@ const DataView = ({ campaigns, viewPage, viewLimit, onView, onEdit, onDelete}) =
 
     const getCampaignStatus = (campaign) => {
         const currentTime = Math.floor(new Date() / 1000);
-        const expireDate = campaign.expireAt;
-        if (campaign.scheduleStatus ==='disabled' && currentTime < expireDate){
+        const campaignExpireTime = campaign.expireAt;
+        const campaignSchedule = campaign.schedules;
+        const campaignStartTime = new Date(campaign.campaignStartTime).getTime()/1000;
+        if (campaign.scheduleStatus ==='disabled' && currentTime < campaignExpireTime){
             return <Tag color={"warning"}>Paused</Tag>
         }
-        if (campaign.scheduleStatus ==='enabled' && currentTime > expireDate){
+        if (campaign.scheduleStatus ==='enabled' && currentTime > campaignExpireTime){
             return <Tag color={"error"}>Expired</Tag>
         }
-        if (campaign.scheduleStatus ==='disabled' && currentTime > expireDate){
+        if (campaign.scheduleStatus ==='disabled' && currentTime > campaignExpireTime){
             return <Tag color={"error"}>Expired</Tag>
         }
-        if (campaign.scheduleStatus ==='enabled' && currentTime < expireDate){
+        if (campaign.scheduleStatus ==='enabled' && currentTime < campaignExpireTime && campaignStartTime < currentTime){
             return <Tag color={"success"}>Running</Tag>
+        }
+        if (campaign.scheduleStatus ==='enabled' && campaignStartTime > currentTime){
+            return <Tag color={"processing"}>In Queue</Tag>
         }
     }
 
@@ -483,6 +488,10 @@ export const CampaignNew = () => {
     const [campaigns, setCampaigns] = useState([]);
     const [CampaignsFetchCount, setCampaignsFetchCount] = useState(0);
     const [CampaignsFetchError, setCampaignsFetchError] = useState(null);
+    const currentTime = Math.floor(new Date() / 1000);
+    const campaignExpireTime = campaigns.expireAt;
+    const campaignSchedule = campaigns.schedules;
+    const campaignStartTime = new Date(campaigns.campaignStartTime).getTime()/1000;
 
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
@@ -515,8 +524,12 @@ export const CampaignNew = () => {
     useEffect(() => {
         CampaignService.fetchCampaigns(lastQuery)
             .then((data) => {
-                console.log(data)
-                setCampaigns(data.campaigns);
+                // console.log(data)
+                setCampaigns(data.campaigns.map(campaign => ({
+                    ...campaign,
+                        campaignStartTime: JSON.parse(atob(campaign.schedules)).props.scheduleStart
+                    }))
+                );
                 setCampaignsFetchCount(data.count);
                 setCampaignsFetchError(null);
             })
