@@ -35,7 +35,7 @@ export const CampaignService = {
 
     fetchCampaignReport: (payload) => console.log(payload) || axios
         .post(
-            `${CONTACT_BOOK_EP}/client/reports/campaignWise`,
+            `${CONTACT_BOOK_EP}/admin/reports/campaignWise`,
             { ...payload },
             {
                 headers: {

@@ -601,9 +601,10 @@ export const CampaignTaskReport = () => {
                                 [
                                     ["sent", "Total sent", "success", v => v || 0],
                                     ["delivered", "Delivered", "success", v => v || 0],
-                                    ["failed", "Failed", "secondary", v => v || 0],
+                                    ["absentSubscriberSM", "Switched Off", "danger", v => v || 0],
+                                    ["unidentifiedSubscriber", "Unidentified Number", "danger", v => v || 0],
                                     ["inProcess", "In Process", "warning", v => v || 0],
-                                    ["total", "Total Task", "danger", v => v],
+                                    ["total", "Total Task", "success", v => v],
                                 ]
                             ]}
                             renderItem={item => item.map(([key, label, type, toValue]) => (<Col>
