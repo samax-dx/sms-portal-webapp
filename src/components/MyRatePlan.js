@@ -36,7 +36,7 @@ const SearchForm = ({ onSearch }) => {
             }
         });
 
-        const queryData = ["ratePlanName", "orderDate_fld0_value", "orderDate_fld1_value"].reduce((acc, v) => {
+        const queryData = ["ratePlanId", "orderDate_fld0_value", "orderDate_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -61,8 +61,8 @@ const SearchForm = ({ onSearch }) => {
             labelAlign="left"
             initialValues={{ date_fld0_value: moment().subtract(1, 'days'), date_fld1_value:moment(new Date()) }}
         >
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="name" label="Rate-Plan Name" children={<Input />} />
-            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block', margin:'0px'}} name="ratePlanId" label="Rate-Plan ID" children={<Input />} />
+            <Form.Item name="ratePlanId_op" initialValue={"contains"} hidden children={<Input />} />
             {/*<Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />*/}
             {/*<Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />*/}
             {/*<Form.Item style={{display:'inline-block', margin:'0px'}} name="date_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />*/}
