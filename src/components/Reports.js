@@ -95,30 +95,6 @@ const SearchForm = ({ onSearch }) => {
 
 const DataView = ({ report,spin, viewPage, viewLimit}) => {
 
-    // return (<>
-    //     <Table
-    //         style={{marginLeft:6}}
-    //         size="small"
-    //         dataSource={report}
-    //         rowKey={Math.random}
-    //         locale={{ emptyText: report === null ? "E" : "No Data" }}
-    //         pagination={false}
-    //     >
-    //         <Table.Column
-    //             dataIndex={undefined}
-    //             title={"#"}
-    //             render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-    //         />
-    //         <Table.Column title="Party Id" dataIndex={"partyId"}/>
-    //         <Table.Column title="Campaign Id" dataIndex={"campaignId"} />
-    //         <Table.Column title="Route Id" dataIndex={"routeId"} />
-    //         <Table.Column title="Total" dataIndex={"total"} />
-    //         <Table.Column title="Delivered" dataIndex={"delivered"} />
-    //         <Table.Column title="In Process" dataIndex={"inProcess"} />
-    //         <Table.Column title="Suspended" dataIndex={"suspended"} />
-    //         <Table.Column title="Failed" dataIndex={"failed"}/>
-    //     </Table>
-    // </>);
         const columns = [
             {
                 dataIndex: undefined,
@@ -126,32 +102,56 @@ const DataView = ({ report,spin, viewPage, viewLimit}) => {
                 render: (_, __, i) => (viewPage - 1) * viewLimit + (++i),
             },
             {
-                title: 'Campaign Id',
+                title: <strong>Campaign Id</strong>,
                 dataIndex: 'campaignId',
             },
             {
-                title: 'Route Id',
+                title: <strong>Route Id</strong>,
                 dataIndex: 'routeId',
             },
             {
-                title: 'Total',
+                title: <strong>Total</strong>,
                 dataIndex: 'total',
+                render: (value) => <span>{value.toLocaleString()}</span>,
             },
             {
-                title: 'Total Sent',
+                title: <strong>Total Sent</strong>,
                 dataIndex: 'sent',
+                render: (value) => <span>{value.toLocaleString()}</span>,
             },
             {
-                title: 'Delivered',
+                title: <strong>Delivered</strong>,
                 dataIndex: 'delivered',
+                render: (value) => <span>{value.toLocaleString()}</span>,
             },
             {
-                title: 'In Process',
+                title: <strong>Success Rate</strong>,
+                render: (_, record) => {
+                    const totalSent = record.sent || 0;
+                    const delivered = record.delivered || 0;
+                    const successRate = totalSent !== 0 ? ((delivered / totalSent) * 100).toFixed(2) : 0;
+                    return `${successRate}%`;
+                },
+            },
+            {
+                title: <strong>In Process</strong>,
                 dataIndex: 'inProcess',
+                render: (value) => <span>{value.toLocaleString()}</span>,
             },
             {
-                title: 'Failed',
+                title: <strong>Switched Off</strong>,
+                dataIndex: 'absentSubscriberSM',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+            {
+                title: <strong>Unidentified Number</strong>,
+                dataIndex: 'unidentifiedSubscriber',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+            {
+                title: <strong>Failed</strong>,
                 dataIndex: 'failed',
+                render: (value) => <span>{value.toLocaleString()}</span>,
             },
         ];
 
