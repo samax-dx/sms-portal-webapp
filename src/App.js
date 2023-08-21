@@ -35,6 +35,7 @@ import getAllConfig from "../src/config/main";
 import {MyRatePlan} from "./components/MyRatePlan";
 import {ApiDocument} from "./components/ApiDocument";
 import {Reports} from "./components/Reports";
+import {ForbiddenWords} from "./components/ForbiddenWords";
 
 function setFavicon (){
     return document.getElementById("favicon");
@@ -73,6 +74,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/messaging/campaign" element={createRouteComponent(<CampaignNew />)} />
                 <ReactRoute path="/messaging/campaign/:campaignId" element={createRouteComponent(<CampaignTaskReport />)} />
                 <ReactRoute path="/messaging/sendSms" element={createRouteComponent(<SendSmsNew />)} />
+                <ReactRoute path="/messaging/forbiddenWords" element={createRouteComponent(< ForbiddenWords/>)} />
                 <ReactRoute path="/contactBook/groups" element={createRouteComponent(<Groups />)} />
                 <ReactRoute path="/contactBook/allContact" element={createRouteComponent(<AllContact />)} />
                 <ReactRoute path="/contactBook/groups/:groupId" element={createRouteComponent(<Contact/>)} />

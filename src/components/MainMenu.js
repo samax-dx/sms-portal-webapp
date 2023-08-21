@@ -1,7 +1,28 @@
 import React from 'react';
 import { Menu } from 'antd';
 
-import { MailOutlined, CreditCardOutlined, AuditOutlined, DatabaseOutlined, ReconciliationTwoTone, DatabaseTwoTone, ReconciliationOutlined, ReconciliationFilled, DatabaseFilled, ShoppingTwoTone, MailFilled, FileTextFilled, MailTwoTone, FileTextOutlined, SendOutlined, FileTextTwoTone, RocketTwoTone, InfoCircleTwoTone, HddTwoTone } from '@ant-design/icons';
+import {
+    MailOutlined,
+    CreditCardOutlined,
+    AuditOutlined,
+    DatabaseOutlined,
+    ReconciliationTwoTone,
+    DatabaseTwoTone,
+    ReconciliationOutlined,
+    ReconciliationFilled,
+    DatabaseFilled,
+    ShoppingTwoTone,
+    MailFilled,
+    FileTextFilled,
+    MailTwoTone,
+    FileTextOutlined,
+    SendOutlined,
+    FileTextTwoTone,
+    RocketTwoTone,
+    InfoCircleTwoTone,
+    HddTwoTone,
+    IdcardTwoTone
+} from '@ant-design/icons';
 import {Link, NavLink, useLocation } from "react-router-dom";
 
 
@@ -25,6 +46,7 @@ export const MainMenu = ({ actor }) => {
                 {/*<Menu.Item key="campaignTaskReport" icon={<InfoCircleTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN_TASK_REPORT' })}>SMS History</Menu.Item>*/}
                 <Menu.Item key="smsHistory"  icon={<InfoCircleTwoTone />}><Link to={"/messaging/smsHistory"}>SMS History</Link></Menu.Item>
                 <Menu.Item key="reports"  icon={<InfoCircleTwoTone />}><Link to={"/messaging/reports"}>Reports</Link></Menu.Item>
+                <Menu.Item key="forbiddenWords" icon={<IdcardTwoTone />}><Link to="/messaging/forbiddenWords">Forbidden Words</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="contactBook" icon={<MailOutlined />} title="Contact Book">
                 {/*<Menu.Item key="sendSMS" icon={<RocketTwoTone />} onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>*/}
