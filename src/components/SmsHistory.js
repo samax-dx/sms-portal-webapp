@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tag, Tooltip
+    Modal, Typography, DatePicker, notification, Tag, Tooltip, Spin
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -147,7 +147,7 @@ const processDataForTableView = ({taskReports}) => {
 
 }
 
-const DataView = ({ taskReports, viewPage, viewLimit}) => {
+const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
 
 
 
@@ -178,61 +178,62 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
     }
 
     return (<>
-        <Table
-            style={{marginLeft:'5px'}}
-            size="small"
-            // dataSource={taskReports}
-             rowKey={parentTask=> parentTask.campaignTaskId}
-            dataSource={
-                tableData
-               }
+        {spin?<Spin spinning={spin} size={"large"}>
+            {<Table
+                style={{marginLeft:'5px'}}
+                size="small"
+                // dataSource={taskReports}
+                rowKey={parentTask=> parentTask.campaignTaskId}
+                dataSource={
+                    tableData
+                }
 
 
-            locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
-            pagination={false}
-            scroll={{
-                x: 2450,
-            }}
-            indentSize= '15'
-        >
-            <Table.Column
-                dataIndex={undefined}
-                title={"#"}
-                width='100px'
-                render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-            />
-            <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} width={"100pt"}/>
-            <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"90pt"} />
-            <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} width={"110pt"}/>
-            <Table.Column title="Status" dataIndex={"status"} width={"110pt"} render={v => [
-                <Tag color={"processing"}>pending</Tag>,
-                <Tag color={"success"}>sent</Tag>,
-                <Tag color={"warning"}>undetermined</Tag>,
-                <Tag color={"error"}>failed</Tag>,
-                <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
+                locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
+                pagination={false}
+                scroll={{
+                    x: 2450,
+                }}
+                indentSize= '15'
+            >
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"#"}
+                    width='100px'
+                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+                />
+                <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} width={"100pt"}/>
+                <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"90pt"} />
+                <Table.Column title="Sender Id" dataIndex={"senderId"} width={"110pt"}/>
+                <Table.Column title="Status" dataIndex={"status"} width={"110pt"} render={v => [
+                    <Tag color={"processing"}>pending</Tag>,
+                    <Tag color={"success"}>sent</Tag>,
+                    <Tag color={"warning"}>undetermined</Tag>,
+                    <Tag color={"error"}>failed</Tag>,
+                    <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
 
-            <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
-                <Tag color={"processing"}>pending</Tag>,
-                <Tag color={"success"}>delivered</Tag>,
-                <Tag color={"warning"}>undetermined</Tag>,
-                <Tag color={"error"}>failed</Tag>,
-                <Tag color={"error"}></Tag>,
-                <span></span>,
-            ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
+                <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
+                    <Tag color={"processing"}>pending</Tag>,
+                    <Tag color={"success"}>delivered</Tag>,
+                    <Tag color={"warning"}>undetermined</Tag>,
+                    <Tag color={"error"}>failed</Tag>,
+                    <Tag color={"error"}></Tag>,
+                    <span></span>,
+                ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
 
-            <Table.Column title="Message" width={"150pt"}
-                          render={(v, r, i) =>{
-                              var msg = r.message;
-                              // if (!r.children) { r.children = []; }
-                              if(r.children){
-                              r.children.forEach(child => msg+= child.message);
-                              r.children.forEach(child => child.fullMessage = msg);
-                              }else{
-                                  console.log(r.fullMessage);
-                              }
-                              // console.log(r.children);
-                              v = msg;
-                              return  v.length>6?<>
+                <Table.Column title="Message" width={"150pt"}
+                              render={(v, r, i) =>{
+                                  var msg = r.message;
+                                  // if (!r.children) { r.children = []; }
+                                  if(r.children){
+                                      r.children.forEach(child => msg+= child.message);
+                                      r.children.forEach(child => child.fullMessage = msg);
+                                  }else{
+                                      console.log(r.fullMessage);
+                                  }
+                                  // console.log(r.children);
+                                  v = msg;
+                                  return  v.length>6?<>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
@@ -242,28 +243,116 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
                                       verticalAlign:"middle"
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
-                              <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
-                          </>:v}}/>
-            {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
-            <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
-            <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
-            <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
-            <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
-            <Table.Column title="Route Id" dataIndex={"routeId"} width={"90pt"}/>
-            <Table.Column title="SMS Count" dataIndex={"smsCount"} width={"90pt"}/>
-            <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"350pt"} />
-            <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={unixToMomentTime} />
-            <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render= {unixToMomentTime}/>
+                                      <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
+                                  </>:v}}/>
+                {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
+                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
+                <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
+                <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
+                <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
+                <Table.Column title="Route Id" dataIndex={"routeId"} width={"90pt"}/>
+                <Table.Column title="SMS Count" dataIndex={"smsCount"} width={"90pt"}/>
+                <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"350pt"} />
+                <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={unixToMomentTime} />
+                <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render= {unixToMomentTime}/>
 
-            <Table.Column
-                dataIndex={""}
-                render={(_, campaignTask, i) =>
-                    <Button onClick={() => showModal(campaignTask)} type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}}>
-                        Schedule
-                    </Button>
+                <Table.Column
+                    dataIndex={""}
+                    render={(_, campaignTask, i) =>
+                        <Button onClick={() => showModal(campaignTask)} type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}}>
+                            Schedule
+                        </Button>
+                    }
+                />
+            </Table>}
+        </Spin>: <Table
+                style={{marginLeft:'5px'}}
+                size="small"
+                // dataSource={taskReports}
+                rowKey={parentTask=> parentTask.campaignTaskId}
+                dataSource={
+                    tableData
                 }
-            />
-        </Table>
+
+
+                locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
+                pagination={false}
+                scroll={{
+                    x: 2450,
+                }}
+                indentSize= '15'
+            >
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"#"}
+                    width='100px'
+                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+                />
+                <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} width={"100pt"}/>
+                <Table.Column title="Called Number" dataIndex={"phoneNumber"} width={"90pt"} />
+                <Table.Column title="Sender Id" dataIndex={"senderId"} width={"110pt"}/>
+                <Table.Column title="Status" dataIndex={"status"} width={"110pt"} render={v => [
+                    <Tag color={"processing"}>pending</Tag>,
+                    <Tag color={"success"}>sent</Tag>,
+                    <Tag color={"warning"}>undetermined</Tag>,
+                    <Tag color={"error"}>failed</Tag>,
+                    <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
+
+                <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
+                    <Tag color={"processing"}>pending</Tag>,
+                    <Tag color={"success"}>delivered</Tag>,
+                    <Tag color={"warning"}>undetermined</Tag>,
+                    <Tag color={"error"}>failed</Tag>,
+                    <Tag color={"error"}></Tag>,
+                    <span></span>,
+                ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
+
+                <Table.Column title="Message" width={"150pt"}
+                              render={(v, r, i) =>{
+                                  var msg = r.message;
+                                  // if (!r.children) { r.children = []; }
+                                  if(r.children){
+                                      r.children.forEach(child => msg+= child.message);
+                                      r.children.forEach(child => child.fullMessage = msg);
+                                  }else{
+                                      console.log(r.fullMessage);
+                                  }
+                                  // console.log(r.children);
+                                  v = msg;
+                                  return  v.length>6?<>
+                              <span
+                                  style={{textOverflow:"ellipsis",
+                                      whiteSpace:"nowrap",
+                                      maxWidth: "50pt",
+                                      display: "inline-block",
+                                      overflow:"hidden",
+                                      verticalAlign:"middle"
+                                  }}
+                              >{v.replace(/\s*,\s*/g, " ")}</span>
+                                      <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
+                                  </>:v}}/>
+                {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
+                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
+                <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
+                <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
+                <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
+                <Table.Column title="Route Id" dataIndex={"routeId"} width={"90pt"}/>
+                <Table.Column title="SMS Count" dataIndex={"smsCount"} width={"90pt"}/>
+                <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"350pt"} />
+                <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={unixToMomentTime} />
+                <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render= {unixToMomentTime}/>
+
+                <Table.Column
+                    dataIndex={""}
+                    render={(_, campaignTask, i) =>
+                        <Button onClick={() => showModal(campaignTask)} type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}}>
+                            Schedule
+                        </Button>
+                    }
+                />
+            </Table>
+        }
+
         <Modal title="Message" key="createCampaign" visible={!!modalDataMsg} onOk={handleOkMsg} onCancel={handleCancelMsg}>
             {/*{modalDataMsg}*/}
             <p><span style={{color:"green"}}>Short Message:</span>  {(modalDataMsg||{}).short}</p>
@@ -328,17 +417,20 @@ export const SmsHistory = () => {
     const [taskReports, setTaskReports] = useState([]);
     const [TaskReportsFetchCount, setTaskReportsFetchCount] = useState(0);
     const [taskReportsFetchError, setTaskReportsFetchError] = useState(null);
-
+    const [spinning, setSpinning] = useState(false);
 
     useEffect(() => {
+        setSpinning(true);
         CampaignService.fetchCampaignTaskReports(lastQuery)
             .then((data) => {
                 // console.log(data)
+                setSpinning(false);
                 setTaskReports(data.taskReports);
                 setTaskReportsFetchCount(data.count);
                 setTaskReportsFetchError(null);
             })
             .catch(error => {
+                setSpinning(false);
                 setTaskReports([]);
                 setTaskReportsFetchCount(0);
                 setTaskReportsFetchError(error);
@@ -359,7 +451,7 @@ export const SmsHistory = () => {
                 </Card>
             </Col>
         </Row>
-        <DataView taskReports={taskReports} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
+        <DataView taskReports={taskReports} viewPage={lastQuery.page} viewLimit={lastQuery.limit} spin={spinning}/>
         <Br />
         <DataPager totalPagingItems={TaskReportsFetchCount} currentPage={lastQuery.page}
                               onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
