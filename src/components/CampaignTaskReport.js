@@ -27,7 +27,7 @@ import {
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
-import dayjs from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {ProductService} from "../services/ProductService";
 import {TaskSearchForm} from "./TaskSearch";
 import {CampaignService} from "../services/CampaignService";
@@ -38,6 +38,7 @@ import {SenderIdService} from "../services/SenderIdService";
 import * as sheetjs from "xlsx";
 import {FileDoneOutlined, FileTextOutlined, FileTextTwoTone} from "@ant-design/icons";
 import {unflatten} from "../Util";
+import {PartyIdCatcher} from "./HomeNew";
 
 
 const SearchForm = ({onSearch}) => {
@@ -106,11 +107,13 @@ const DataPager = ({totalPagingItems, currentPage, onPagingChange}) => {
         </Space>
     </>);
 };
-const SchedulePickerWithType = ({type}) => {
+const SchedulePickerWithType = ({type,schedule}) => {
+    const campaignStartTime = dayjs(schedule).valueOf();
+
     if (type === 'default') return (<>
         <Row>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
+                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(campaignStartTime)}>
                     <DatePicker placeholder="Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
@@ -119,12 +122,12 @@ const SchedulePickerWithType = ({type}) => {
     if (type === 'DateRange') return (<>
         <Row>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(new Date())}>
+                <Form.Item name="schedule.props.scheduleStart" initialValue={moment(campaignStartTime)}>
                     <DatePicker placeholder="Start Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
             <Col md={12}>
-                <Form.Item name="schedule.props.scheduleEnd" initialValue={moment(new Date())}>
+                <Form.Item name="schedule.props.scheduleEnd" initialValue={moment(campaignStartTime)}>
                     <DatePicker placeholder="End Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
                 </Form.Item>
             </Col>
@@ -184,18 +187,21 @@ const EditForm = ({recordArg, onRecordSaved,close }) => {
     const [lastWrite, setLastWrite] = useState(recordArg);
 
     const [senderIds, setSenderIds] = useState([]);
+    const partyId = PartyIdCatcher();
     useEffect(()=> {
-        SenderIdService.fetchRecords({})
+        SenderIdService.fetchRecords({partyId})
             .then(data=>{
                 setSenderIds(data.senderIds);
             })
     },[])
-
     // useEffect(() => writeForm.resetFields(), [recordArg, writeForm]);
     useEffect(() => {
         setIsCreateForm(Object.keys(recordArg).length === 0);
         writeForm.resetFields();
-        writeForm.setFieldsValue(recordArg);
+        writeForm.setFieldsValue({
+            ...recordArg,
+            expireAt: moment(parseInt(recordArg.expireAt * 1000))
+        });
     }, [recordArg]);
 
     useEffect( () => {
@@ -219,64 +225,63 @@ const EditForm = ({recordArg, onRecordSaved,close }) => {
             <Form.Item name="campaignId" label="Campaign ID" rules={[{ required: false }]} hidden children={<Input />} />
             <Form.Item name="scheduleStatus" label="Schedule Status" rules={[{ required: true }]} hidden children={<Input />} />
 
-            <Form.Item name="senderId" label="Sender ID" rules={[{ required: false }]}>
+            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]}>
                 <Select style={{ minWidth: 150 }}>
                     {senderIds.map((v, i) => <Select.Option key={v.senderId} value={v.senderId}>{v.senderId}</Select.Option>)}
                 </Select>
             </Form.Item>
 
-            <Form.Item
-                name="phoneNumbers"
-                label={<>
-                    <span>Contacts</span>
-                    <Tooltip title="Import (Excel, CSV, Text)">
-                        &nbsp;&nbsp;
-                        <Upload
-                            maxCount={1}
-                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
-                            customRequest={r => {
-                                const reader = new FileReader();
+            {/*<Form.Item*/}
+            {/*    name="phoneNumbers"*/}
+            {/*    label={<>*/}
+            {/*        <span>Contacts</span>*/}
+            {/*        <Tooltip title="Import (Excel, CSV, Text)">*/}
+            {/*            &nbsp;&nbsp;*/}
+            {/*            <Upload*/}
+            {/*                maxCount={1}*/}
+            {/*                accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"*/}
+            {/*                customRequest={r => {*/}
+            {/*                    const reader = new FileReader();*/}
 
-                                reader.onload = () => {
-                                    const contactBook = sheetjs.read(reader.result, { sheets: 0 });
-                                    const contactSheet = Object.values(contactBook.Sheets)[0];
+            {/*                    reader.onload = () => {*/}
+            {/*                        const contactBook = sheetjs.read(reader.result, { sheets: 0 });*/}
+            {/*                        const contactSheet = Object.values(contactBook.Sheets)[0];*/}
 
-                                    const contacts = sheetjs.utils
-                                        .sheet_to_json(contactSheet, { skipHidden: true })
-                                        .reduce((acc, v) => {
-                                            if (v.msisdn !== undefined) {
-                                                acc.push(v.msisdn);
-                                            }
-                                            return acc;
-                                        }, []);
+            {/*                        const contacts = sheetjs.utils*/}
+            {/*                            .sheet_to_json(contactSheet, { skipHidden: true })*/}
+            {/*                            .reduce((acc, v) => {*/}
+            {/*                                if (v.msisdn !== undefined) {*/}
+            {/*                                    acc.push(v.msisdn);*/}
+            {/*                                }*/}
+            {/*                                return acc;*/}
+            {/*                            }, []);*/}
 
-                                    contacts.length ? r.onSuccess(JSON.stringify(contacts)) : r.onError("zero_msisdn_found");
-                                };
+            {/*                        contacts.length ? r.onSuccess(JSON.stringify(contacts)) : r.onError("zero_msisdn_found");*/}
+            {/*                    };*/}
 
-                                reader.onerror = () => {
-                                    r.onError(reader.error.message);
-                                }
+            {/*                    reader.onerror = () => {*/}
+            {/*                        r.onError(reader.error.message);*/}
+            {/*                    }*/}
 
-                                reader.readAsArrayBuffer(r.file);
-                            }}
-                            onChange={info => {
-                                if (info.file.status === 'done') {
-                                    writeForm.setFieldsValue({ ...writeForm.getFieldsValue, phoneNumbers: info.file.response.join(", ") })
-                                    return message.success(`Found ${info.file.response.length} MSISDN(s)`);
-                                }
-                                if (info.file.status === 'error') {
-                                    return message.error(`Error: ${info.file.error.toUpperCase()}`);
-                                }
-                            }}
-                            showUploadList={false}
-                            children={<Button shape="round" icon={<FileTextTwoTone />} />}
-                        />
-                    </Tooltip>
-                </>}
-                rules={[{ required: false }]}
-                hidden
-                children={<Input.TextArea />}
-            />
+            {/*                    reader.readAsArrayBuffer(r.file);*/}
+            {/*                }}*/}
+            {/*                onChange={info => {*/}
+            {/*                    if (info.file.status === 'done') {*/}
+            {/*                        writeForm.setFieldsValue({ ...writeForm.getFieldsValue, phoneNumbers: info.file.response.join(", ") })*/}
+            {/*                        return message.success(`Found ${info.file.response.length} MSISDN(s)`);*/}
+            {/*                    }*/}
+            {/*                    if (info.file.status === 'error') {*/}
+            {/*                        return message.error(`Error: ${info.file.error.toUpperCase()}`);*/}
+            {/*                    }*/}
+            {/*                }}*/}
+            {/*                showUploadList={false}*/}
+            {/*                children={<Button shape="round" icon={<FileTextTwoTone />} />}*/}
+            {/*            />*/}
+            {/*        </Tooltip>*/}
+            {/*    </>}*/}
+            {/*    rules={[{ required: false }]}*/}
+            {/*    children={<Input.TextArea />}*/}
+            {/*/>*/}
 
             <Form.Item
                 name="message"
@@ -289,8 +294,11 @@ const EditForm = ({recordArg, onRecordSaved,close }) => {
                     </Space>
                 </>}
                 rules={[{ required: true }]}
-                children={<Input.TextArea />}
+                children={<Input.TextArea disabled={!isCreateForm}/>}
             />
+            <Form.Item name="expireAt" label="Valid Until" required >
+                <DatePicker placeholder="Date" showTime use12Hours={true}/>
+            </Form.Item>
             <Form.Item name="schedule.policy" id="selected" label="Schedule Policy" initialValue={type}>
                 <Select onChange={setType}>
                     <Option value="default">Default (Schedule On)</Option>
@@ -300,7 +308,7 @@ const EditForm = ({recordArg, onRecordSaved,close }) => {
             </Form.Item>
             <Form.Item colon={false} label=" " style={{ marginTop:'0px'}} >
                 <Card>
-                    <SchedulePickerWithType type={type}/>
+                    <SchedulePickerWithType type={type} schedule={recordArg.campaignStartTime}/>
                 </Card>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8 }}>
@@ -346,7 +354,8 @@ const EditForm = ({recordArg, onRecordSaved,close }) => {
 
                                 delete formDataUf.schedule;
                                 formDataUf.schedules = [window.btoa(JSON.stringify(schedule))].join(",");
-                                return CampaignService.saveCampaign(formDataUf);
+                                formDataUf.expireAt = Date.parse(formDataUf.expireAt.format("YYYY-MM-DD HH:mm:ss"))/1000;
+                                return CampaignService.updateCampaign(formDataUf);
                             })
                             .then(campaign => {
                                 onRecordSaved(campaign);
@@ -354,7 +363,7 @@ const EditForm = ({recordArg, onRecordSaved,close }) => {
                                 notification.success({
                                     key: `corder_${Date.now()}`,
                                     message: "Task Complete",
-                                    description: <>Campaign created: {campaign.campaignId}</>,
+                                    description: <>Campaign updated: {campaign.campaignId}</>,
                                     duration: 5
                                 });
                             })
@@ -362,7 +371,7 @@ const EditForm = ({recordArg, onRecordSaved,close }) => {
                                 notification.error({
                                     key: `corder_${Date.now()}`,
                                     message: "Task Failed",
-                                    description: <>Error creating order.<br />{error.message}</>,
+                                    description: <>Error updating campaign.<br />{error.message}</>,
                                     duration: 5
                                 });
                             }))
@@ -418,10 +427,15 @@ export const CampaignTaskReport = () => {
     const unixToMomentTime = value => {
         if(value==null) return "";
         const parseValue = parseInt(value)*1000
-        console.log(parseValue);
         const finalTime=  moment(parseValue).format('lll');
         return finalTime;
     }
+    useEffect(()=>{
+        repetitiveApiCaller();
+        setInterval(()=>{
+            repetitiveApiCaller();
+        },30000)
+    },[])
 
     useEffect(() => {
         CampaignService.fetchCampaignTasks(lastQuery)
@@ -439,10 +453,10 @@ export const CampaignTaskReport = () => {
             });
     }, [lastQuery]);
 
-    useEffect(() => {
+    const repetitiveApiCaller=()=> {
         CampaignService.fetchCampaignReport({campaignId})
             .then((data) => {
-                // console.log(data.taskReports);
+                console.log(data);
                setcampaignWiseReport(data);
             })
             .catch(error => {
@@ -450,7 +464,7 @@ export const CampaignTaskReport = () => {
                 setCampaignTasksFetchCount(0);
                 setCampaignFetchError(error);
             });
-    }, [lastQuery]);
+    };
 
     useEffect(() => {
         setLastQuery({ page: 1, limit: 10, campaignId: campaignId })
@@ -531,13 +545,13 @@ export const CampaignTaskReport = () => {
                             disabled={campaign.scheduleStatus === 'disabled'}
                             style={{marginLeft: 10}}
                         />
-                        {/*<Button*/}
-                        {/*    type="primary"*/}
-                        {/*    onClick={() => showCampaignModal(campaign)}*/}
-                        {/*    children={"Edit Campaign"}*/}
-                        {/*    // disabled={campaign.pendingTaskCount === 0}*/}
-                        {/*    style={{marginLeft: 10}}*/}
-                        {/*/>*/}
+                        <Button
+                            type="primary"
+                            onClick={() => showCampaignModal(campaign)}
+                            children={"Edit Campaign"}
+                            disabled={campaign.sentTaskCount > 0 || currentTime > campaignStartTime}
+                            style={{marginLeft: 10}}
+                        />
                         {/*<Button*/}
                         {/*    type="primary"*/}
                         {/*    onClick={() => onCampaignStart({ campaignId: campaign.campaignId })}*/}
@@ -659,6 +673,30 @@ export const CampaignTaskReport = () => {
                     // });
                     //
                     // return newTask;
+                    if (parentTask.children.length && (parentTask.statusExternal == "delivered" || parentTask.statusExternal == "processing"|| parentTask.statusExternal == null || parentTask.statusExternal == "pending"))
+                    {
+                        const firstNotDelivered = parentTask.children.find(child => child.statusExternal != "delivered");
+                        if (firstNotDelivered)
+                        {
+                            parentTask.errorCodeExternal = parentTask.statusExternal != "delivered" ? parentTask.errorCodeExternal:firstNotDelivered.errorCodeExternal
+                            parentTask.statusExternal = "failed";
+                        }
+                        else
+                        {
+
+                            parentTask.statusExternal = 'delivered';
+                        }
+                    }
+                    else
+                    {
+                        parentTask.statusExternal = parentTask.statusExternal == null ? null : (parentTask.errorCodeExternal ? parentTask.statusExternal : "delivered");
+                    }
+
+
+                    if(parentTask.status == "failed"||parentTask.status == null||parentTask.status == "suspended")
+                    {
+                        parentTask.statusExternal = null;
+                    }
                     return parentTask;
                 })}
                 rowKey={parentTask=> parentTask.campaignTaskId}
@@ -671,21 +709,25 @@ export const CampaignTaskReport = () => {
                     render={(_, __, i) => (lastQuery.page - 1) * lastQuery.limit + (++i)}
                 />
 
-                <Table.Column title="Phone Number" dataIndex={"phoneNumber"}/>
-                <Table.Column title="Task Status" dataIndex={"status"}
-                              render={v => [<Tag color={"processing"}>pending</Tag>, <Tag color={"success"}>sent</Tag>,
-                                  <Tag
-                                      color={"error"}>error</Tag>][[v === "pending", v === "sent", v === "failed"].indexOf(!0)]}/>
-                <Table.Column title="Status Message" dataIndex={undefined}
-                              render={(v, r, i) => (r.statusExternal && "sent") || (r.errorCode || r.errorCodeExternal)}/>
-                <Table.Column title="Package" dataIndex={"packageId"}/>
-                <Table.Column title="External Status Update Time" dataIndex={"lastUpdatedTxStamp"}
-                              render={(unixToMomentTime)}/>
-                <Table.Column title="Error Code" dataIndex={"errorCode"}/>
-                <Table.Column title="External Error Code" dataIndex={"errorCodeExternal"}/>
-                <Table.Column title="External Task Id" dataIndex={"taskIdExternal"}/>
-                {/*<Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>*/}
-                <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
+                <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"}/>
+                <Table.Column title="Sender Id" dataIndex={"senderId"} width={"150pt"}/>
+                {/*<Table.Column title="Phone Number" dataIndex={"phoneNumber"}/>*/}
+                <Table.Column title="Status" dataIndex={"status"} width={"110pt"} render={v => [
+                    <Tag color={"processing"}>pending</Tag>,
+                    <Tag color={"success"}>sent</Tag>,
+                    <Tag color={"warning"}>undetermined</Tag>,
+                    <Tag color={"error"}>failed</Tag>,
+                    <Tag color={"error"}>suspended</Tag>][[v === "pending" || v == null, v === "sent", v === "undetermined", v === "failed", v === "suspended"].indexOf(!0)]} />
+                <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
+                    <Tag color={"processing"}>pending</Tag>,
+                    <Tag color={"success"}>delivered</Tag>,
+                    <Tag color={"warning"}>undetermined</Tag>,
+                    <Tag color={"error"}>failed</Tag>,
+                    <Tag color={"error"}></Tag>,
+                    <span></span>,
+                ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
+
+                <Table.Column title="Message" width={"150pt"}
                               render={(v, r, i) =>{
                                   var msg = r.message;
                                   // if (!r.children) { r.children = []; }
@@ -695,9 +737,9 @@ export const CampaignTaskReport = () => {
                                   }else{
                                       console.log(r.fullMessage);
                                   }
-
+                                  // console.log(r.children);
                                   v = msg;
-                                 return v.length>6?<>
+                                  return  v.length>6?<>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
@@ -707,11 +749,45 @@ export const CampaignTaskReport = () => {
                                       verticalAlign:"middle"
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
-                                  <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
-                              </>:v}}/>
-                <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} render={(unixToMomentTime)}/>
-                <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} render={(unixToMomentTime)}/>
-                <Table.Column title="Terminating Called Number" dataIndex={"terminatingCalledNumber"}/>
+                                      <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
+                                  </>:v}}/>
+                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
+                <Table.Column title="Error Code" dataIndex={"errorCode"}/>
+                <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"110pt"}/>
+                <Table.Column title="Package" dataIndex={"packageId"}/>
+                <Table.Column title="Route Id" dataIndex={"routeId"} width={"90pt"}/>
+                {/*<Table.Column title="External Status Update Time" dataIndex={"lastUpdatedTxStamp"}*/}
+                {/*              render={(unixToMomentTime)}/>*/}
+                <Table.Column title="SMS Count" dataIndex={"smsCount"} width={"90pt"}/>
+                {/*<Table.Column title="External Task Id" dataIndex={"taskIdExternal"}/>*/}
+                {/*<Table.Column title="Message" dataIndex={"message"} width={"25vw"}/>*/}
+                {/*<Table.Column title="Message" dataIndex={"message"} width={"150pt"}*/}
+                {/*              render={(v, r, i) =>{*/}
+                {/*                  var msg = r.message;*/}
+                {/*                  // if (!r.children) { r.children = []; }*/}
+                {/*                  if(r.children){*/}
+                {/*                      r.children.forEach(child => msg+= child.message);*/}
+                {/*                      r.children.forEach(child => child.fullMessage = msg);*/}
+                {/*                  }else{*/}
+                {/*                      console.log(r.fullMessage);*/}
+                {/*                  }*/}
+
+                {/*                  v = msg;*/}
+                {/*                 return v.length>6?<>*/}
+                {/*              <span*/}
+                {/*                  style={{textOverflow:"ellipsis",*/}
+                {/*                      whiteSpace:"nowrap",*/}
+                {/*                      maxWidth: "50pt",*/}
+                {/*                      display: "inline-block",*/}
+                {/*                      overflow:"hidden",*/}
+                {/*                      verticalAlign:"middle"*/}
+                {/*                  }}*/}
+                {/*              >{v.replace(/*/}
+                {/*                  <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>*/}
+                {/*              </>:v}}/>*/}
+                <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"350pt"} />
+                <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={(unixToMomentTime)}/>
+                <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render={(unixToMomentTime)}/>
 
                 <Table.Column
                     dataIndex={undefined}

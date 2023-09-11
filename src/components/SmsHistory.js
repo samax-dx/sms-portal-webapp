@@ -149,8 +149,6 @@ const processDataForTableView = ({taskReports}) => {
 
 const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
 
-
-
     const tableData = processDataForTableView({taskReports});
     const unixToMomentTime=(value)=>{
         if(value==null) return "";
@@ -289,7 +287,7 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                     render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
                 />
                 <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} width={"100pt"}/>
-                <Table.Column title="Called Number" dataIndex={"phoneNumber"} width={"90pt"} />
+                <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"90pt"} />
                 <Table.Column title="Sender Id" dataIndex={"senderId"} width={"110pt"}/>
                 <Table.Column title="Status" dataIndex={"status"} width={"110pt"} render={v => [
                     <Tag color={"processing"}>pending</Tag>,
@@ -320,15 +318,15 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                                   // console.log(r.children);
                                   v = msg;
                                   return  v.length>6?<>
-                              <span
-                                  style={{textOverflow:"ellipsis",
-                                      whiteSpace:"nowrap",
-                                      maxWidth: "50pt",
-                                      display: "inline-block",
-                                      overflow:"hidden",
-                                      verticalAlign:"middle"
-                                  }}
-                              >{v.replace(/\s*,\s*/g, " ")}</span>
+                                  <span
+                                      style={{textOverflow:"ellipsis",
+                                          whiteSpace:"nowrap",
+                                          maxWidth: "50pt",
+                                          display: "inline-block",
+                                          overflow:"hidden",
+                                          verticalAlign:"middle"
+                                      }}
+                                  >{v.replace(/\s*,\s*/g, " ")}</span>
                                       <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
                                   </>:v}}/>
                 {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
@@ -417,10 +415,9 @@ export const SmsHistory = () => {
     const [taskReports, setTaskReports] = useState([]);
     const [TaskReportsFetchCount, setTaskReportsFetchCount] = useState(0);
     const [taskReportsFetchError, setTaskReportsFetchError] = useState(null);
-    const [spinning, setSpinning] = useState(false);
+    const [spinning, setSpinning] = useState(true);
 
     useEffect(() => {
-        setSpinning(true);
         CampaignService.fetchCampaignTaskReports(lastQuery)
             .then((data) => {
                 // console.log(data)
@@ -447,7 +444,7 @@ export const SmsHistory = () => {
             <Col md={24} style={{marginLeft:'5px'}}>
                 <Card title={<Title level={5}>SMS History</Title>}
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                 </Card>
             </Col>
         </Row>

@@ -519,11 +519,11 @@ export const CampaignNew = () => {
                     duration: 15
                 });
             })
-            .catch(error => {
+            .catch(data => {
                 notification.error({
                     key: `rCampaign_${Date.now()}`,
                     message: "Task Failed",
-                    description: `Error Deleting campaign: ${campaign.campaignId}`,
+                    description: `Error Deleting campaign: ${data.message}`,
                     duration: 15
                 });
             });
