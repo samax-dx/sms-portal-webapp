@@ -30,6 +30,7 @@ import {SenderIdService} from "../services/SenderIdService";
 import {unflatten} from "../Util";
 import moment from 'moment';
 import {PartyIdCatcher} from "./HomeNew";
+import {InputSms} from "./InputSms";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -143,7 +144,7 @@ const SchedulePickerWithType = ({type}) => {
                 </Descriptions.Item>
             </Descriptions>
         </Row>
-       {/* <Row>
+        {/* <Row>
             <Descriptions title="Extended Hours" Layout="vertical" >
                 <Descriptions.Item label="Start at" span={1} labelStyle={{ alignItems:'start'}}>
                     <Form.Item name="schedule.props.activeHourStart" initialValue={moment(new Date())}>
@@ -183,6 +184,10 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
         writeForm.setFieldsValue(recordArg);
     }, [recordArg]);
 
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        isCreateForm && writeForm.resetFields();
+    },[lastWrite]);
     useEffect( () => {
         if (lastWrite === recordArg) return;
         isCreateForm && writeForm.resetFields();
@@ -260,20 +265,20 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
                 rules={[{ required: true }]}
                 children={<Input.TextArea />}
             />
-
-            <Form.Item
-                name="message"
-                label={<>
-                    <span>Message Text</span>
-                    <Space style={{ display: "none" }}>
-                        &nbsp;&nbsp;
-                        <Tooltip title="Import Draft"><Button shape="circle" icon={<FileTextOutlined />} /></Tooltip>
-                        <Tooltip title="Import Template"><Button shape="circle" icon={<FileDoneOutlined />} /></Tooltip>
-                    </Space>
-                </>}
-                rules={[{ required: true }]}
-                children={<Input.TextArea />}
-            />
+            {<InputSms/>}
+            {/*<Form.Item*/}
+            {/*    name="message"*/}
+            {/*    label={<>*/}
+            {/*        <span>Message Text</span>*/}
+            {/*        <Space style={{ display: "none" }}>*/}
+            {/*            &nbsp;&nbsp;*/}
+            {/*            <Tooltip title="Import Draft"><Button shape="circle" icon={<FileTextOutlined />} /></Tooltip>*/}
+            {/*            <Tooltip title="Import Template"><Button shape="circle" icon={<FileDoneOutlined />} /></Tooltip>*/}
+            {/*        </Space>*/}
+            {/*    </>}*/}
+            {/*    rules={[{ required: true }]}*/}
+            {/*    children={<InputSms/>}*/}
+            {/*/>*/}
             <Form.Item name="expireAt" label="Valid Until" rules={[{ required: true }]} initialValue={moment(new Date()).add(7,"days")}>
                 <DatePicker placeholder="Valid Date" showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss"/>
             </Form.Item>
@@ -286,7 +291,7 @@ const WriteForm = ({recordArg, onRecordSaved,close }) => {
             </Form.Item>
             <Form.Item colon={false} label=" " style={{ marginTop:'0px'}} >
                 <Card>
-                <SchedulePickerWithType type={type}/>
+                    <SchedulePickerWithType type={type}/>
                 </Card>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8 }}>
@@ -519,11 +524,11 @@ export const CampaignNew = () => {
                     duration: 15
                 });
             })
-            .catch(data => {
+            .catch(error => {
                 notification.error({
                     key: `rCampaign_${Date.now()}`,
                     message: "Task Failed",
-                    description: `Error Deleting campaign: ${data.message}`,
+                    description: `Error Deleting campaign: ${campaign.campaignId}`,
                     duration: 15
                 });
             });
@@ -535,7 +540,7 @@ export const CampaignNew = () => {
             .then((data) => {
                 // console.log(data)
                 setCampaigns(data.campaigns.map(campaign => ({
-                    ...campaign,
+                        ...campaign,
                         campaignStartTime: JSON.parse(atob(campaign.schedules)).props.scheduleStart
                     }))
                 );
@@ -575,6 +580,6 @@ export const CampaignNew = () => {
         <DataView campaigns={reversedCampaigns.reverse()} viewPage={lastQuery.page} viewLimit={lastQuery.limit} onEdit={showModal} onDelete={removeCampaign} />
         <Br />
         <DataPager totalPagingItems={CampaignsFetchCount} currentPage={lastQuery.page}
-                              onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+                   onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
 };

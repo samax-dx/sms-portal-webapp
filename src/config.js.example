@@ -1,0 +1,8 @@
+export const APP_NAME = "SMS Portal";
+export const OFBIZ_EP = "https://localhost:8443/ofbiz-spring/api";
+export const CONTACT_BOOK_EP = "http://localhost:8083";
+export const SMS_REPORT_EP = "http://localhost:8083";
+export const GP1_Sigtran = " "
+export const GP2_Sigtran = " "
+export const BL1_Sigtran = " "
+export const MAX_CHARACTER = 500;
