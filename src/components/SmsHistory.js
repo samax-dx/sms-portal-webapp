@@ -218,7 +218,7 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                     <Tag color={"error"}></Tag>,
                     <span></span>,
                 ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
-
+                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"170pt"} render={unixToMomentTime} />
                 <Table.Column title="Message" width={"150pt"}
                               render={(v, r, i) =>{
                                   var msg = r.message;
@@ -244,13 +244,13 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                                       <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
                                   </>:v}}/>
                 {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
-                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
                 <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
                 <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
                 <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
                 <Table.Column title="Route Id" dataIndex={"routeId"} width={"90pt"}/>
                 <Table.Column title="SMS Count" dataIndex={"smsCount"} width={"90pt"}/>
                 <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"350pt"} />
+                <Table.Column title="Retry Count" dataIndex={"retryCount"} width={"170pt"}/>
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={unixToMomentTime} />
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render= {unixToMomentTime}/>
 
@@ -304,7 +304,7 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                     <Tag color={"error"}></Tag>,
                     <span></span>,
                 ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
-
+                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"170pt"} render={unixToMomentTime} />
                 <Table.Column title="Message" width={"150pt"}
                               render={(v, r, i) =>{
                                   var msg = r.message;
@@ -330,13 +330,13 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                                       <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
                                   </>:v}}/>
                 {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
-                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
                 <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"}/>
                 <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
                 <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
                 <Table.Column title="Route Id" dataIndex={"routeId"} width={"90pt"}/>
                 <Table.Column title="SMS Count" dataIndex={"smsCount"} width={"90pt"}/>
                 <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"350pt"} />
+            <Table.Column title="Retry Count" dataIndex={"retryCount"} width={"170pt"}/>
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"170pt"} render={unixToMomentTime} />
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"170pt"} render= {unixToMomentTime}/>
 
@@ -450,7 +450,11 @@ export const SmsHistory = () => {
         </Row>
         <DataView taskReports={taskReports} viewPage={lastQuery.page} viewLimit={lastQuery.limit} spin={spinning}/>
         <Br />
-        <DataPager totalPagingItems={TaskReportsFetchCount} currentPage={lastQuery.page}
-                              onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+        <Space direction='horizontal' style={{ justifyContent: 'flex-end' }}>
+            <Button type="primary" onClick={(page, limit) => setLastQuery({...lastQuery, page: lastQuery.page - 1})}>Previous</Button>
+            <Button type="primary" onClick={(page, limit) => setLastQuery({...lastQuery, page: lastQuery.page + 1})}>Next</Button>
+        </Space>
+        {/*<DataPager totalPagingItems={TaskReportsFetchCount} currentPage={lastQuery.page}*/}
+        {/*                      onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />*/}
     </>);
 };
