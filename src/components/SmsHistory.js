@@ -418,6 +418,7 @@ export const SmsHistory = () => {
     const [spinning, setSpinning] = useState(true);
 
     useEffect(() => {
+        setSpinning(true);
         CampaignService.fetchCampaignTaskReports(lastQuery)
             .then((data) => {
                 // console.log(data)
