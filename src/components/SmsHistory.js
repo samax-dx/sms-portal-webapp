@@ -66,8 +66,8 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="campaignName" label="Campaign" children={<Input />} />
             <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />
-            <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
+            {/*<Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />*/}
+            {/*<Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />*/}
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
             <Form.Item name="updatedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format={"YYYY-MM-DD HH:mm:ss"} />} />
