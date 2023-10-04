@@ -29,6 +29,7 @@ import {PartyIdCatcher} from "./HomeNew";
 import {DebounceSelectForCampaign} from "./DebounceSelectForCampaignDropdown";
 import {ReportsService} from "../services/ReportsService";
 import {DebounceSelectForRoute} from "./DebounceSelectForRouteDropdown";
+import {CSVLink} from "react-csv";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -261,7 +262,25 @@ export const Reports = () => {
                       //     </Button>}
                 >
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    {reports.length > 0 ?<Button type="primary">
+                        <CSVLink
+                            filename={"reports.csv"}
+                            data={reports}
+                            className="btn btn-primary"
+                            onClick={()=>{
+                                console.log(reports)
+                                message.success("The file is downloading")
+                            }}
+                        >
+                            Export to CSV
+                        </CSVLink>
+                    </Button>:<Button type="primary" disabled>
+                    </Button>}
+                    </div>
+
                 </Card>
+
             </Col>
             {/*<Modal width={1000} header="Create Campaign" key="createCampaign" visible={modalData} footer={null} maskClosable={false} closable={false} style={{ top: 20 }} bodyStyle={{height:"57rem"}}>*/}
             {/*    <WriteForm close={handleCancel} recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />*/}
