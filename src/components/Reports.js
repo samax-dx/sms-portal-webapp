@@ -40,7 +40,7 @@ const SearchForm = ({ onSearch }) => {
 
         ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
+            formData[n] = date ? moment(date).format("YYYY-MM-DD HH:mm:ss") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
