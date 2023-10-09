@@ -30,7 +30,7 @@ const SearchForm = ({ onSearch }) => {
 
         ["updatedOn_fld0_value", "updatedOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
+            formData[n] = date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
@@ -60,7 +60,7 @@ const SearchForm = ({ onSearch }) => {
             labelCol={{ span: 15}}
             wrapperCol={{span:23}}
             labelAlign="left"
-            initialValues={{ updatedOn_fld0_value: moment().subtract(3, 'days'),updatedOn_fld1_value:moment(new Date()) }}
+            initialValues={{ updatedOn_fld0_value: moment().subtract(1, 'days'),updatedOn_fld1_value:moment(new Date()) }}
         >
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="phoneNumber" label="Phone Number" children={<Input />} />
             <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
@@ -105,9 +105,9 @@ function addKeyValueToArrayObjects(arr, key, value) {
     return arr;
 }
 const processDataForTableView = ({taskReports}) => {
-
+    const reversedTaskReports = Object.values(taskReports || {}).reverse();
     let index = 0;
-    return Object.values(taskReports || {}).map((taskGroup, i) => {
+    return reversedTaskReports.map((taskGroup, i) => {
 
 
         const parentTask = taskGroup[0];
