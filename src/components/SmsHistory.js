@@ -510,6 +510,7 @@ export const SmsHistory = () => {
     const [taskReportsFetchError, setTaskReportsFetchError] = useState(null);
     const [spinning, setSpinning] = useState(true);
     const csvData = formatDataAsCSV(taskReports);
+    console.log(csvData);
 
     useEffect(() => {
         setSpinning(true);
@@ -542,7 +543,7 @@ export const SmsHistory = () => {
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        {csvData.length > 0 ?<Button type="primary">
+                        {csvData.length > 1 ?<Button type="primary">
                             <CSVLink
                                 filename={"smsHistory.csv"}
                                 data={csvData}
