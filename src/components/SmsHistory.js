@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tag, Tooltip, Spin
+    Modal, Typography, DatePicker, notification, Tag, Tooltip, Spin, message
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -19,6 +19,7 @@ import {SmsTaskService} from "../services/SmsTaskService";
 import {CampaignService} from "../services/CampaignService";
 import {useParams} from "react-router-dom";
 import moment from "moment";
+import {CSVLink} from "react-csv";
 
 
 
@@ -84,6 +85,98 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
+const formatDataAsCSV = (taskReports) => {
+    const reversedTaskReports = Object.values(taskReports || {}).reverse();
+
+    const csvData = [];
+
+    csvData.push([
+        'title',
+        'campaignTaskId',
+        'phoneNumber',
+        'terminatingCalledNumber',
+        'originatingCallingNumber',
+        'terminatingCallingNumber',
+        'message',
+        'smsCount',
+        'smsEncoding',
+        'campaignId',
+        'packageId',
+        'routeId',
+        'status',
+        'statusExternal',
+        'statusExternalUpdatedAt',
+        'errorCode',
+        'errorCodeExternal',
+        'taskIdExternal',
+        'smsId',
+        'retryCount',
+        'retryHistory',
+        'nextRetryTime',
+        'lastRetryTime',
+        'allRetryTimes',
+        'taskDetailJson',
+        'parentId',
+        'multipartSegmentNumber',
+        'campaignName',
+        'senderId',
+        'instances',
+        'createdStamp',
+        'sentOn',
+        'lastUpdatedStamp',
+    ]);
+
+    function pushTaskRow(task, taskType) {
+        csvData.push([
+            taskType,
+            task.campaignTaskId,
+            task.phoneNumber,
+            task.terminatingCalledNumber,
+            task.originatingCallingNumber,
+            task.terminatingCallingNumber,
+            task.message,
+            task.smsCount,
+            task.smsEncoding,
+            task.campaignId,
+            task.packageId,
+            task.routeId,
+            task.status,
+            task.statusExternal,
+            task.statusExternalUpdatedAt,
+            task.errorCode,
+            task.errorCodeExternal,
+            task.taskIdExternal,
+            task.smsId,
+            task.retryCount,
+            task.retryHistory,
+            task.nextRetryTime,
+            task.lastRetryTime,
+            task.allRetryTimes,
+            task.taskDetailJson,
+            task.parentId,
+            task.multipartSegmentNumber,
+            task.campaignName,
+            task.senderId,
+            task.instances,
+            task.createdStamp,
+            task.sentOn,
+            task.lastUpdatedStamp,
+        ]);
+    }
+
+    reversedTaskReports.forEach(taskGroup => {
+        if (taskGroup.length > 1) {
+            pushTaskRow(taskGroup[0], "head");
+            for (let i = 1; i < taskGroup.length; i++) {
+                pushTaskRow(taskGroup[i], "part " + (i+1));
+            }
+        } else {
+            pushTaskRow(taskGroup[0], "head");
+        }
+    });
+
+    return csvData;
+};
 
 function deepClone(obj) {
     if (obj === null || typeof obj !== 'object') {
@@ -416,6 +509,7 @@ export const SmsHistory = () => {
     const [TaskReportsFetchCount, setTaskReportsFetchCount] = useState(0);
     const [taskReportsFetchError, setTaskReportsFetchError] = useState(null);
     const [spinning, setSpinning] = useState(true);
+    const csvData = formatDataAsCSV(taskReports);
 
     useEffect(() => {
         setSpinning(true);
@@ -439,13 +533,29 @@ export const SmsHistory = () => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
 
-
+    const objectLength = Object.keys(taskReports)
+    console.log(taskReports);
     return (<>
         <Row>
             <Col md={24} style={{marginLeft:'5px'}}>
                 <Card title={<Title level={5}>SMS History</Title>}
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}>
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        {csvData.length > 0 ?<Button type="primary">
+                            <CSVLink
+                                filename={"smsHistory.csv"}
+                                data={csvData}
+                                className="btn btn-primary"
+                                onClick={()=>{
+                                    message.success("The file is downloading")
+                                }}
+                            >
+                                Export to CSV
+                            </CSVLink>
+                        </Button>:<Button type="primary" disabled>
+                        </Button>}
+                    </div>
                 </Card>
             </Col>
         </Row>
